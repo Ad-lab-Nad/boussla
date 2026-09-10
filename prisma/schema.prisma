@@ -1,0 +1,261 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               String   @id @default(cuid())
+  email            String   @unique
+  name             String?
+  stripeCustomerId String?  @unique
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  subscription Subscription?
+  audits       Audit[]
+
+  @@map("users")
+}
+
+enum PlanTier {
+  FREE_TRIAL
+  STARTER
+  PRO
+  AGENCY
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  PAST_DUE
+  CANCELED
+  TRIALING
+}
+
+model Subscription {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  plan   PlanTier           @default(FREE_TRIAL)
+  status SubscriptionStatus @default(TRIALING)
+
+  stripeSubscriptionId String? @unique
+  stripePriceId        String?
+
+  auditsQuotaPerMonth  Int @default(5)
+  auditsUsedThisPeriod Int @default(0)
+
+  currentPeriodStart DateTime?
+  currentPeriodEnd   DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("subscriptions")
+}
+
+enum AdPlatform {
+  META
+  GOOGLE
+  TIKTOK
+  SNAPCHAT
+  OTHER
+}
+
+enum CampaignObjective {
+  SALES
+  LEADS
+  TRAFFIC
+  MESSAGES
+  OTHER
+}
+
+enum AuditStatus {
+  DRAFT
+  ANALYZING
+  COMPLETED
+  FAILED
+}
+
+model Audit {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  platform     AdPlatform
+  objective    CampaignObjective
+  industry     String
+  country      String
+  currency     String            @default("TND")
+  productName  String
+  sellingPrice Float
+  productCost  Float
+  shippingCost Float             @default(0)
+  otherCosts   Float             @default(0)
+
+  status    AuditStatus @default(DRAFT)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  kpis        CampaignKpi?
+  creative    CreativeAnalysis?
+  landingPage LandingPageAnalysis?
+  diagnosis   Diagnosis?
+
+  @@map("audits")
+}
+
+model CampaignKpi {
+  id      String @id @default(cuid())
+  auditId String @unique
+  audit   Audit  @relation(fields: [auditId], references: [id], onDelete: Cascade)
+
+  spend            Float
+  impressions      Int
+  reach            Int
+  clicks           Int
+  landingPageViews Int
+  addToCart        Int
+  checkouts        Int
+  purchases        Int
+  revenue          Float
+  frequency        Float?
+
+  ctr             Float?
+  cpc             Float?
+  cpm             Float?
+  lpViewRate      Float?
+  addToCartRate   Float?
+  checkoutRate    Float?
+  conversionRate  Float?
+  cpa             Float?
+  roas            Float?
+  margin          Float?
+  breakEvenRoas   Float?
+  estimatedProfit Float?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("campaign_kpis")
+}
+
+model CreativeAnalysis {
+  id      String @id @default(cuid())
+  auditId String @unique
+  audit   Audit  @relation(fields: [auditId], references: [id], onDelete: Cascade)
+
+  imageUrl String?
+  videoUrl String?
+  mainText String?
+  headline String?
+  cta      String?
+
+  hookScore              Int?
+  attentionScore         Int?
+  clarityScore           Int?
+  productVisibilityScore Int?
+  offerScore             Int?
+  benefitScore           Int?
+  ctaScore               Int?
+  readabilityScore       Int?
+  socialProofScore       Int?
+  differentiationScore   Int?
+  visualConsistencyScore Int?
+  persuasionScore        Int?
+
+  creativeScore Int?
+  strengths     Json?
+  weaknesses    Json?
+  rawAiResponse Json?
+
+  createdAt DateTime @default(now())
+
+  @@map("creative_analyses")
+}
+
+enum MessageMatchStatus {
+  MATCH
+  PARTIAL_MISMATCH
+  MISMATCH
+}
+
+model LandingPageAnalysis {
+  id      String @id @default(cuid())
+  auditId String @unique
+  audit   Audit  @relation(fields: [auditId], references: [id], onDelete: Cascade)
+
+  url           String?
+  screenshotUrl String?
+
+  valuePropositionScore    Int?
+  offerScore               Int?
+  priceClarityScore        Int?
+  ctaScore                 Int?
+  productPresentationScore Int?
+  argumentScore            Int?
+  reviewsScore             Int?
+  socialProofScore         Int?
+  guaranteesScore          Int?
+  deliveryScore            Int?
+  paymentOptionsScore      Int?
+  trustScore               Int?
+  mobileUxScore            Int?
+  frictionScore            Int?
+  purchaseClarityScore     Int?
+
+  landingPageScore Int?
+
+  messageMatchStatus      MessageMatchStatus?
+  messageMatchExplanation String?
+
+  rawAiResponse Json?
+
+  createdAt DateTime @default(now())
+
+  @@map("landing_page_analyses")
+}
+
+enum ScaleDecision {
+  SCALE
+  OPTIMIZE
+  TEST
+  STOP
+  INSUFFICIENT_DATA
+}
+
+enum ScalingType {
+  VERTICAL
+  HORIZONTAL
+  NOT_APPLICABLE
+}
+
+model Diagnosis {
+  id      String @id @default(cuid())
+  auditId String @unique
+  audit   Audit  @relation(fields: [auditId], references: [id], onDelete: Cascade)
+
+  campaignScore      Int
+  creativeScore      Int?
+  trafficScore       Int?
+  landingPageScore   Int?
+  funnelScore        Int?
+  profitabilityScore Int?
+  stabilityScore     Int?
+
+  mainDiagnosis   String
+  decision        ScaleDecision
+  confidenceScore Int
+  explanation     String
+
+  scalingType ScalingType? @default(NOT_APPLICABLE)
+  actionPlan  Json?
+
+  createdAt DateTime @default(now())
+
+  @@map("diagnoses")
+}
