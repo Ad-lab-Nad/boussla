@@ -18,6 +18,11 @@ model User {
   subscription Subscription?
   audits       Audit[]
 
+  products   Product[]
+  stockItems StockItem[]
+  orders     Order[]
+  expenses   Expense[]
+
   @@map("users")
 }
 
@@ -258,4 +263,149 @@ model Diagnosis {
   createdAt DateTime @default(now())
 
   @@map("diagnoses")
+}
+
+// ==================== GESTION MODULE ====================
+// Migrated from a localStorage prototype (gestion-complete1109.html).
+
+enum OrderStatus {
+  IN_PROGRESS
+  DELIVERED
+  RETURNED
+}
+
+enum PaymentStatus {
+  PAID
+  PENDING
+  UNPAID
+}
+
+model Product {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  name      String
+  sellPrice Float
+  unitCost  Float
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  orderLines        OrderLine[]
+  productionBatches ProductionBatch[]
+
+  @@map("products")
+}
+
+model StockItem {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  name           String
+  unit           String @default("unité")
+  alertThreshold Float  @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  purchases StockPurchase[]
+  usages    StockUsage[]
+
+  @@map("stock_items")
+}
+
+model StockPurchase {
+  id          String    @id @default(cuid())
+  stockItemId String
+  stockItem   StockItem @relation(fields: [stockItemId], references: [id], onDelete: Cascade)
+
+  date     DateTime
+  quantity Float
+  unitCost Float
+
+  createdAt DateTime @default(now())
+
+  @@map("stock_purchases")
+}
+
+model StockUsage {
+  id          String    @id @default(cuid())
+  stockItemId String
+  stockItem   StockItem @relation(fields: [stockItemId], references: [id], onDelete: Cascade)
+
+  date     DateTime
+  quantity Float
+
+  createdAt DateTime @default(now())
+
+  @@map("stock_usages")
+}
+
+model ProductionBatch {
+  id        String  @id @default(cuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  date     DateTime
+  quantity Int
+
+  createdAt DateTime @default(now())
+
+  @@map("production_batches")
+}
+
+model Order {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  date          DateTime
+  clientName    String?
+  status        OrderStatus   @default(IN_PROGRESS)
+  paymentStatus PaymentStatus @default(PENDING)
+  paymentDate   DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  lines OrderLine[]
+
+  @@map("orders")
+}
+
+// Order lines snapshot the product's name/price/cost at order time, so a later
+// rename or deletion of the Product never rewrites past orders (matches the
+// prototype's `nomProduit` / `prixVente` / `coutUnitaire` snapshot behavior).
+model OrderLine {
+  id      String @id @default(cuid())
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  productId String?
+  product   Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  productNameSnapshot String
+  quantity            Int
+  sellPriceSnapshot   Float
+  unitCostSnapshot    Float
+
+  createdAt DateTime @default(now())
+
+  @@map("order_lines")
+}
+
+model Expense {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  date        DateTime
+  description String
+  amount      Float
+
+  createdAt DateTime @default(now())
+
+  @@map("expenses")
 }

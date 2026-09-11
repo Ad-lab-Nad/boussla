@@ -1,0 +1,362 @@
+/* Ported from the original prototype (gestion-complete1109.html). Tabs are
+   now real routes (Next.js Link) instead of hidden panels, so the
+   `.tab-panel` show/hide rules are gone — everything else matches. */
+
+.gestion {
+  --bg: #faf9f5;
+  --surface: #ffffff;
+  --ink: #1c231f;
+  --ink-soft: #6f766f;
+  --ink-faint: #a3a89f;
+  --border: #e8e6dc;
+  --forest: #1f6f4a;
+  --forest-2: #2f8f5b;
+  --forest-soft: #e5f2ea;
+  --citrus: #e8622c;
+  --citrus-soft: #fbe9df;
+  --amber: #c98a1f;
+  --amber-soft: #f8edda;
+  --red: #c94a3d;
+  --red-soft: #fbe4e1;
+  --shadow-sm: 0 1px 2px rgba(28, 35, 31, 0.05);
+  --shadow-md: 0 10px 30px -12px rgba(31, 111, 74, 0.22),
+    0 2px 8px -2px rgba(28, 35, 31, 0.06);
+  --radius: 16px;
+
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-gestion-sans), sans-serif;
+  min-height: 100%;
+  -webkit-font-smoothing: antialiased;
+}
+
+.gestion .wrap {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 28px 18px 100px;
+}
+
+.gestion h1 {
+  font-family: var(--font-gestion-serif), serif;
+  font-weight: 600;
+  font-size: 1.7rem;
+  margin: 0 0 4px;
+  color: var(--forest);
+}
+
+.gestion .subtitle {
+  font-size: 0.86rem;
+  color: var(--ink-soft);
+  margin-bottom: 18px;
+}
+
+.gestion .tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 22px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0;
+}
+
+.gestion .tab-btn {
+  background: none;
+  border: none;
+  padding: 10px 16px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.gestion .tab-btn.active {
+  color: var(--forest);
+  border-bottom-color: var(--forest);
+}
+
+.gestion .card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  margin-bottom: 18px;
+  box-shadow: var(--shadow-sm);
+}
+
+.gestion .card h2 {
+  font-family: var(--font-gestion-serif), serif;
+  font-weight: 600;
+  font-size: 1.02rem;
+  margin: 0 0 14px;
+}
+
+.gestion .card .hint {
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  margin-top: -8px;
+  margin-bottom: 14px;
+}
+
+.gestion .field-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  align-items: end;
+}
+
+.gestion .field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.gestion .field label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.gestion .field input,
+.gestion .field select {
+  border: 1.5px solid var(--border);
+  background: #fdfdfb;
+  border-radius: 9px;
+  padding: 9px 11px;
+  font-size: 0.85rem;
+  color: var(--ink);
+  width: 100%;
+  font-family: inherit;
+}
+
+.gestion .field input:focus,
+.gestion .field select:focus {
+  outline: none;
+  border-color: var(--forest);
+  box-shadow: 0 0 0 3px var(--forest-soft);
+}
+
+.gestion .btn {
+  background: var(--forest);
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 9px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.8rem;
+  font-family: inherit;
+}
+
+.gestion .btn:hover {
+  background: #175a3c;
+}
+
+.gestion .btn.secondary {
+  background: var(--surface);
+  color: var(--forest);
+  border: 1.5px solid var(--forest);
+}
+
+.gestion .btn.small {
+  padding: 6px 10px;
+  font-size: 0.72rem;
+}
+
+.gestion table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 4px;
+}
+
+.gestion th {
+  text-align: left;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  color: var(--ink-faint);
+  padding: 0 8px 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.gestion td {
+  padding: 8px;
+  font-size: 0.84rem;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+.gestion tr:last-child td {
+  border-bottom: none;
+}
+
+.gestion .num {
+  font-family: var(--font-gestion-mono), monospace;
+}
+
+.gestion .right {
+  text-align: right;
+}
+
+.gestion .badge {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.gestion .badge.in_progress {
+  background: var(--amber-soft);
+  color: var(--amber);
+}
+
+.gestion .badge.delivered {
+  background: var(--forest-soft);
+  color: var(--forest);
+}
+
+.gestion .badge.returned {
+  background: var(--red-soft);
+  color: var(--red);
+}
+
+.gestion .badge.paid {
+  background: var(--forest-soft);
+  color: var(--forest);
+}
+
+.gestion .badge.pending {
+  background: var(--amber-soft);
+  color: var(--amber);
+}
+
+.gestion .badge.unpaid {
+  background: var(--red-soft);
+  color: var(--red);
+}
+
+.gestion .del-btn {
+  background: none;
+  border: none;
+  color: var(--ink-faint);
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.gestion .del-btn:hover {
+  color: var(--red);
+}
+
+.gestion select.status-select {
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 4px 6px;
+  font-size: 0.75rem;
+  font-family: inherit;
+}
+
+.gestion .kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.gestion .kpi {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  box-shadow: var(--shadow-sm);
+}
+
+.gestion .kpi .label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  letter-spacing: 0.4px;
+  margin-bottom: 8px;
+}
+
+.gestion .kpi .value {
+  font-family: var(--font-gestion-mono), monospace;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.gestion .kpi.profit .value {
+  color: var(--forest);
+}
+
+.gestion .kpi.profit.negative .value {
+  color: var(--red);
+}
+
+.gestion .kpi.warn {
+  border-color: var(--amber);
+}
+
+.gestion .month-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 6px 8px 6px 14px;
+  box-shadow: var(--shadow-sm);
+  width: fit-content;
+  margin-bottom: 18px;
+}
+
+.gestion .month-pill select {
+  border: none;
+  background: transparent;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--ink);
+  font-family: inherit;
+}
+
+.gestion .alert-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.84rem;
+}
+
+.gestion .alert-row:last-child {
+  border-bottom: none;
+}
+
+.gestion .empty {
+  text-align: center;
+  padding: 24px;
+  color: var(--ink-faint);
+  font-size: 0.85rem;
+}
+
+.gestion .cmd-line-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 40px;
+  gap: 12px;
+  margin-bottom: 8px;
+  align-items: center;
+}
+
+.gestion .cmd-lines-header {
+  display: grid;
+  grid-template-columns: 2fr 1fr 40px;
+  gap: 12px;
+  margin-bottom: 8px;
+}
