@@ -40,74 +40,76 @@ export default async function CommandesPage() {
 
   return (
     <>
-      <div className="card">
+      <div className="g-card">
         <h2>Nouvelle commande</h2>
-        <div className="hint">
+        <div className="g-hint">
           Une commande peut contenir plusieurs parfums différents — ajoutez une ligne par
           parfum.
         </div>
         <OrderForm products={products} createOrderAction={createOrder} />
       </div>
 
-      <div className="card">
+      <div className="g-card">
         <h2>Toutes les commandes</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Client</th>
-              <th>Produits</th>
-              <th className="right">Montant</th>
-              <th>Statut</th>
-              <th>Paiement</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {orders.map((order) => {
-              const label = order.lines
-                .map((l) => `${l.productNameSnapshot} ×${l.quantity}`)
-                .join(", ");
-              return (
-                <tr key={order.id}>
-                  <td className="num">{order.date.toISOString().slice(0, 10)}</td>
-                  <td>{order.clientName || "—"}</td>
-                  <td>{label}</td>
-                  <td className="right num">{fmt(orderAmount(order))}</td>
-                  <td>
-                    <form action={updateOrderStatus}>
-                      <input type="hidden" name="id" value={order.id} />
-                      <AutoSubmitSelect
-                        name="status"
-                        defaultValue={order.status}
-                        options={STATUS_OPTIONS}
-                        className={`status-select badge ${STATUS_BADGE_CLASS[order.status]}`}
-                      />
-                    </form>
-                  </td>
-                  <td>
-                    <form action={updateOrderPaymentStatus}>
-                      <input type="hidden" name="id" value={order.id} />
-                      <AutoSubmitSelect
-                        name="paymentStatus"
-                        defaultValue={order.paymentStatus}
-                        options={PAYMENT_OPTIONS}
-                        className={`status-select badge ${PAYMENT_BADGE_CLASS[order.paymentStatus]}`}
-                      />
-                    </form>
-                  </td>
-                  <td>
-                    <form action={deleteOrder}>
-                      <input type="hidden" name="id" value={order.id} />
-                      <ConfirmSubmitButton confirmMessage="Supprimer cette commande ?" />
-                    </form>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-        {orders.length === 0 && <div className="empty">Aucune commande enregistrée.</div>}
+        <div className="g-table-wrap">
+          <table className="g-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Client</th>
+                <th>Produits</th>
+                <th className="right">Montant</th>
+                <th>Statut</th>
+                <th>Paiement</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {orders.map((order) => {
+                const label = order.lines
+                  .map((l) => `${l.productNameSnapshot} ×${l.quantity}`)
+                  .join(", ");
+                return (
+                  <tr key={order.id}>
+                    <td className="num">{order.date.toISOString().slice(0, 10)}</td>
+                    <td>{order.clientName || "—"}</td>
+                    <td>{label}</td>
+                    <td className="right num">{fmt(orderAmount(order))}</td>
+                    <td>
+                      <form action={updateOrderStatus}>
+                        <input type="hidden" name="id" value={order.id} />
+                        <AutoSubmitSelect
+                          name="status"
+                          defaultValue={order.status}
+                          options={STATUS_OPTIONS}
+                          className={`g-status-select g-badge ${STATUS_BADGE_CLASS[order.status]}`}
+                        />
+                      </form>
+                    </td>
+                    <td>
+                      <form action={updateOrderPaymentStatus}>
+                        <input type="hidden" name="id" value={order.id} />
+                        <AutoSubmitSelect
+                          name="paymentStatus"
+                          defaultValue={order.paymentStatus}
+                          options={PAYMENT_OPTIONS}
+                          className={`g-status-select g-badge ${PAYMENT_BADGE_CLASS[order.paymentStatus]}`}
+                        />
+                      </form>
+                    </td>
+                    <td>
+                      <form action={deleteOrder}>
+                        <input type="hidden" name="id" value={order.id} />
+                        <ConfirmSubmitButton confirmMessage="Supprimer cette commande ?" />
+                      </form>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        {orders.length === 0 && <div className="g-empty">Aucune commande enregistrée.</div>}
       </div>
     </>
   );

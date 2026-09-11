@@ -1,9 +1,11 @@
 "use client";
 
+import { Trash2 } from "lucide-react";
+
 export function ConfirmSubmitButton({
   confirmMessage,
   title = "Supprimer",
-  children = "✕",
+  children,
 }: {
   confirmMessage: string;
   title?: string;
@@ -12,13 +14,13 @@ export function ConfirmSubmitButton({
   return (
     <button
       type="submit"
-      className="del-btn"
+      className="g-del-btn"
       title={title}
       onClick={(e) => {
         if (!confirm(confirmMessage)) e.preventDefault();
       }}
     >
-      {children}
+      {children ?? <Trash2 size={15} />}
     </button>
   );
 }

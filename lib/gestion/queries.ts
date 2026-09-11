@@ -4,7 +4,7 @@ import {
   stockTotals,
   type OrderLike,
 } from "@/lib/gestion/calculations";
-import { buildMonthOptions, monthKeyFromDate } from "@/lib/gestion/format";
+import { buildMonthOptions, monthKeyFromDate, shiftMonthKey } from "@/lib/gestion/format";
 
 export async function getProducts(userId: string) {
   return prisma.product.findMany({
@@ -81,13 +81,12 @@ export async function getAvailableMonthKeys(userId: string) {
   return buildMonthOptions(existing);
 }
 
-export async function getDashboardData(userId: string, month: string) {
-  const [orders, expenses, stockItems] = await Promise.all([
-    getOrders(userId),
-    getExpenses(userId),
-    getStockItems(userId),
-  ]);
-
+function totalsForMonth(
+  month: string,
+  orders: Awaited<ReturnType<typeof getOrders>>,
+  expenses: Awaited<ReturnType<typeof getExpenses>>,
+  stockItems: Awaited<ReturnType<typeof getStockItems>>
+) {
   const ordersInMonth: OrderLike[] = orders
     .filter((o) => monthKeyFromDate(o.date) === month)
     .map((o) => ({
@@ -111,15 +110,39 @@ export async function getDashboardData(userId: string, month: string) {
     );
   }, 0);
 
-  const totals = computeDashboardTotals({
+  return computeDashboardTotals({
     ordersInMonth,
     expensesInMonth,
     stockPurchasesCostInMonth,
+  });
+}
+
+const TREND_MONTHS = 6;
+
+export async function getDashboardData(userId: string, month: string) {
+  const [orders, expenses, stockItems] = await Promise.all([
+    getOrders(userId),
+    getExpenses(userId),
+    getStockItems(userId),
+  ]);
+
+  const totals = totalsForMonth(month, orders, expenses, stockItems);
+  const previousTotals = totalsForMonth(
+    shiftMonthKey(month, -1),
+    orders,
+    expenses,
+    stockItems
+  );
+
+  const trend = Array.from({ length: TREND_MONTHS }, (_, i) => {
+    const key = shiftMonthKey(month, i - (TREND_MONTHS - 1));
+    const t = totalsForMonth(key, orders, expenses, stockItems);
+    return { month: key, revenue: t.revenue, netProfit: t.netProfit };
   });
 
   const stockAlerts = stockItems
     .filter(({ item, totals: t }) => t.remaining <= (item.alertThreshold || 0))
     .map(({ item, totals: t }) => ({ item, remaining: t.remaining }));
 
-  return { totals, stockAlerts };
+  return { totals, previousTotals, trend, stockAlerts };
 }

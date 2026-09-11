@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Plus, X } from "lucide-react";
 import { fmt, todayStr } from "@/lib/gestion/format";
 
 type Product = { id: string; name: string; sellPrice: number; unitCost: number };
@@ -32,7 +33,7 @@ export function OrderForm({
 
   if (products.length === 0) {
     return (
-      <div className="hint">
+      <div className="g-hint">
         Créez d&apos;abord un produit dans l&apos;onglet Produits.
       </div>
     );
@@ -46,16 +47,16 @@ export function OrderForm({
         setLines([newLine(products)]);
       }}
     >
-      <div className="field-grid">
-        <div className="field">
+      <div className="g-field-grid">
+        <div className="g-field">
           <label>Date</label>
           <input type="date" name="date" defaultValue={todayStr()} required />
         </div>
-        <div className="field">
+        <div className="g-field">
           <label>Client (optionnel)</label>
           <input type="text" name="clientName" placeholder="Nom" />
         </div>
-        <div className="field">
+        <div className="g-field">
           <label>Statut</label>
           <select name="status" defaultValue="IN_PROGRESS">
             <option value="IN_PROGRESS">En cours</option>
@@ -63,7 +64,7 @@ export function OrderForm({
             <option value="RETURNED">Retour</option>
           </select>
         </div>
-        <div className="field">
+        <div className="g-field">
           <label>Paiement</label>
           <select name="paymentStatus" defaultValue="PENDING">
             <option value="PENDING">En attente</option>
@@ -74,32 +75,14 @@ export function OrderForm({
       </div>
 
       <div style={{ marginTop: 16 }}>
-        <div className="cmd-lines-header">
-          <label
-            style={{
-              fontSize: "0.68rem",
-              fontWeight: 600,
-              color: "var(--ink-soft)",
-              textTransform: "uppercase",
-            }}
-          >
-            Parfum / produit
-          </label>
-          <label
-            style={{
-              fontSize: "0.68rem",
-              fontWeight: 600,
-              color: "var(--ink-soft)",
-              textTransform: "uppercase",
-            }}
-          >
-            Quantité
-          </label>
+        <div className="g-line-header">
+          <label>Parfum / produit</label>
+          <label>Quantité</label>
           <span></span>
         </div>
 
         {lines.map((line) => (
-          <div className="cmd-line-row" key={line.id}>
+          <div className="g-line-row" key={line.id}>
             <select
               value={line.productId}
               onChange={(e) =>
@@ -133,23 +116,23 @@ export function OrderForm({
             />
             <button
               type="button"
-              className="del-btn"
+              className="g-del-btn"
               title="Retirer"
               disabled={lines.length <= 1}
               onClick={() => setLines((prev) => prev.filter((l) => l.id !== line.id))}
             >
-              ✕
+              <X size={15} />
             </button>
           </div>
         ))}
 
         <button
           type="button"
-          className="btn secondary small"
+          className="g-btn secondary small"
           style={{ marginTop: 8 }}
           onClick={() => setLines((prev) => [...prev, newLine(products)])}
         >
-          + Ajouter un parfum
+          <Plus size={13} /> Ajouter un parfum
         </button>
       </div>
 
@@ -161,10 +144,10 @@ export function OrderForm({
           alignItems: "center",
         }}
       >
-        <span style={{ fontSize: "0.85rem", color: "var(--ink-soft)" }}>
+        <span style={{ fontSize: "0.85rem", color: "var(--g-muted)" }}>
           Total commande : <strong className="num">{fmt(total)}</strong>
         </span>
-        <button type="submit" className="btn">
+        <button type="submit" className="g-btn">
           Enregistrer la commande
         </button>
       </div>
