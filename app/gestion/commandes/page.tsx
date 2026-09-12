@@ -37,27 +37,29 @@ const PAYMENT_BADGE_CLASS: Record<string, string> = {
 export default async function CommandesPage() {
   const user = await getCurrentUser();
   const [orders, products] = await Promise.all([getOrders(user.id), getProducts(user.id)]);
+  const isServices = user.activityType === "SERVICES";
 
   return (
     <>
       <div className="g-card">
-        <h2>Nouvelle commande</h2>
+        <h2>{isServices ? "Nouvelle vente" : "Nouvelle commande"}</h2>
         <div className="g-hint">
-          Une commande peut contenir plusieurs parfums différents — ajoutez une ligne par
-          parfum.
+          {isServices
+            ? "Une vente peut contenir plusieurs prestations différentes — ajoutez une ligne par prestation."
+            : "Une commande peut contenir plusieurs parfums différents — ajoutez une ligne par parfum."}
         </div>
-        <OrderForm products={products} createOrderAction={createOrder} />
+        <OrderForm products={products} createOrderAction={createOrder} isServices={isServices} />
       </div>
 
       <div className="g-card">
-        <h2>Toutes les commandes</h2>
+        <h2>{isServices ? "Toutes les ventes" : "Toutes les commandes"}</h2>
         <div className="g-table-wrap">
           <table className="g-table">
             <thead>
               <tr>
                 <th>Date</th>
                 <th>Client</th>
-                <th>Produits</th>
+                <th>{isServices ? "Prestations" : "Produits"}</th>
                 <th className="right">Montant</th>
                 <th>Statut</th>
                 <th>Paiement</th>
@@ -100,7 +102,9 @@ export default async function CommandesPage() {
                     <td>
                       <form action={deleteOrder}>
                         <input type="hidden" name="id" value={order.id} />
-                        <ConfirmSubmitButton confirmMessage="Supprimer cette commande ?" />
+                        <ConfirmSubmitButton
+                          confirmMessage={isServices ? "Supprimer cette vente ?" : "Supprimer cette commande ?"}
+                        />
                       </form>
                     </td>
                   </tr>
@@ -109,7 +113,11 @@ export default async function CommandesPage() {
             </tbody>
           </table>
         </div>
-        {orders.length === 0 && <div className="g-empty">Aucune commande enregistrée.</div>}
+        {orders.length === 0 && (
+          <div className="g-empty">
+            {isServices ? "Aucune vente enregistrée." : "Aucune commande enregistrée."}
+          </div>
+        )}
       </div>
     </>
   );

@@ -22,14 +22,19 @@ type ActivityType = "PRODUCTS" | "SERVICES";
 // URL to a hidden page (e.g. /gestion/stock under Services) still gets the
 // right topbar title instead of falling back to "Tableau de bord".
 function buildFullNav(activityType: ActivityType) {
+  const isServices = activityType === "SERVICES";
   return [
     { href: "/gestion", label: "Tableau de bord", icon: LayoutDashboard },
-    { href: "/gestion/commandes", label: "Commandes", icon: ShoppingCart },
+    {
+      href: "/gestion/commandes",
+      label: isServices ? "Ventes" : "Commandes",
+      icon: ShoppingCart,
+    },
     { href: "/gestion/stock", label: "Stock", icon: Package },
     { href: "/gestion/produits-finis", label: "Stock produits finis", icon: Boxes },
     {
       href: "/gestion/produits",
-      label: activityType === "SERVICES" ? "Prestations" : "Produits",
+      label: isServices ? "Prestations" : "Produits",
       icon: Tag,
     },
     { href: "/gestion/depenses", label: "Dépenses", icon: Receipt },

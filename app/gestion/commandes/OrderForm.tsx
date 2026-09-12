@@ -18,9 +18,11 @@ function newLine(products: Product[]): Line {
 export function OrderForm({
   products,
   createOrderAction,
+  isServices = false,
 }: {
   products: Product[];
   createOrderAction: (formData: FormData) => Promise<void>;
+  isServices?: boolean;
 }) {
   const [lines, setLines] = useState<Line[]>(() =>
     products.length > 0 ? [newLine(products)] : []
@@ -34,7 +36,9 @@ export function OrderForm({
   if (products.length === 0) {
     return (
       <div className="g-hint">
-        Créez d&apos;abord un produit dans l&apos;onglet Produits.
+        {isServices
+          ? "Créez d'abord une prestation dans l'onglet Prestations."
+          : "Créez d'abord un produit dans l'onglet Produits."}
       </div>
     );
   }
@@ -76,7 +80,7 @@ export function OrderForm({
 
       <div style={{ marginTop: 16 }}>
         <div className="g-line-header">
-          <label>Parfum / produit</label>
+          <label>{isServices ? "Prestation" : "Parfum / produit"}</label>
           <label>Quantité</label>
           <span></span>
         </div>
@@ -132,7 +136,7 @@ export function OrderForm({
           style={{ marginTop: 8 }}
           onClick={() => setLines((prev) => [...prev, newLine(products)])}
         >
-          <Plus size={13} /> Ajouter un parfum
+          <Plus size={13} /> {isServices ? "Ajouter une prestation" : "Ajouter un parfum"}
         </button>
       </div>
 
@@ -145,10 +149,11 @@ export function OrderForm({
         }}
       >
         <span style={{ fontSize: "0.85rem", color: "var(--g-muted)" }}>
-          Total commande : <strong className="num">{fmt(total)}</strong>
+          {isServices ? "Total vente" : "Total commande"} :{" "}
+          <strong className="num">{fmt(total)}</strong>
         </span>
         <button type="submit" className="g-btn">
-          Enregistrer la commande
+          {isServices ? "Enregistrer la vente" : "Enregistrer la commande"}
         </button>
       </div>
     </form>
