@@ -1,0 +1,197 @@
+/* Public landing page — reuses the Gestion design tokens (see
+   app/gestion/gestion.css, imported alongside this file) for visual
+   consistency, with its own layout for a full marketing page. */
+
+.landing {
+  min-height: 100vh;
+  background: var(--g-page);
+  color: var(--g-ink);
+}
+
+.l-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 20px 24px;
+}
+
+.l-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.l-brand__mark {
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  background: var(--g-blue);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.l-brand__name {
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.l-nav-login {
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--g-muted);
+  text-decoration: none;
+}
+
+.l-nav-login:hover {
+  color: var(--g-blue);
+}
+
+.l-hero {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 56px 24px 40px;
+  text-align: center;
+}
+
+.l-hero h1 {
+  font-size: clamp(1.9rem, 4.5vw, 2.7rem);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  margin: 0 0 22px;
+}
+
+.l-hero p {
+  font-size: 1.02rem;
+  line-height: 1.65;
+  color: var(--g-ink-2);
+  margin: 0 0 16px;
+}
+
+.l-solution {
+  font-weight: 600;
+  color: var(--g-ink) !important;
+  font-size: 1.1rem !important;
+  margin-top: 22px !important;
+}
+
+.l-cta-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  margin-top: 32px;
+}
+
+.l-btn-large {
+  font-size: 0.95rem;
+  padding: 14px 30px;
+}
+
+.l-trial-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--g-success-text);
+  background: color-mix(in srgb, var(--g-good) 14%, transparent);
+  border-radius: 999px;
+  padding: 7px 16px;
+}
+
+.l-trial-pill svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
+.l-values {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 24px 24px 64px;
+}
+
+.l-value-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.l-value-card {
+  background: var(--g-surface);
+  border: 1px solid var(--g-border);
+  border-radius: var(--g-radius);
+  padding: 22px 20px;
+  box-shadow: var(--g-shadow);
+}
+
+.l-value-card__icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+
+.l-value-card__icon svg {
+  width: 19px;
+  height: 19px;
+}
+
+.l-value-card h3 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+
+.l-value-card p {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--g-ink-2);
+  margin: 0;
+}
+
+.l-pricing {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 0 24px 72px;
+  text-align: center;
+}
+
+.l-pricing-card {
+  background: var(--g-surface);
+  border: 1px solid var(--g-border);
+  border-radius: var(--g-radius);
+  box-shadow: var(--g-shadow);
+  padding: 40px 32px;
+}
+
+.l-pricing-card .l-price {
+  font-family: var(--font-gestion-mono), ui-monospace, monospace;
+  font-size: 2.1rem;
+  font-weight: 700;
+  margin: 6px 0 4px;
+}
+
+.l-pricing-card .l-price-note {
+  font-size: 0.82rem;
+  color: var(--g-muted);
+  margin: 0 0 26px;
+}
+
+.l-footer {
+  border-top: 1px solid var(--g-border);
+  padding: 24px;
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--g-muted);
+}
