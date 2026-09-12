@@ -53,6 +53,11 @@ enum PlanTier {
   AGENCY
 }
 
+enum BillingInterval {
+  MONTHLY
+  ANNUAL
+}
+
 enum SubscriptionStatus {
   ACTIVE
   PAST_DUE
@@ -67,6 +72,14 @@ model Subscription {
 
   plan   PlanTier           @default(FREE_TRIAL)
   status SubscriptionStatus @default(TRIALING)
+
+  // Boussla is a single-price product with two billing cadences rather than
+  // tiers — billingInterval (not `plan`, which predates Boussla and doesn't
+  // map to it) is what currentPeriodEnd is actually computed from.
+  // priceAmount snapshots what that cadence cost in DT at selection time, so
+  // a later price change never rewrites what a past period actually charged.
+  billingInterval BillingInterval?
+  priceAmount     Float?
 
   stripeSubscriptionId String? @unique
   stripePriceId        String?

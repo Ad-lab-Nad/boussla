@@ -10,6 +10,7 @@ import {
   Boxes,
   Tag,
   Receipt,
+  CreditCard,
   Menu,
   X,
   LogOut,
@@ -38,6 +39,10 @@ function buildFullNav(activityType: ActivityType) {
       icon: Tag,
     },
     { href: "/gestion/depenses", label: "Dépenses", icon: Receipt },
+    // Not in the main nav — linked from the sidebar footer instead, next to
+    // the account email. Kept in this list so its topbar title still
+    // resolves correctly (see the comment above).
+    { href: "/gestion/abonnement", label: "Abonnement", icon: CreditCard },
   ];
 }
 
@@ -54,9 +59,11 @@ export function GestionChrome({
   const [open, setOpen] = useState(false);
   const fullNav = buildFullNav(activityType);
   const isServices = activityType === "SERVICES";
-  const nav = isServices
-    ? fullNav.filter((n) => n.href !== "/gestion/stock" && n.href !== "/gestion/produits-finis")
-    : fullNav;
+  const nav = fullNav.filter((n) => {
+    if (n.href === "/gestion/abonnement") return false;
+    if (isServices) return n.href !== "/gestion/stock" && n.href !== "/gestion/produits-finis";
+    return true;
+  });
   const current = fullNav.find((n) => n.href === pathname) ?? fullNav[0];
 
   return (
@@ -94,6 +101,14 @@ export function GestionChrome({
           <div className="g-user-email" title={userEmail}>
             {userEmail}
           </div>
+          <Link
+            href="/gestion/abonnement"
+            className={`g-nav-item ${pathname === "/gestion/abonnement" ? "active" : ""}`}
+            onClick={() => setOpen(false)}
+          >
+            <CreditCard />
+            Abonnement
+          </Link>
           <form action={signOut}>
             <button type="submit" className="g-nav-item g-logout-btn">
               <LogOut />

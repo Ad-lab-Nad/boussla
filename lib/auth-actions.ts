@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { createClient } from "@/lib/supabase/server";
+import { getOrCreateSubscription } from "@/lib/subscription";
 
 export type AuthActionState = { error?: string; success?: string } | null;
 
@@ -52,7 +53,7 @@ export async function signUp(
     // Claim-or-create: a pre-existing single-tenant row with this email
     // (from before real auth existed) gets linked rather than duplicated —
     // its data (products, orders, stock...) carries over untouched.
-    await prisma.user.upsert({
+    const user = await prisma.user.upsert({
       where: { email },
       update: {
         authUserId,
@@ -70,6 +71,9 @@ export async function signUp(
         activityType,
       },
     });
+    // Starts the 14-day free trial. A no-op if this account (new or
+    // claimed) already has a subscription.
+    await getOrCreateSubscription(user.id);
   }
 
   if (data.session) {
