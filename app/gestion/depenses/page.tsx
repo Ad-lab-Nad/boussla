@@ -3,6 +3,7 @@ import { getCurrentUser } from "@/lib/current-user";
 import { getExpenses } from "@/lib/gestion/queries";
 import { createExpense, deleteExpense } from "@/lib/gestion/actions";
 import { fmt, todayStr } from "@/lib/gestion/format";
+import { EXPENSE_CATEGORY_LABELS, EXPENSE_CATEGORY_OPTIONS } from "@/lib/gestion/expense-categories";
 import { ConfirmSubmitButton } from "@/components/gestion/ConfirmSubmitButton";
 
 export default async function DepensesPage() {
@@ -27,6 +28,16 @@ export default async function DepensesPage() {
             <input type="text" name="description" placeholder="ex: Ads Facebook" required />
           </div>
           <div className="g-field">
+            <label>Catégorie</label>
+            <select name="category" defaultValue="OTHER">
+              {EXPENSE_CATEGORY_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="g-field">
             <label>Montant (DT)</label>
             <input type="number" name="amount" min="0.01" step="0.01" required />
           </div>
@@ -44,6 +55,7 @@ export default async function DepensesPage() {
               <tr>
                 <th>Date</th>
                 <th>Description</th>
+                <th>Catégorie</th>
                 <th className="right">Montant</th>
                 <th></th>
               </tr>
@@ -53,6 +65,7 @@ export default async function DepensesPage() {
                 <tr key={d.id}>
                   <td className="num">{d.date.toISOString().slice(0, 10)}</td>
                   <td>{d.description}</td>
+                  <td>{EXPENSE_CATEGORY_LABELS[d.category]}</td>
                   <td className="right num">{fmt(d.amount)}</td>
                   <td>
                     <form action={deleteExpense}>

@@ -5,7 +5,14 @@ import {
   stockTotals,
   type OrderLike,
 } from "@/lib/gestion/calculations";
-import { buildMonthOptions, monthKeyFromDate, shiftMonthKey } from "@/lib/gestion/format";
+import {
+  buildMonthOptions,
+  monthKeyFromDate,
+  monthKeyFromDateStr,
+  shiftMonthKey,
+  todayStr,
+} from "@/lib/gestion/format";
+import { EXPENSE_CATEGORY_OPTIONS } from "@/lib/gestion/expense-categories";
 
 export async function getProducts(userId: string) {
   return prisma.product.findMany({
@@ -158,4 +165,74 @@ export async function getDashboardData(userId: string, month: string) {
     .map(({ item, totals: t }) => ({ item, remaining: t.remaining }));
 
   return { totals, previousTotals, trend, stockAlerts };
+}
+
+export type AnalysisPeriod = "3" | "6" | "12" | "all";
+
+export type AnalysisMonthRow = {
+  month: string;
+  revenue: number;
+  cost: number;
+  expensesTotal: number;
+  netProfit: number;
+};
+
+export type ExpenseCategoryPoint = { month: string } & Record<string, number | string>;
+
+function monthRange(startKey: string, endKey: string): string[] {
+  const keys: string[] = [];
+  let k = startKey;
+  // month keys are zero-padded "YYYY-MM" so string comparison sorts correctly
+  while (k <= endKey) {
+    keys.push(k);
+    k = shiftMonthKey(k, 1);
+  }
+  return keys;
+}
+
+export async function getAnalysisData(userId: string, period: AnalysisPeriod) {
+  const [orders, expenses, stockItems] = await Promise.all([
+    getOrders(userId),
+    getExpenses(userId),
+    getStockItems(userId),
+  ]);
+
+  const currentMonth = monthKeyFromDateStr(todayStr());
+
+  let monthKeys: string[];
+  if (period === "all") {
+    const allDates = [...orders.map((o) => o.date), ...expenses.map((e) => e.date)];
+    const earliestKey =
+      allDates.length > 0
+        ? monthKeyFromDate(allDates.reduce((min, d) => (d < min ? d : min), allDates[0]))
+        : currentMonth;
+    monthKeys = monthRange(earliestKey, currentMonth);
+  } else {
+    const n = Number(period);
+    monthKeys = Array.from({ length: n }, (_, i) => shiftMonthKey(currentMonth, i - (n - 1)));
+  }
+
+  const monthlyTotals: AnalysisMonthRow[] = monthKeys.map((month) => {
+    const t = totalsForMonth(month, orders, expenses, stockItems);
+    return {
+      month,
+      revenue: t.revenue,
+      cost: t.cost,
+      expensesTotal: t.expensesTotal,
+      netProfit: t.netProfit,
+    };
+  });
+
+  const categoryByMonth: ExpenseCategoryPoint[] = monthKeys.map((month) => {
+    const point: ExpenseCategoryPoint = { month };
+    for (const opt of EXPENSE_CATEGORY_OPTIONS) point[opt.value] = 0;
+    for (const e of expenses) {
+      if (monthKeyFromDate(e.date) === month) {
+        point[e.category] = (point[e.category] as number) + e.amount;
+      }
+    }
+    return point;
+  });
+
+  return { monthlyTotals, categoryByMonth };
 }

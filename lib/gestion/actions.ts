@@ -266,10 +266,14 @@ export async function deleteProductionBatch(formData: FormData) {
 
 // ---------- DEPENSES ----------
 
+const EXPENSE_CATEGORIES = ["ADVERTISING", "TRANSPORT", "FIXED_COSTS", "STOCK_PURCHASES", "OTHER"];
+
 export async function createExpense(formData: FormData) {
   const user = await getCurrentUser();
   const description = str(formData, "description");
   const amount = num(formData, "amount");
+  const categoryRaw = str(formData, "category");
+  const category = EXPENSE_CATEGORIES.includes(categoryRaw) ? categoryRaw : "OTHER";
   if (!description || amount <= 0) {
     throw new Error("Remplissez la description et le montant.");
   }
@@ -279,6 +283,12 @@ export async function createExpense(formData: FormData) {
       date: dateOf(formData, "date"),
       description,
       amount,
+      category: category as
+        | "ADVERTISING"
+        | "TRANSPORT"
+        | "FIXED_COSTS"
+        | "STOCK_PURCHASES"
+        | "OTHER",
     },
   });
   revalidateGestion("/gestion/depenses");

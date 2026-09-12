@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
+  LineChart,
   ShoppingCart,
   Package,
   Boxes,
@@ -26,6 +27,7 @@ function buildFullNav(activityType: ActivityType) {
   const isServices = activityType === "SERVICES";
   return [
     { href: "/gestion", label: "Tableau de bord", icon: LayoutDashboard },
+    { href: "/gestion/analyse", label: "Analyse", icon: LineChart },
     {
       href: "/gestion/commandes",
       label: isServices ? "Ventes" : "Commandes",

@@ -442,6 +442,14 @@ model OrderLine {
   @@map("order_lines")
 }
 
+enum ExpenseCategory {
+  ADVERTISING
+  TRANSPORT
+  FIXED_COSTS
+  STOCK_PURCHASES
+  OTHER
+}
+
 model Expense {
   id     String @id @default(cuid())
   userId String
@@ -450,6 +458,7 @@ model Expense {
   date        DateTime
   description String
   amount      Float
+  category    ExpenseCategory @default(OTHER)
 
   createdAt DateTime @default(now())
 
