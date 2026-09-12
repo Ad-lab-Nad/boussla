@@ -80,6 +80,56 @@ export async function getFinishedStock(userId: string) {
   });
 }
 
+/**
+ * Per-product movement for one specific month: quantity sold and produced
+ * *that month*, plus the stock balance as it stood at the end of that month
+ * (cumulative produced minus cumulative sold up to and including it) — a
+ * historical snapshot, not "as of now" like getFinishedStock.
+ */
+export async function getProductMovement(userId: string, month: string) {
+  const [products, batches, orders] = await Promise.all([
+    getProducts(userId),
+    prisma.productionBatch.findMany({ where: { product: { userId } } }),
+    prisma.order.findMany({
+      where: { userId, status: "DELIVERED" },
+      include: { lines: true },
+    }),
+  ]);
+
+  return products.map((product) => {
+    const soldThisMonth = orders
+      .filter((o) => monthKeyFromDate(o.date) === month)
+      .reduce(
+        (sum, o) =>
+          sum + o.lines.filter((l) => l.productId === product.id).reduce((s, l) => s + l.quantity, 0),
+        0
+      );
+
+    const producedThisMonth = batches
+      .filter((b) => b.productId === product.id && monthKeyFromDate(b.date) === month)
+      .reduce((sum, b) => sum + b.quantity, 0);
+
+    const totalProducedToDate = batches
+      .filter((b) => b.productId === product.id && monthKeyFromDate(b.date) <= month)
+      .reduce((sum, b) => sum + b.quantity, 0);
+
+    const totalSoldToDate = orders
+      .filter((o) => monthKeyFromDate(o.date) <= month)
+      .reduce(
+        (sum, o) =>
+          sum + o.lines.filter((l) => l.productId === product.id).reduce((s, l) => s + l.quantity, 0),
+        0
+      );
+
+    return {
+      product,
+      soldThisMonth,
+      producedThisMonth,
+      availableAtMonthEnd: totalProducedToDate - totalSoldToDate,
+    };
+  });
+}
+
 export async function getAvailableMonthKeys(userId: string) {
   const [orders, expenses] = await Promise.all([
     prisma.order.findMany({ where: { userId }, select: { date: true } }),
