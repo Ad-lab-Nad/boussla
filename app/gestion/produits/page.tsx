@@ -9,19 +9,29 @@ import { ImportProductsButton } from "@/components/gestion/ImportProductsButton"
 export default async function ProduitsPage() {
   const user = await getCurrentUser();
   const products = await getProducts(user.id);
+  const isServices = user.activityType === "SERVICES";
+  const deleteConfirmMessage = isServices
+    ? "Supprimer cette prestation ?"
+    : "Supprimer ce produit ?";
 
   return (
     <>
       <div className="g-card">
-        <h2>Nouveau produit</h2>
+        <h2>{isServices ? "Nouvelle prestation" : "Nouveau produit"}</h2>
         <div className="g-hint">
-          Le coût unitaire vient de votre calculateur de prix (fruit + sucre + pot + étiquette
-          + emballage + pub).
+          {isServices
+            ? "Le coût unitaire correspond au coût de revient de votre prestation (temps, matériel, sous-traitance...)."
+            : "Le coût unitaire vient de votre calculateur de prix (fruit + sucre + pot + étiquette + emballage + pub)."}
         </div>
         <form action={createProduct} className="g-field-grid">
           <div className="g-field">
             <label>Nom</label>
-            <input type="text" name="name" placeholder="ex: Confiture Figue" required />
+            <input
+              type="text"
+              name="name"
+              placeholder={isServices ? "ex: Consultation 1h" : "ex: Confiture Figue"}
+              required
+            />
           </div>
           <div className="g-field">
             <label>Prix de vente (DT)</label>
@@ -46,14 +56,14 @@ export default async function ProduitsPage() {
             marginBottom: 14,
           }}
         >
-          <h2 style={{ margin: 0 }}>Catalogue produits</h2>
+          <h2 style={{ margin: 0 }}>{isServices ? "Catalogue prestations" : "Catalogue produits"}</h2>
           <ImportProductsButton />
         </div>
         <div className="g-table-wrap">
           <table className="g-table">
             <thead>
               <tr>
-                <th>Produit</th>
+                <th>{isServices ? "Prestation" : "Produit"}</th>
                 <th className="right">Prix vente</th>
                 <th className="right">Coût unitaire</th>
                 <th className="right">Marge/unité</th>
@@ -70,7 +80,7 @@ export default async function ProduitsPage() {
                   <td>
                     <form action={deleteProduct}>
                       <input type="hidden" name="id" value={p.id} />
-                      <ConfirmSubmitButton confirmMessage="Supprimer ce produit ?" />
+                      <ConfirmSubmitButton confirmMessage={deleteConfirmMessage} />
                     </form>
                   </td>
                 </tr>
@@ -78,7 +88,11 @@ export default async function ProduitsPage() {
             </tbody>
           </table>
         </div>
-        {products.length === 0 && <div className="g-empty">Aucun produit enregistré.</div>}
+        {products.length === 0 && (
+          <div className="g-empty">
+            {isServices ? "Aucune prestation enregistrée." : "Aucun produit enregistré."}
+          </div>
+        )}
       </div>
     </>
   );

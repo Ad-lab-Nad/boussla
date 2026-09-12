@@ -34,6 +34,27 @@ export function SignupForm() {
           autoComplete="new-password"
         />
       </div>
+
+      <div className="g-field">
+        <label>Type d&apos;activité</label>
+        <div className="g-radio-group">
+          <label className="g-radio-option">
+            <input type="radio" name="activityType" value="PRODUCTS" defaultChecked />
+            <span>
+              <strong>Produits physiques</strong>
+              <small>Gère aussi le stock de matières et de produits finis.</small>
+            </span>
+          </label>
+          <label className="g-radio-option">
+            <input type="radio" name="activityType" value="SERVICES" />
+            <span>
+              <strong>Services / Prestations</strong>
+              <small>Pas de stock — commandes, prestations et dépenses uniquement.</small>
+            </span>
+          </label>
+        </div>
+      </div>
+
       <div className="g-field">
         <label>Secteur d&apos;activité</label>
         <select

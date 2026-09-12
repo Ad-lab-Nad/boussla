@@ -30,7 +30,9 @@ export default async function GestionLayout({ children }: { children: React.Reac
 
   return (
     <div className={`gestion ${inter.variable} ${jetbrainsMono.variable}`}>
-      <GestionChrome userEmail={user.email}>{children}</GestionChrome>
+      <GestionChrome userEmail={user.email} activityType={user.activityType}>
+        {children}
+      </GestionChrome>
     </div>
   );
 }

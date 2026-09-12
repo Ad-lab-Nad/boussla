@@ -7,6 +7,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum ActivityType {
+  PRODUCTS
+  SERVICES
+}
+
 model User {
   id               String   @id @default(cuid())
   email            String   @unique
@@ -24,8 +29,11 @@ model User {
 
   // Collected at signup.
   industry           String?
-  marketingConsent   Boolean   @default(false)
+  marketingConsent   Boolean      @default(false)
   marketingConsentAt DateTime?
+  // Drives the Gestion nav: SERVICES hides Stock / Stock produits finis and
+  // relabels "Produits" to "Prestations" — see components/gestion/GestionChrome.tsx.
+  activityType       ActivityType @default(PRODUCTS)
 
   subscription Subscription?
   audits       Audit[]

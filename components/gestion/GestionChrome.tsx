@@ -16,25 +16,43 @@ import {
 } from "lucide-react";
 import { signOut } from "@/lib/auth-actions";
 
-const NAV = [
-  { href: "/gestion", label: "Tableau de bord", icon: LayoutDashboard },
-  { href: "/gestion/commandes", label: "Commandes", icon: ShoppingCart },
-  { href: "/gestion/stock", label: "Stock", icon: Package },
-  { href: "/gestion/produits-finis", label: "Stock produits finis", icon: Boxes },
-  { href: "/gestion/produits", label: "Produits", icon: Tag },
-  { href: "/gestion/depenses", label: "Dépenses", icon: Receipt },
-];
+type ActivityType = "PRODUCTS" | "SERVICES";
+
+// Kept separate from the visible/filtered list below so a directly-typed
+// URL to a hidden page (e.g. /gestion/stock under Services) still gets the
+// right topbar title instead of falling back to "Tableau de bord".
+function buildFullNav(activityType: ActivityType) {
+  return [
+    { href: "/gestion", label: "Tableau de bord", icon: LayoutDashboard },
+    { href: "/gestion/commandes", label: "Commandes", icon: ShoppingCart },
+    { href: "/gestion/stock", label: "Stock", icon: Package },
+    { href: "/gestion/produits-finis", label: "Stock produits finis", icon: Boxes },
+    {
+      href: "/gestion/produits",
+      label: activityType === "SERVICES" ? "Prestations" : "Produits",
+      icon: Tag,
+    },
+    { href: "/gestion/depenses", label: "Dépenses", icon: Receipt },
+  ];
+}
 
 export function GestionChrome({
   children,
   userEmail,
+  activityType,
 }: {
   children: React.ReactNode;
   userEmail: string;
+  activityType: ActivityType;
 }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const current = NAV.find((n) => n.href === pathname) ?? NAV[0];
+  const fullNav = buildFullNav(activityType);
+  const isServices = activityType === "SERVICES";
+  const nav = isServices
+    ? fullNav.filter((n) => n.href !== "/gestion/stock" && n.href !== "/gestion/produits-finis")
+    : fullNav;
+  const current = fullNav.find((n) => n.href === pathname) ?? fullNav[0];
 
   return (
     <div className="g-shell">
@@ -50,7 +68,7 @@ export function GestionChrome({
         </div>
 
         <nav className="g-nav">
-          {NAV.map((item) => {
+          {nav.map((item) => {
             const Icon = item.icon;
             const active = item.href === pathname;
             return (

@@ -765,6 +765,62 @@ select.g-status-select {
   margin-bottom: 8px;
 }
 
+.g-radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* .g-radio-option is itself a <label> nested in .g-field, so the plain
+   ".g-radio-option" class alone loses to ".g-field label" (higher
+   specificity) — qualify with the parent class to win the cascade and
+   reset the field-caption look (uppercase, tiny, muted) it would
+   otherwise inherit. */
+.g-radio-group .g-radio-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  border: 1.5px solid var(--g-border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: normal;
+  color: var(--g-ink);
+}
+
+.g-radio-option:has(input:checked) {
+  border-color: var(--g-blue);
+  background: color-mix(in srgb, var(--g-blue) 6%, transparent);
+}
+
+.g-radio-option input[type="radio"] {
+  /* .g-field input sets width:100%/padding/border for text-like inputs —
+     undo all of that here so the radio renders as a normal radio dot. */
+  width: auto;
+  height: auto;
+  padding: 0;
+  border: none;
+  background: none;
+  border-radius: 0;
+  margin-top: 3px;
+  accent-color: var(--g-blue);
+  flex-shrink: 0;
+}
+
+.g-radio-option span {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.g-radio-option small {
+  color: var(--g-muted);
+  font-size: 0.74rem;
+}
+
 .g-line-header label {
   font-size: 0.68rem;
   font-weight: 600;

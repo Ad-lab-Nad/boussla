@@ -32,6 +32,7 @@ export async function signUp(
   const password = String(formData.get("password") || "");
   const industry = String(formData.get("industry") || "").trim() || null;
   const marketingConsent = formData.get("marketingConsent") === "on";
+  const activityType = formData.get("activityType") === "SERVICES" ? "SERVICES" : "PRODUCTS";
 
   if (!email || !password) return { error: "Email et mot de passe requis." };
   if (password.length < 8)
@@ -58,6 +59,7 @@ export async function signUp(
         industry,
         marketingConsent,
         marketingConsentAt: marketingConsent ? new Date() : null,
+        activityType,
       },
       create: {
         email,
@@ -65,6 +67,7 @@ export async function signUp(
         industry,
         marketingConsent,
         marketingConsentAt: marketingConsent ? new Date() : null,
+        activityType,
       },
     });
   }
