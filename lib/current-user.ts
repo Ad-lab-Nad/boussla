@@ -1,16 +1,30 @@
+import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { createClient } from "@/lib/supabase/server";
 
-// No authentication exists yet in this app (no login, no session). Until
-// that's built, the Gestion module operates as a single-tenant app scoped to
-// one default User, found-or-created by a fixed email. Every Gestion query
-// and mutation should go through this helper so swapping it for a real
-// `auth()` session lookup later is a one-file change.
-const DEFAULT_USER_EMAIL = "nada.abidi@sogeplan.tn";
-
+/**
+ * The signed-in user's own business-data row (never another user's).
+ * Redirects to /login if there's no session — middleware already guards
+ * /gestion/*, this is the defense-in-depth check for Server Actions invoked
+ * directly.
+ */
 export async function getCurrentUser() {
+  const supabase = await createClient();
+  const { data } = await supabase.auth.getClaims();
+  const claims = data?.claims;
+  if (!claims) redirect("/login");
+
+  const user = await prisma.user.findUnique({ where: { authUserId: claims.sub } });
+  if (user) return user;
+
+  // Defensive fallback: signup already claims-or-creates the row keyed by
+  // authUserId (see lib/auth-actions.ts). Getting here means that link is
+  // somehow missing — repair it by email rather than failing outright.
+  const email = claims.email as string | undefined;
+  if (!email) redirect("/login");
   return prisma.user.upsert({
-    where: { email: DEFAULT_USER_EMAIL },
-    update: {},
-    create: { email: DEFAULT_USER_EMAIL },
+    where: { email },
+    update: { authUserId: claims.sub },
+    create: { email, authUserId: claims.sub },
   });
 }

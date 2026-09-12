@@ -15,6 +15,18 @@ model User {
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
+  // Links this business-data row to its Supabase Auth identity
+  // (auth.users.id, a UUID — kept as plain text since `auth` isn't modeled
+  // in this schema). Nullable because rows created before real auth existed
+  // get claimed (linked) by email the first time their owner signs up,
+  // rather than being recreated — see lib/current-user.ts.
+  authUserId String? @unique
+
+  // Collected at signup.
+  industry           String?
+  marketingConsent   Boolean   @default(false)
+  marketingConsentAt DateTime?
+
   subscription Subscription?
   audits       Audit[]
 

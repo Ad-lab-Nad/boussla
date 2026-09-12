@@ -12,7 +12,9 @@ import {
   Receipt,
   Menu,
   X,
+  LogOut,
 } from "lucide-react";
+import { signOut } from "@/lib/auth-actions";
 
 const NAV = [
   { href: "/gestion", label: "Tableau de bord", icon: LayoutDashboard },
@@ -23,7 +25,13 @@ const NAV = [
   { href: "/gestion/depenses", label: "Dépenses", icon: Receipt },
 ];
 
-export function GestionChrome({ children }: { children: React.ReactNode }) {
+export function GestionChrome({
+  children,
+  userEmail,
+}: {
+  children: React.ReactNode;
+  userEmail: string;
+}) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const current = NAV.find((n) => n.href === pathname) ?? NAV[0];
@@ -60,7 +68,15 @@ export function GestionChrome({ children }: { children: React.ReactNode }) {
         </nav>
 
         <div className="g-sidebar__footer">
-          Stock, commandes, produits et analyse mensuelle du vrai bénéfice.
+          <div className="g-user-email" title={userEmail}>
+            {userEmail}
+          </div>
+          <form action={signOut}>
+            <button type="submit" className="g-nav-item g-logout-btn">
+              <LogOut />
+              Se déconnecter
+            </button>
+          </form>
         </div>
       </aside>
 

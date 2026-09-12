@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import { GestionChrome } from "@/components/gestion/GestionChrome";
+import { getCurrentUser } from "@/lib/current-user";
 import "./gestion.css";
 
 // Every Gestion page reads live, mutable data (orders, stock, expenses...) —
@@ -24,10 +25,12 @@ export const metadata: Metadata = {
   description: "Stock, commandes, produits et analyse mensuelle du vrai bénéfice.",
 };
 
-export default function GestionLayout({ children }: { children: React.ReactNode }) {
+export default async function GestionLayout({ children }: { children: React.ReactNode }) {
+  const user = await getCurrentUser();
+
   return (
     <div className={`gestion ${inter.variable} ${jetbrainsMono.variable}`}>
-      <GestionChrome>{children}</GestionChrome>
+      <GestionChrome userEmail={user.email}>{children}</GestionChrome>
     </div>
   );
 }
