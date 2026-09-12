@@ -448,6 +448,24 @@
   color: var(--g-critical);
 }
 
+.g-badge.status-valid {
+  background: color-mix(in srgb, var(--g-good) 16%, transparent);
+  color: var(--g-success-text);
+}
+.g-badge.status-warning {
+  background: color-mix(in srgb, var(--g-warning) 20%, transparent);
+  color: color-mix(in srgb, var(--g-warning) 65%, black);
+}
+.g-badge.status-error {
+  background: color-mix(in srgb, var(--g-critical) 16%, transparent);
+  color: var(--g-critical);
+}
+
+.g-badge svg {
+  vertical-align: -2px;
+  margin-right: 4px;
+}
+
 select.g-status-select {
   border: 1px solid var(--g-border);
   border-radius: 999px;
@@ -752,4 +770,96 @@ select.g-status-select {
   font-weight: 600;
   color: var(--g-muted);
   text-transform: uppercase;
+}
+
+/* ================== MODAL (import dialog) ================== */
+
+.g-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(11, 11, 11, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 50;
+}
+
+.g-modal {
+  background: var(--g-surface);
+  border: 1px solid var(--g-border);
+  border-radius: var(--g-radius);
+  box-shadow: var(--g-shadow);
+  width: 100%;
+  max-width: 640px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.g-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--g-border);
+}
+
+.g-modal__header h2 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.g-modal__close {
+  background: none;
+  border: none;
+  color: var(--g-muted);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  display: inline-flex;
+}
+
+.g-modal__close:hover {
+  background: color-mix(in srgb, var(--g-ink) 6%, transparent);
+  color: var(--g-ink);
+}
+
+.g-modal__body {
+  padding: 18px 20px;
+  overflow-y: auto;
+}
+
+.g-modal__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 14px 20px;
+  border-top: 1px solid var(--g-border);
+}
+
+.g-file-input {
+  border: 1.5px dashed var(--g-border);
+  border-radius: 10px;
+  padding: 18px;
+  width: 100%;
+  font-size: 0.84rem;
+  background: var(--g-surface-2);
+  cursor: pointer;
+}
+
+.g-import-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+  color: var(--g-ink-2);
+  margin-bottom: 10px;
+  gap: 12px;
+}
+
+.g-import-summary strong {
+  color: var(--g-ink);
 }

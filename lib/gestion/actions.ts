@@ -47,6 +47,41 @@ export async function deleteProduct(formData: FormData) {
   revalidateGestion("/gestion/produits");
 }
 
+/**
+ * Bulk-creates products from a validated Excel/CSV import preview. Called
+ * directly from the import dialog (not a <form>), so it takes plain data
+ * rather than FormData. Only rows the client already marked valid should be
+ * passed in — this re-validates anyway, since a Server Function is reachable
+ * directly and must never trust its caller.
+ */
+export async function bulkCreateProducts(
+  rows: { name: string; sellPrice: number; unitCost: number }[]
+): Promise<{ count: number }> {
+  const user = await getCurrentUser();
+
+  const valid = rows.filter(
+    (r) =>
+      typeof r.name === "string" &&
+      r.name.trim() &&
+      Number.isFinite(r.sellPrice) &&
+      r.sellPrice >= 0 &&
+      Number.isFinite(r.unitCost) &&
+      r.unitCost >= 0
+  );
+  if (valid.length === 0) return { count: 0 };
+
+  const result = await prisma.product.createMany({
+    data: valid.map((r) => ({
+      userId: user.id,
+      name: r.name.trim(),
+      sellPrice: r.sellPrice,
+      unitCost: r.unitCost,
+    })),
+  });
+  revalidateGestion("/gestion/produits");
+  return { count: result.count };
+}
+
 // ---------- COMMANDES ----------
 
 type OrderLineInput = { productId: string; quantity: number };

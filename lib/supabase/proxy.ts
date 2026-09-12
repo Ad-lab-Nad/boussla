@@ -4,6 +4,12 @@ import { NextResponse, type NextRequest } from "next/server";
 const AUTH_PAGES = ["/login", "/signup", "/forgot-password"];
 
 export async function updateSession(request: NextRequest) {
+  // Same local dev-only escape hatch as lib/current-user.ts — skip the auth
+  // gate entirely while DEV_BYPASS_AUTH_EMAIL is set in your own .env.
+  if (process.env.NODE_ENV !== "production" && process.env.DEV_BYPASS_AUTH_EMAIL) {
+    return NextResponse.next({ request });
+  }
+
   let supabaseResponse = NextResponse.next({ request });
 
   const supabase = createServerClient(

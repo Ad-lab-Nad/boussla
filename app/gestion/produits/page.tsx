@@ -4,6 +4,7 @@ import { getProducts } from "@/lib/gestion/queries";
 import { createProduct, deleteProduct } from "@/lib/gestion/actions";
 import { fmt } from "@/lib/gestion/format";
 import { ConfirmSubmitButton } from "@/components/gestion/ConfirmSubmitButton";
+import { ImportProductsButton } from "@/components/gestion/ImportProductsButton";
 
 export default async function ProduitsPage() {
   const user = await getCurrentUser();
@@ -37,7 +38,17 @@ export default async function ProduitsPage() {
       </div>
 
       <div className="g-card">
-        <h2>Catalogue produits</h2>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: 14,
+          }}
+        >
+          <h2 style={{ margin: 0 }}>Catalogue produits</h2>
+          <ImportProductsButton />
+        </div>
         <div className="g-table-wrap">
           <table className="g-table">
             <thead>

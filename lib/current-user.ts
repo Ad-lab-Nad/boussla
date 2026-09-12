@@ -9,6 +9,14 @@ import { createClient } from "@/lib/supabase/server";
  * directly.
  */
 export async function getCurrentUser() {
+  // Local dev-only escape hatch: set DEV_BYPASS_AUTH_EMAIL in your own .env
+  // (never committed, never active outside `next dev`) to skip Supabase
+  // Auth entirely and work as that user. Remove it to test the real flow.
+  if (process.env.NODE_ENV !== "production" && process.env.DEV_BYPASS_AUTH_EMAIL) {
+    const email = process.env.DEV_BYPASS_AUTH_EMAIL;
+    return prisma.user.upsert({ where: { email }, update: {}, create: { email } });
+  }
+
   const supabase = await createClient();
   const { data } = await supabase.auth.getClaims();
   const claims = data?.claims;
