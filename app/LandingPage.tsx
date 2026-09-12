@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { CheckCircle2, Eye, Package, Trophy, Wallet } from "lucide-react";
+import { AmbianceIllustration } from "./AmbianceIllustration";
+import { DashboardPreview } from "./DashboardPreview";
 import "./landing.css";
 
 const VALUES = [
@@ -63,6 +65,13 @@ export function LandingPage() {
             14 jours gratuits, sans carte bancaire requise
           </span>
         </div>
+      </section>
+
+      <section className="l-media">
+        <div className="l-ambiance">
+          <AmbianceIllustration />
+        </div>
+        <DashboardPreview />
       </section>
 
       <section className="l-values">
