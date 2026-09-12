@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import {
   computeDashboardTotals,
+  orderCashDate,
   stockTotals,
   type OrderLike,
 } from "@/lib/gestion/calculations";
@@ -81,21 +82,32 @@ export async function getAvailableMonthKeys(userId: string) {
   return buildMonthOptions(existing);
 }
 
+function toOrderLike(o: Awaited<ReturnType<typeof getOrders>>[number]): OrderLike {
+  return {
+    id: o.id,
+    date: o.date,
+    status: o.status,
+    paymentStatus: o.paymentStatus,
+    paymentMethod: o.paymentMethod,
+    checkDueDate: o.checkDueDate,
+    lines: o.lines,
+  };
+}
+
 function totalsForMonth(
   month: string,
   orders: Awaited<ReturnType<typeof getOrders>>,
   expenses: Awaited<ReturnType<typeof getExpenses>>,
   stockItems: Awaited<ReturnType<typeof getStockItems>>
 ) {
-  const ordersInMonth: OrderLike[] = orders
-    .filter((o) => monthKeyFromDate(o.date) === month)
-    .map((o) => ({
-      id: o.id,
-      date: o.date,
-      status: o.status,
-      paymentStatus: o.paymentStatus,
-      lines: o.lines,
-    }));
+  const allOrders = orders.map(toOrderLike);
+  const ordersInMonth = allOrders.filter((o) => monthKeyFromDate(o.date) === month);
+  // A postdated check's cash can land in a different month than the order
+  // itself, so this is filtered separately by orderCashDate — see
+  // computeDashboardTotals.
+  const cashOrdersInMonth = allOrders.filter(
+    (o) => monthKeyFromDate(orderCashDate(o)) === month
+  );
 
   const expensesInMonth = expenses
     .filter((e) => monthKeyFromDate(e.date) === month)
@@ -112,6 +124,7 @@ function totalsForMonth(
 
   return computeDashboardTotals({
     ordersInMonth,
+    cashOrdersInMonth,
     expensesInMonth,
     stockPurchasesCostInMonth,
   });

@@ -38,6 +38,8 @@ export type OrderLike = {
   date: Date;
   status: "IN_PROGRESS" | "DELIVERED" | "RETURNED";
   paymentStatus: "PAID" | "PENDING" | "UNPAID";
+  paymentMethod: "CASH" | "CHECK" | "TRANSFER" | "OTHER";
+  checkDueDate: Date | null;
   lines: OrderLineLike[];
 };
 
@@ -46,6 +48,17 @@ export function orderAmount(order: OrderLike): number {
     (sum, l) => sum + l.sellPriceSnapshot * l.quantity,
     0
   );
+}
+
+/**
+ * The month an order's cash actually lands in, for trésorerie purposes.
+ * A postdated check (common in Tunisia) doesn't clear on the order date —
+ * it clears on its due date. Every other payment method is assumed
+ * immediate, same as before this field existed.
+ */
+export function orderCashDate(order: Pick<OrderLike, "date" | "paymentMethod" | "checkDueDate">): Date {
+  if (order.paymentMethod === "CHECK" && order.checkDueDate) return order.checkDueDate;
+  return order.date;
 }
 
 export type TopProductRow = { key: string; name: string; quantity: number; revenue: number };
@@ -64,10 +77,15 @@ export type DashboardTotals = {
 
 export function computeDashboardTotals(params: {
   ordersInMonth: OrderLike[];
+  /** Delivered orders whose cash date (orderCashDate) falls in this month —
+   * usually the same orders as ordersInMonth, except a postdated check
+   * pushes an order out to its due-date month instead. Used only for
+   * cashFlow, never for revenue/cost (those stay on an accrual basis). */
+  cashOrdersInMonth: OrderLike[];
   expensesInMonth: number;
   stockPurchasesCostInMonth: number;
 }): DashboardTotals {
-  const { ordersInMonth, expensesInMonth, stockPurchasesCostInMonth } = params;
+  const { ordersInMonth, cashOrdersInMonth, expensesInMonth, stockPurchasesCostInMonth } = params;
 
   const delivered = ordersInMonth.filter((o) => o.status === "DELIVERED");
   const inProgress = ordersInMonth.filter((o) => o.status === "IN_PROGRESS");
@@ -101,8 +119,12 @@ export function computeDashboardTotals(params: {
     }
   }
 
+  const cashRevenue = cashOrdersInMonth
+    .filter((o) => o.status === "DELIVERED")
+    .reduce((sum, o) => sum + orderAmount(o), 0);
+
   const netProfit = revenue - cost - expensesInMonth;
-  const cashFlow = revenue - stockPurchasesCostInMonth - expensesInMonth;
+  const cashFlow = cashRevenue - stockPurchasesCostInMonth - expensesInMonth;
 
   return {
     revenue,

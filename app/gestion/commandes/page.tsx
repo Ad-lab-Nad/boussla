@@ -34,10 +34,34 @@ const PAYMENT_BADGE_CLASS: Record<string, string> = {
   UNPAID: "unpaid",
 };
 
-export default async function CommandesPage() {
+const PAYMENT_METHOD_LABELS: Record<string, string> = {
+  CASH: "Espèces",
+  CHECK: "Chèque",
+  TRANSFER: "Virement",
+  OTHER: "Autre",
+};
+const PAYMENT_METHOD_FILTER_OPTIONS = [
+  { value: "ALL", label: "Tous les moyens de paiement" },
+  { value: "CASH", label: "Espèces" },
+  { value: "CHECK", label: "Chèque" },
+  { value: "TRANSFER", label: "Virement" },
+  { value: "OTHER", label: "Autre" },
+];
+
+export default async function CommandesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ method?: string }>;
+}) {
+  const { method } = await searchParams;
   const user = await getCurrentUser();
-  const [orders, products] = await Promise.all([getOrders(user.id), getProducts(user.id)]);
+  const [allOrders, products] = await Promise.all([getOrders(user.id), getProducts(user.id)]);
   const isServices = user.activityType === "SERVICES";
+
+  const methodFilter =
+    method && method in PAYMENT_METHOD_LABELS ? method : "ALL";
+  const orders =
+    methodFilter === "ALL" ? allOrders : allOrders.filter((o) => o.paymentMethod === methodFilter);
 
   return (
     <>
@@ -52,7 +76,26 @@ export default async function CommandesPage() {
       </div>
 
       <div className="g-card">
-        <h2>{isServices ? "Toutes les ventes" : "Toutes les commandes"}</h2>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: 14,
+            flexWrap: "wrap",
+            gap: 10,
+          }}
+        >
+          <h2 style={{ margin: 0 }}>{isServices ? "Toutes les ventes" : "Toutes les commandes"}</h2>
+          <form method="get">
+            <AutoSubmitSelect
+              name="method"
+              defaultValue={methodFilter}
+              options={PAYMENT_METHOD_FILTER_OPTIONS}
+              className="g-status-select"
+            />
+          </form>
+        </div>
         <div className="g-table-wrap">
           <table className="g-table">
             <thead>
@@ -63,6 +106,7 @@ export default async function CommandesPage() {
                 <th className="right">Montant</th>
                 <th>Statut</th>
                 <th>Paiement</th>
+                <th>Mode</th>
                 <th></th>
               </tr>
             </thead>
@@ -100,6 +144,14 @@ export default async function CommandesPage() {
                       </form>
                     </td>
                     <td>
+                      {PAYMENT_METHOD_LABELS[order.paymentMethod]}
+                      {order.paymentMethod === "CHECK" && order.checkDueDate && (
+                        <div style={{ fontSize: "0.72rem", color: "var(--g-muted)" }}>
+                          échéance {order.checkDueDate.toISOString().slice(0, 10)}
+                        </div>
+                      )}
+                    </td>
+                    <td>
                       <form action={deleteOrder}>
                         <input type="hidden" name="id" value={order.id} />
                         <ConfirmSubmitButton
@@ -115,7 +167,11 @@ export default async function CommandesPage() {
         </div>
         {orders.length === 0 && (
           <div className="g-empty">
-            {isServices ? "Aucune vente enregistrée." : "Aucune commande enregistrée."}
+            {methodFilter !== "ALL"
+              ? "Aucune commande pour ce moyen de paiement."
+              : isServices
+                ? "Aucune vente enregistrée."
+                : "Aucune commande enregistrée."}
           </div>
         )}
       </div>

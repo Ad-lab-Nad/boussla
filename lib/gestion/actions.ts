@@ -92,6 +92,12 @@ export async function createOrder(formData: FormData) {
   const clientName = str(formData, "clientName") || null;
   const status = str(formData, "status") || "IN_PROGRESS";
   const paymentStatus = str(formData, "paymentStatus") || "PENDING";
+  const paymentMethodRaw = str(formData, "paymentMethod");
+  const paymentMethod = ["CASH", "CHECK", "TRANSFER", "OTHER"].includes(paymentMethodRaw)
+    ? paymentMethodRaw
+    : "CASH";
+  const checkDueDateStr = str(formData, "checkDueDate");
+  const checkDueDate = paymentMethod === "CHECK" && checkDueDateStr ? parseDateInput(checkDueDateStr) : null;
 
   let rawLines: OrderLineInput[] = [];
   try {
@@ -117,6 +123,8 @@ export async function createOrder(formData: FormData) {
       status: status as "IN_PROGRESS" | "DELIVERED" | "RETURNED",
       paymentStatus: paymentStatus as "PAID" | "PENDING" | "UNPAID",
       paymentDate: paymentStatus === "PAID" ? new Date() : null,
+      paymentMethod: paymentMethod as "CASH" | "CHECK" | "TRANSFER" | "OTHER",
+      checkDueDate,
       lines: {
         create: validLines.map((l) => {
           const product = byId.get(l.productId);

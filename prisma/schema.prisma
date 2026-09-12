@@ -300,6 +300,13 @@ enum PaymentStatus {
   UNPAID
 }
 
+enum PaymentMethod {
+  CASH
+  CHECK
+  TRANSFER
+  OTHER
+}
+
 model Product {
   id     String @id @default(cuid())
   userId String
@@ -386,6 +393,12 @@ model Order {
   status        OrderStatus   @default(IN_PROGRESS)
   paymentStatus PaymentStatus @default(PENDING)
   paymentDate   DateTime?
+
+  // How the order was/will be paid. CHECK in Tunisia is often postdated —
+  // checkDueDate lets the dashboard's trésorerie wait for that date instead
+  // of counting the cash the moment the order is marked Payé.
+  paymentMethod PaymentMethod @default(CASH)
+  checkDueDate  DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

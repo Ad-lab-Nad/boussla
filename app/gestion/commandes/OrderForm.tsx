@@ -27,6 +27,7 @@ export function OrderForm({
   const [lines, setLines] = useState<Line[]>(() =>
     products.length > 0 ? [newLine(products)] : []
   );
+  const [paymentMethod, setPaymentMethod] = useState("CASH");
 
   const total = lines.reduce((sum, l) => {
     const product = products.find((p) => p.id === l.productId);
@@ -49,6 +50,7 @@ export function OrderForm({
         formData.set("linesJson", JSON.stringify(lines));
         await createOrderAction(formData);
         setLines([newLine(products)]);
+        setPaymentMethod("CASH");
       }}
     >
       <div className="g-field-grid">
@@ -76,6 +78,25 @@ export function OrderForm({
             <option value="UNPAID">Impayé</option>
           </select>
         </div>
+        <div className="g-field">
+          <label>Moyen de paiement</label>
+          <select
+            name="paymentMethod"
+            value={paymentMethod}
+            onChange={(e) => setPaymentMethod(e.target.value)}
+          >
+            <option value="CASH">Espèces</option>
+            <option value="CHECK">Chèque</option>
+            <option value="TRANSFER">Virement</option>
+            <option value="OTHER">Autre</option>
+          </select>
+        </div>
+        {paymentMethod === "CHECK" && (
+          <div className="g-field">
+            <label>Date d&apos;échéance (optionnel)</label>
+            <input type="date" name="checkDueDate" />
+          </div>
+        )}
       </div>
 
       <div style={{ marginTop: 16 }}>
