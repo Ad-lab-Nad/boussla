@@ -3,6 +3,13 @@
 import { useActionState, useState } from "react";
 import { signUp, type AuthActionState } from "@/lib/auth-actions";
 
+// Launch is Produits-only — the Services/Prestations mode is fully built
+// (Gestion nav, Commandes/Ventes copy, etc.) but not yet validated with real
+// users on that segment, so the choice is hidden rather than removed. Flip
+// this back on once that research happens; every new signup defaults to
+// PRODUCTS below either way.
+const SERVICES_MODE_ENABLED = false;
+
 const INDUSTRIES = [
   { value: "Alimentaire", label: "Alimentaire" },
   { value: "Artisanat", label: "Artisanat" },
@@ -35,25 +42,29 @@ export function SignupForm() {
         />
       </div>
 
-      <div className="g-field">
-        <label>Type d&apos;activité</label>
-        <div className="g-radio-group">
-          <label className="g-radio-option">
-            <input type="radio" name="activityType" value="PRODUCTS" defaultChecked />
-            <span>
-              <strong>Produits physiques</strong>
-              <small>Gère aussi le stock de matières et de produits finis.</small>
-            </span>
-          </label>
-          <label className="g-radio-option">
-            <input type="radio" name="activityType" value="SERVICES" />
-            <span>
-              <strong>Services / Prestations</strong>
-              <small>Pas de stock — commandes, prestations et dépenses uniquement.</small>
-            </span>
-          </label>
+      {SERVICES_MODE_ENABLED ? (
+        <div className="g-field">
+          <label>Type d&apos;activité</label>
+          <div className="g-radio-group">
+            <label className="g-radio-option">
+              <input type="radio" name="activityType" value="PRODUCTS" defaultChecked />
+              <span>
+                <strong>Produits physiques</strong>
+                <small>Gère aussi le stock de matières et de produits finis.</small>
+              </span>
+            </label>
+            <label className="g-radio-option">
+              <input type="radio" name="activityType" value="SERVICES" />
+              <span>
+                <strong>Services / Prestations</strong>
+                <small>Pas de stock — commandes, prestations et dépenses uniquement.</small>
+              </span>
+            </label>
+          </div>
         </div>
-      </div>
+      ) : (
+        <input type="hidden" name="activityType" value="PRODUCTS" />
+      )}
 
       <div className="g-field">
         <label>Secteur d&apos;activité</label>
