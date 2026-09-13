@@ -13,14 +13,22 @@ import {
 import { useColorScheme } from "@/components/gestion/useColorScheme";
 import { CHART_COLORS } from "@/lib/gestion/chart-colors";
 import { fmt, monthLabelShort } from "@/lib/gestion/format";
-import { EXPENSE_CATEGORY_OPTIONS } from "@/lib/gestion/expense-categories";
 import type { ExpenseCategoryPoint } from "@/lib/gestion/queries";
 
-// Fixed categorical order (never reassigned per render) — five categories
-// fits the palette's soft cap for a legend-backed multi-line chart.
+// Fixed categorical order for whichever categories actually rank in this
+// period (never reassigned per render) — up to 5 fits the palette's soft
+// cap for a legend-backed multi-line chart. "Autre" (always last in
+// `categories`, see getAnalysisData) gets a muted tone instead of a 6th
+// categorical hue — it's a catch-all bucket, not a series of its own.
 const SERIES_TONES = ["blue", "orange", "aqua", "yellow", "magenta"] as const;
 
-export function ExpenseCategoryChart({ rows }: { rows: ExpenseCategoryPoint[] }) {
+export function ExpenseCategoryChart({
+  rows,
+  categories,
+}: {
+  rows: ExpenseCategoryPoint[];
+  categories: { value: string; label: string }[];
+}) {
   const c = CHART_COLORS[useColorScheme()];
   const data = rows.map((r) => ({ ...r, label: monthLabelShort(r.month) }));
   const tickInterval = data.length > 18 ? Math.ceil(data.length / 12) - 1 : 0;
@@ -54,8 +62,9 @@ export function ExpenseCategoryChart({ rows }: { rows: ExpenseCategoryPoint[] })
           labelStyle={{ color: c.ink2, fontWeight: 600, marginBottom: 4 }}
         />
         <Legend wrapperStyle={{ fontSize: 12, color: c.ink2 }} iconType="line" iconSize={14} />
-        {EXPENSE_CATEGORY_OPTIONS.map((opt, i) => {
-          const color = c[SERIES_TONES[i]];
+        {categories.map((opt, i) => {
+          const isOther = opt.value === "OTHER";
+          const color = isOther ? c.muted : c[SERIES_TONES[i]];
           return (
             <Line
               key={opt.value}
@@ -64,6 +73,7 @@ export function ExpenseCategoryChart({ rows }: { rows: ExpenseCategoryPoint[] })
               name={opt.label}
               stroke={color}
               strokeWidth={2}
+              strokeDasharray={isOther ? "4 3" : undefined}
               dot={{ r: 3, fill: color, strokeWidth: 2, stroke: c.surface }}
               activeDot={{ r: 5, strokeWidth: 2, stroke: c.surface }}
             />

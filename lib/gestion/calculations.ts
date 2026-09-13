@@ -138,3 +138,33 @@ export function computeDashboardTotals(params: {
     topProducts: [...byProduct.values()].sort((a, b) => b.quantity - a.quantity),
   };
 }
+
+export type CategoryOption = { value: string; label: string };
+
+/**
+ * Ranks categories by total spend and keeps only the top `maxShown` as
+ * individual series, folding the rest into `fallbackValue` — a category list
+ * that grows past a chart's readable series count (dataviz soft cap ~5-6)
+ * without either hiding a category actually in use or wasting a line on one
+ * that isn't.
+ */
+export function rankAndFoldCategories(
+  categoryOptions: CategoryOption[],
+  totalsByCategory: Record<string, number>,
+  maxShown: number,
+  fallbackValue: string
+): { shown: CategoryOption[]; folded: Set<string>; chartCategories: CategoryOption[] } {
+  const ranked = categoryOptions
+    .filter((o) => o.value !== fallbackValue && (totalsByCategory[o.value] ?? 0) > 0)
+    .sort((a, b) => (totalsByCategory[b.value] ?? 0) - (totalsByCategory[a.value] ?? 0));
+
+  const shown = ranked.slice(0, maxShown);
+  const folded = new Set(ranked.slice(maxShown).map((o) => o.value));
+  const fallbackOption = categoryOptions.find((o) => o.value === fallbackValue);
+
+  return {
+    shown,
+    folded,
+    chartCategories: fallbackOption ? [...shown, fallbackOption] : shown,
+  };
+}

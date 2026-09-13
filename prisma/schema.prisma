@@ -447,6 +447,14 @@ enum ExpenseCategory {
   TRANSPORT
   FIXED_COSTS
   STOCK_PURCHASES
+  SUPPLIES_EQUIPMENT
+  RESEARCH_DEVELOPMENT
+  RENT
+  SALARIES_LABOR
+  PACKAGING
+  BANK_FEES
+  // Reserved for genuinely exceptional cases — the UI doesn't default to
+  // this anymore now that there's a real category for almost everything.
   OTHER
 }
 

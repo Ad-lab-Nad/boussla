@@ -29,7 +29,10 @@ export default async function DepensesPage() {
           </div>
           <div className="g-field">
             <label>Catégorie</label>
-            <select name="category" defaultValue="OTHER">
+            <select name="category" defaultValue="" required>
+              <option value="" disabled>
+                Choisir une catégorie
+              </option>
               {EXPENSE_CATEGORY_OPTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value}>
                   {opt.label}

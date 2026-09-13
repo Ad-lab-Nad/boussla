@@ -4,6 +4,8 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/current-user";
 import { parseDateInput, todayStr } from "@/lib/gestion/format";
+import { EXPENSE_CATEGORY_OPTIONS } from "@/lib/gestion/expense-categories";
+import type { ExpenseCategory } from "@prisma/client";
 
 function revalidateGestion(path?: string) {
   revalidatePath("/gestion");
@@ -286,7 +288,7 @@ export async function deleteProductionBatch(formData: FormData) {
 
 // ---------- DEPENSES ----------
 
-const EXPENSE_CATEGORIES = ["ADVERTISING", "TRANSPORT", "FIXED_COSTS", "STOCK_PURCHASES", "OTHER"];
+const EXPENSE_CATEGORIES = EXPENSE_CATEGORY_OPTIONS.map((o) => o.value as string);
 
 export async function createExpense(formData: FormData) {
   const user = await getCurrentUser();
@@ -297,18 +299,16 @@ export async function createExpense(formData: FormData) {
   if (!description || amount <= 0) {
     throw new Error("Remplissez la description et le montant.");
   }
+  if (!categoryRaw) {
+    throw new Error("Choisissez une catégorie.");
+  }
   await prisma.expense.create({
     data: {
       userId: user.id,
       date: dateOf(formData, "date"),
       description,
       amount,
-      category: category as
-        | "ADVERTISING"
-        | "TRANSPORT"
-        | "FIXED_COSTS"
-        | "STOCK_PURCHASES"
-        | "OTHER",
+      category: category as ExpenseCategory,
     },
   });
   revalidateGestion("/gestion/depenses");

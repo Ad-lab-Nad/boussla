@@ -2,7 +2,9 @@ import { prisma } from "@/lib/prisma";
 import {
   computeDashboardTotals,
   orderCashDate,
+  rankAndFoldCategories,
   stockTotals,
+  type CategoryOption,
   type OrderLike,
 } from "@/lib/gestion/calculations";
 import {
@@ -273,16 +275,36 @@ export async function getAnalysisData(userId: string, period: AnalysisPeriod) {
     };
   });
 
+  // The category list can grow well past what a multi-line chart can show
+  // clearly (dataviz soft cap is ~5-6 series) — fold whatever doesn't rank
+  // into the top 5 by spend into "Autre" rather than a fixed slice. See
+  // rankAndFoldCategories's own doc comment for why.
+  const monthKeySet = new Set(monthKeys);
+  const totalsByCategory: Record<string, number> = {};
+  for (const opt of EXPENSE_CATEGORY_OPTIONS) totalsByCategory[opt.value] = 0;
+  for (const e of expenses) {
+    if (monthKeySet.has(monthKeyFromDate(e.date))) {
+      totalsByCategory[e.category] += e.amount;
+    }
+  }
+
+  const { folded: foldedValues, chartCategories } = rankAndFoldCategories(
+    EXPENSE_CATEGORY_OPTIONS as unknown as CategoryOption[],
+    totalsByCategory,
+    5,
+    "OTHER"
+  );
+
   const categoryByMonth: ExpenseCategoryPoint[] = monthKeys.map((month) => {
     const point: ExpenseCategoryPoint = { month };
-    for (const opt of EXPENSE_CATEGORY_OPTIONS) point[opt.value] = 0;
+    for (const opt of chartCategories) point[opt.value] = 0;
     for (const e of expenses) {
-      if (monthKeyFromDate(e.date) === month) {
-        point[e.category] = (point[e.category] as number) + e.amount;
-      }
+      if (monthKeyFromDate(e.date) !== month) continue;
+      const key = foldedValues.has(e.category) ? "OTHER" : e.category;
+      point[key] = (point[key] as number) + e.amount;
     }
     return point;
   });
 
-  return { monthlyTotals, categoryByMonth };
+  return { monthlyTotals, categoryByMonth, chartCategories };
 }

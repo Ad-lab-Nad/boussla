@@ -35,7 +35,7 @@ export default async function AnalysePage({
   const selectedMonth =
     rawMonth && monthOptions.includes(rawMonth) ? rawMonth : currentMonth;
 
-  const [{ monthlyTotals, categoryByMonth }, productMovement] = await Promise.all([
+  const [{ monthlyTotals, categoryByMonth, chartCategories }, productMovement] = await Promise.all([
     getAnalysisData(user.id, period),
     isServices ? Promise.resolve([]) : getProductMovement(user.id, selectedMonth),
   ]);
@@ -58,9 +58,11 @@ export default async function AnalysePage({
       <div className="g-chart-card">
         <h2>Dépenses par catégorie</h2>
         <div className="g-hint">
-          Pour repérer, par exemple, si le budget pub augmente mois après mois.
+          Pour repérer, par exemple, si le budget pub augmente mois après mois. Les 5 catégories
+          les plus dépensières sur la période s&apos;affichent individuellement ; le reste est
+          regroupé dans « Autre ».
         </div>
-        <ExpenseCategoryChart rows={categoryByMonth} />
+        <ExpenseCategoryChart rows={categoryByMonth} categories={chartCategories} />
       </div>
 
       <div className="g-card">
