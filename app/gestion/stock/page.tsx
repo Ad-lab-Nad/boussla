@@ -1,18 +1,30 @@
 import { Plus } from "lucide-react";
 import { getCurrentUser } from "@/lib/current-user";
-import { getStockItems } from "@/lib/gestion/queries";
+import { getStockItems, getStockPurchases, getStockUsages } from "@/lib/gestion/queries";
 import {
   createStockItem,
   createStockPurchase,
   createStockUsage,
   deleteStockItem,
+  deleteStockPurchase,
+  deleteStockUsage,
+  updateStockItem,
+  updateStockPurchase,
+  updateStockUsage,
 } from "@/lib/gestion/actions";
 import { fmt, fmtNumber, todayStr } from "@/lib/gestion/format";
 import { ConfirmSubmitButton } from "@/components/gestion/ConfirmSubmitButton";
+import { EditStockItemButton } from "@/components/gestion/EditStockItemButton";
+import { EditStockPurchaseButton } from "@/components/gestion/EditStockPurchaseButton";
+import { EditStockUsageButton } from "@/components/gestion/EditStockUsageButton";
 
 export default async function StockPage() {
   const user = await getCurrentUser();
-  const stockItems = await getStockItems(user.id);
+  const [stockItems, purchases, usages] = await Promise.all([
+    getStockItems(user.id),
+    getStockPurchases(user.id),
+    getStockUsages(user.id),
+  ]);
 
   return (
     <>
@@ -136,7 +148,8 @@ export default async function StockPage() {
                       {fmtNumber(totals.remaining)}
                     </td>
                     <td className="right num">{fmt(totals.remainingValue)}</td>
-                    <td>
+                    <td style={{ display: "flex", gap: 2 }}>
+                      <EditStockItemButton item={item} updateStockItemAction={updateStockItem} />
                       <form action={deleteStockItem}>
                         <input type="hidden" name="id" value={item.id} />
                         <ConfirmSubmitButton confirmMessage="Supprimer cette matière et son historique ?" />
@@ -149,6 +162,74 @@ export default async function StockPage() {
           </table>
         </div>
         {stockItems.length === 0 && <div className="g-empty">Aucune matière enregistrée.</div>}
+      </div>
+
+      <div className="g-card">
+        <h2>Historique des achats</h2>
+        <div className="g-table-wrap">
+          <table className="g-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Matière</th>
+                <th className="right">Quantité</th>
+                <th className="right">Coût unitaire</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {purchases.map((p) => (
+                <tr key={p.id}>
+                  <td className="num">{p.date.toISOString().slice(0, 10)}</td>
+                  <td>{p.stockItem.name}</td>
+                  <td className="right num">{fmtNumber(p.quantity)}</td>
+                  <td className="right num">{fmt(p.unitCost)}</td>
+                  <td style={{ display: "flex", gap: 2 }}>
+                    <EditStockPurchaseButton purchase={p} updateStockPurchaseAction={updateStockPurchase} />
+                    <form action={deleteStockPurchase}>
+                      <input type="hidden" name="id" value={p.id} />
+                      <ConfirmSubmitButton confirmMessage="Supprimer cet achat ?" />
+                    </form>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        {purchases.length === 0 && <div className="g-empty">Aucun achat enregistré.</div>}
+      </div>
+
+      <div className="g-card">
+        <h2>Historique des utilisations</h2>
+        <div className="g-table-wrap">
+          <table className="g-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Matière</th>
+                <th className="right">Quantité</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {usages.map((u) => (
+                <tr key={u.id}>
+                  <td className="num">{u.date.toISOString().slice(0, 10)}</td>
+                  <td>{u.stockItem.name}</td>
+                  <td className="right num">{fmtNumber(u.quantity)}</td>
+                  <td style={{ display: "flex", gap: 2 }}>
+                    <EditStockUsageButton usage={u} updateStockUsageAction={updateStockUsage} />
+                    <form action={deleteStockUsage}>
+                      <input type="hidden" name="id" value={u.id} />
+                      <ConfirmSubmitButton confirmMessage="Supprimer cette utilisation ?" />
+                    </form>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        {usages.length === 0 && <div className="g-empty">Aucune utilisation enregistrée.</div>}
       </div>
     </>
   );

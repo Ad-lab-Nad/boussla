@@ -1,9 +1,10 @@
 import { Plus } from "lucide-react";
 import { getCurrentUser } from "@/lib/current-user";
 import { getFinishedStock, getProductionBatches, getProducts } from "@/lib/gestion/queries";
-import { createProductionBatch, deleteProductionBatch } from "@/lib/gestion/actions";
+import { createProductionBatch, deleteProductionBatch, updateProductionBatch } from "@/lib/gestion/actions";
 import { todayStr } from "@/lib/gestion/format";
 import { ConfirmSubmitButton } from "@/components/gestion/ConfirmSubmitButton";
+import { EditProductionBatchButton } from "@/components/gestion/EditProductionBatchButton";
 
 export default async function ProduitsFinisPage() {
   const user = await getCurrentUser();
@@ -98,7 +99,12 @@ export default async function ProduitsFinisPage() {
                   <td className="num">{b.date.toISOString().slice(0, 10)}</td>
                   <td>{b.product.name}</td>
                   <td className="right num">{b.quantity}</td>
-                  <td>
+                  <td style={{ display: "flex", gap: 2 }}>
+                    <EditProductionBatchButton
+                      batch={b}
+                      products={products}
+                      updateProductionBatchAction={updateProductionBatch}
+                    />
                     <form action={deleteProductionBatch}>
                       <input type="hidden" name="id" value={b.id} />
                       <ConfirmSubmitButton confirmMessage="Supprimer ce lot ?" />

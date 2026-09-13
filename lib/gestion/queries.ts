@@ -32,6 +32,22 @@ export async function getStockItems(userId: string) {
   return items.map((item) => ({ item, totals: stockTotals(item.purchases, item.usages) }));
 }
 
+export async function getStockPurchases(userId: string) {
+  return prisma.stockPurchase.findMany({
+    where: { stockItem: { userId } },
+    orderBy: { date: "desc" },
+    include: { stockItem: true },
+  });
+}
+
+export async function getStockUsages(userId: string) {
+  return prisma.stockUsage.findMany({
+    where: { stockItem: { userId } },
+    orderBy: { date: "desc" },
+    include: { stockItem: true },
+  });
+}
+
 export async function getExpenses(userId: string) {
   return prisma.expense.findMany({
     where: { userId },

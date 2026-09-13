@@ -1,10 +1,11 @@
 import { Plus } from "lucide-react";
 import { getCurrentUser } from "@/lib/current-user";
 import { getExpenses } from "@/lib/gestion/queries";
-import { createExpense, deleteExpense } from "@/lib/gestion/actions";
+import { createExpense, deleteExpense, updateExpense } from "@/lib/gestion/actions";
 import { fmt, todayStr } from "@/lib/gestion/format";
 import { EXPENSE_CATEGORY_LABELS, EXPENSE_CATEGORY_OPTIONS } from "@/lib/gestion/expense-categories";
 import { ConfirmSubmitButton } from "@/components/gestion/ConfirmSubmitButton";
+import { EditExpenseButton } from "@/components/gestion/EditExpenseButton";
 
 export default async function DepensesPage() {
   const user = await getCurrentUser();
@@ -70,7 +71,8 @@ export default async function DepensesPage() {
                   <td>{d.description}</td>
                   <td>{EXPENSE_CATEGORY_LABELS[d.category]}</td>
                   <td className="right num">{fmt(d.amount)}</td>
-                  <td>
+                  <td style={{ display: "flex", gap: 2 }}>
+                    <EditExpenseButton expense={d} updateExpenseAction={updateExpense} />
                     <form action={deleteExpense}>
                       <input type="hidden" name="id" value={d.id} />
                       <ConfirmSubmitButton confirmMessage="Supprimer cette dépense ?" />

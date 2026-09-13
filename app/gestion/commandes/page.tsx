@@ -4,12 +4,14 @@ import { orderAmount } from "@/lib/gestion/calculations";
 import {
   createOrder,
   deleteOrder,
+  updateOrder,
   updateOrderPaymentStatus,
   updateOrderStatus,
 } from "@/lib/gestion/actions";
 import { fmt } from "@/lib/gestion/format";
 import { ConfirmSubmitButton } from "@/components/gestion/ConfirmSubmitButton";
 import { AutoSubmitSelect } from "@/components/gestion/AutoSubmitSelect";
+import { EditOrderButton } from "@/components/gestion/EditOrderButton";
 import { OrderForm } from "./OrderForm";
 
 const STATUS_OPTIONS = [
@@ -151,7 +153,13 @@ export default async function CommandesPage({
                         </div>
                       )}
                     </td>
-                    <td>
+                    <td style={{ display: "flex", gap: 2 }}>
+                      <EditOrderButton
+                        order={order}
+                        products={products}
+                        updateOrderAction={updateOrder}
+                        isServices={isServices}
+                      />
                       <form action={deleteOrder}>
                         <input type="hidden" name="id" value={order.id} />
                         <ConfirmSubmitButton
