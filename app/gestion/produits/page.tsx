@@ -1,10 +1,11 @@
 import { Plus } from "lucide-react";
 import { getCurrentUser } from "@/lib/current-user";
 import { getProducts } from "@/lib/gestion/queries";
-import { createProduct, deleteProduct } from "@/lib/gestion/actions";
+import { createProduct, deleteProduct, updateProduct } from "@/lib/gestion/actions";
 import { fmt } from "@/lib/gestion/format";
 import { ConfirmSubmitButton } from "@/components/gestion/ConfirmSubmitButton";
 import { ImportProductsButton } from "@/components/gestion/ImportProductsButton";
+import { EditProductButton } from "@/components/gestion/EditProductButton";
 
 export default async function ProduitsPage() {
   const user = await getCurrentUser();
@@ -77,7 +78,12 @@ export default async function ProduitsPage() {
                   <td className="right num">{fmt(p.sellPrice)}</td>
                   <td className="right num">{fmt(p.unitCost)}</td>
                   <td className="right num">{fmt(p.sellPrice - p.unitCost)}</td>
-                  <td>
+                  <td style={{ display: "flex", gap: 2 }}>
+                    <EditProductButton
+                      product={p}
+                      updateProductAction={updateProduct}
+                      isServices={isServices}
+                    />
                     <form action={deleteProduct}>
                       <input type="hidden" name="id" value={p.id} />
                       <ConfirmSubmitButton confirmMessage={deleteConfirmMessage} />

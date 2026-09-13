@@ -47,6 +47,26 @@ export async function deleteProduct(formData: FormData) {
   revalidateGestion("/gestion/produits");
 }
 
+// Only touches the products table — OrderLine keeps its own
+// productNameSnapshot/sellPriceSnapshot/unitCostSnapshot captured at order
+// time, so editing a product here never rewrites past orders. Future orders
+// simply read the product's new values when they snapshot them.
+export async function updateProduct(formData: FormData) {
+  const user = await getCurrentUser();
+  const id = str(formData, "id");
+  const name = str(formData, "name");
+  if (!name) throw new Error("Indiquez un nom de produit.");
+  await prisma.product.updateMany({
+    where: { id, userId: user.id },
+    data: {
+      name,
+      sellPrice: num(formData, "sellPrice"),
+      unitCost: num(formData, "unitCost"),
+    },
+  });
+  revalidateGestion("/gestion/produits");
+}
+
 /**
  * Bulk-creates products from a validated Excel/CSV import preview. Called
  * directly from the import dialog (not a <form>), so it takes plain data
