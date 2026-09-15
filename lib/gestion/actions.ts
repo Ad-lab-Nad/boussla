@@ -459,6 +459,17 @@ export async function updateProductionBatch(formData: FormData) {
 
 const EXPENSE_CATEGORIES = EXPENSE_CATEGORY_OPTIONS.map((o) => o.value as string);
 
+/** null when the "plusieurs mois" checkbox isn't checked; otherwise the
+ * validated month count (>= 2) to spread the amount across. */
+function spreadMonthsOf(formData: FormData): number | null {
+  if (formData.get("isSpread") !== "on") return null;
+  const months = Math.trunc(num(formData, "spreadMonths"));
+  if (months < 2) {
+    throw new Error("Indique sur combien de mois étaler cette dépense (au moins 2).");
+  }
+  return months;
+}
+
 export async function createExpense(formData: FormData) {
   const user = await getCurrentUser();
   const description = str(formData, "description");
@@ -471,6 +482,7 @@ export async function createExpense(formData: FormData) {
   if (!categoryRaw) {
     throw new Error("Choisissez une catégorie.");
   }
+  const spreadMonths = spreadMonthsOf(formData);
   await prisma.expense.create({
     data: {
       userId: user.id,
@@ -478,6 +490,7 @@ export async function createExpense(formData: FormData) {
       description,
       amount,
       category: category as ExpenseCategory,
+      spreadMonths,
     },
   });
   revalidateGestion("/gestion/depenses");
@@ -495,6 +508,7 @@ export async function updateExpense(formData: FormData) {
   if (!EXPENSE_CATEGORIES.includes(categoryRaw)) {
     throw new Error("Choisissez une catégorie.");
   }
+  const spreadMonths = spreadMonthsOf(formData);
   await prisma.expense.updateMany({
     where: { id, userId: user.id },
     data: {
@@ -502,6 +516,7 @@ export async function updateExpense(formData: FormData) {
       description,
       amount,
       category: categoryRaw as ExpenseCategory,
+      spreadMonths,
     },
   });
   revalidateGestion("/gestion/depenses");

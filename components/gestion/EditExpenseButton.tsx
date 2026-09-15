@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Pencil, X } from "lucide-react";
 import { EXPENSE_CATEGORY_OPTIONS } from "@/lib/gestion/expense-categories";
+import { SpreadExpenseFields } from "@/components/gestion/SpreadExpenseFields";
 
 type Expense = {
   id: string;
@@ -11,6 +12,7 @@ type Expense = {
   description: string;
   amount: number;
   category: string;
+  spreadMonths: number | null;
 };
 
 export function EditExpenseButton({
@@ -98,6 +100,7 @@ export function EditExpenseButton({
                       required
                     />
                   </div>
+                  <SpreadExpenseFields defaultSpreadMonths={expense.spreadMonths} />
                 </div>
                 {error && (
                   <div className="g-auth-error" style={{ marginTop: 12 }}>

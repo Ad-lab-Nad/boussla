@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import {
   computeDashboardTotals,
+  expenseAccrualForMonth,
   orderCashDate,
   rankAndFoldCategories,
   stockTotals,
@@ -151,9 +152,16 @@ export async function getProductMovement(userId: string, month: string) {
 export async function getAvailableMonthKeys(userId: string) {
   const [orders, expenses] = await Promise.all([
     prisma.order.findMany({ where: { userId }, select: { date: true } }),
-    prisma.expense.findMany({ where: { userId }, select: { date: true } }),
+    prisma.expense.findMany({ where: { userId }, select: { date: true, spreadMonths: true } }),
   ]);
-  const existing = [...orders, ...expenses].map((r) => monthKeyFromDate(r.date));
+  const existing = orders.map((r) => monthKeyFromDate(r.date));
+  // A spread expense's later months need to be selectable too, even ones
+  // further out than buildMonthOptions's own +6-month buffer.
+  for (const e of expenses) {
+    const startMonth = monthKeyFromDate(e.date);
+    const months = e.spreadMonths && e.spreadMonths > 1 ? e.spreadMonths : 1;
+    for (let i = 0; i < months; i++) existing.push(shiftMonthKey(startMonth, i));
+  }
   return buildMonthOptions(existing);
 }
 
@@ -184,7 +192,11 @@ function totalsForMonth(
     (o) => monthKeyFromDate(orderCashDate(o)) === month
   );
 
-  const expensesInMonth = expenses
+  const expensesAccrualInMonth = expenses.reduce(
+    (sum, e) => sum + expenseAccrualForMonth(e, month),
+    0
+  );
+  const expensesCashInMonth = expenses
     .filter((e) => monthKeyFromDate(e.date) === month)
     .reduce((sum, e) => sum + e.amount, 0);
 
@@ -200,7 +212,8 @@ function totalsForMonth(
   return computeDashboardTotals({
     ordersInMonth,
     cashOrdersInMonth,
-    expensesInMonth,
+    expensesAccrualInMonth,
+    expensesCashInMonth,
     stockPurchasesCostInMonth,
   });
 }

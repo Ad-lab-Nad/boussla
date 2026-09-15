@@ -297,6 +297,31 @@
   align-items: end;
 }
 
+/* A checkbox + its own inline label — kept out of .g-field entirely so it
+   never needs the .g-field label uppercase-caption override (unlike
+   .g-radio-option, which nests inside .g-field and has to fight that
+   specificity). Spans the full row when used inside .g-field-grid. */
+.g-check-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  grid-column: 1 / -1;
+}
+
+.g-check-field label {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--g-ink-2);
+  cursor: pointer;
+}
+
+.g-check-field input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--g-blue);
+  flex-shrink: 0;
+}
+
 .g-field {
   display: flex;
   flex-direction: column;

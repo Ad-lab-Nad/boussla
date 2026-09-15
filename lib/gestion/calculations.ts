@@ -1,6 +1,26 @@
 // Pure calculation helpers for the Gestion module — no I/O, so they mirror
 // the original prototype's math 1:1 and stay easy to unit test.
 
+import { monthKeyFromDate, shiftMonthKey } from "@/lib/gestion/format";
+
+export type ExpenseLike = { date: Date; amount: number; spreadMonths: number | null };
+
+/**
+ * How much of this expense counts toward `month` on an accrual basis — the
+ * figure net profit should use. Not spread (spreadMonths null or <= 1): the
+ * full amount, in the expense's own month only, same as before this field
+ * existed. Spread: an equal share of the amount across `spreadMonths`
+ * consecutive months starting at the expense's own month, so a durable
+ * purchase doesn't fully hit the month it was bought in.
+ */
+export function expenseAccrualForMonth(expense: ExpenseLike, month: string): number {
+  const months = expense.spreadMonths && expense.spreadMonths > 1 ? expense.spreadMonths : 1;
+  const startMonth = monthKeyFromDate(expense.date);
+  if (months === 1) return month === startMonth ? expense.amount : 0;
+  const endMonth = shiftMonthKey(startMonth, months - 1);
+  return month >= startMonth && month <= endMonth ? expense.amount / months : 0;
+}
+
 export type StockTotals = {
   purchased: number;
   used: number;
@@ -73,9 +93,9 @@ export type TopProductRow = {
 export type DashboardTotals = {
   revenue: number; // CA (livré)
   cost: number; // coût réel
-  expensesTotal: number;
-  netProfit: number; // CA - coût - dépenses
-  cashFlow: number; // CA - achats stock du mois - dépenses
+  expensesTotal: number; // accrual basis — spread expenses count only their monthly share
+  netProfit: number; // CA - coût - dépenses (accrual)
+  cashFlow: number; // CA cash - achats stock du mois - dépenses (cash, jamais étalées)
   inProgressCount: number;
   returnedCount: number;
   unpaidAmount: number; // livrées avec paymentStatus PENDING ou UNPAID
@@ -89,10 +109,22 @@ export function computeDashboardTotals(params: {
    * pushes an order out to its due-date month instead. Used only for
    * cashFlow, never for revenue/cost (those stay on an accrual basis). */
   cashOrdersInMonth: OrderLike[];
-  expensesInMonth: number;
+  /** Accrual-basis expense total (see expenseAccrualForMonth) — a spread
+   * expense contributes only its share of this month. Feeds netProfit. */
+  expensesAccrualInMonth: number;
+  /** Cash-basis expense total — always the full amount of whatever was
+   * actually paid in this month, regardless of spreading, because that's
+   * when the money actually left the account. Feeds cashFlow. */
+  expensesCashInMonth: number;
   stockPurchasesCostInMonth: number;
 }): DashboardTotals {
-  const { ordersInMonth, cashOrdersInMonth, expensesInMonth, stockPurchasesCostInMonth } = params;
+  const {
+    ordersInMonth,
+    cashOrdersInMonth,
+    expensesAccrualInMonth,
+    expensesCashInMonth,
+    stockPurchasesCostInMonth,
+  } = params;
 
   const delivered = ordersInMonth.filter((o) => o.status === "DELIVERED");
   const inProgress = ordersInMonth.filter((o) => o.status === "IN_PROGRESS");
@@ -131,13 +163,13 @@ export function computeDashboardTotals(params: {
     .filter((o) => o.status === "DELIVERED")
     .reduce((sum, o) => sum + orderAmount(o), 0);
 
-  const netProfit = revenue - cost - expensesInMonth;
-  const cashFlow = cashRevenue - stockPurchasesCostInMonth - expensesInMonth;
+  const netProfit = revenue - cost - expensesAccrualInMonth;
+  const cashFlow = cashRevenue - stockPurchasesCostInMonth - expensesCashInMonth;
 
   return {
     revenue,
     cost,
-    expensesTotal: expensesInMonth,
+    expensesTotal: expensesAccrualInMonth,
     netProfit,
     cashFlow,
     inProgressCount: inProgress.length,

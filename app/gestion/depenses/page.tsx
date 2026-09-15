@@ -6,6 +6,7 @@ import { fmt, todayStr } from "@/lib/gestion/format";
 import { EXPENSE_CATEGORY_LABELS, EXPENSE_CATEGORY_OPTIONS } from "@/lib/gestion/expense-categories";
 import { ConfirmSubmitButton } from "@/components/gestion/ConfirmSubmitButton";
 import { EditExpenseButton } from "@/components/gestion/EditExpenseButton";
+import { SpreadExpenseFields } from "@/components/gestion/SpreadExpenseFields";
 
 export default async function DepensesPage() {
   const user = await getCurrentUser();
@@ -45,6 +46,7 @@ export default async function DepensesPage() {
             <label>Montant (DT)</label>
             <input type="number" name="amount" min="0.01" step="0.01" required />
           </div>
+          <SpreadExpenseFields />
           <button type="submit" className="g-btn">
             <Plus size={15} /> Ajouter
           </button>
@@ -68,7 +70,14 @@ export default async function DepensesPage() {
               {expenses.map((d) => (
                 <tr key={d.id}>
                   <td className="num">{d.date.toISOString().slice(0, 10)}</td>
-                  <td>{d.description}</td>
+                  <td>
+                    {d.description}
+                    {d.spreadMonths && d.spreadMonths > 1 && (
+                      <div style={{ fontSize: "0.72rem", color: "var(--g-muted)" }}>
+                        Étalée sur {d.spreadMonths} mois ({fmt(d.amount / d.spreadMonths)}/mois)
+                      </div>
+                    )}
+                  </td>
                   <td>{EXPENSE_CATEGORY_LABELS[d.category]}</td>
                   <td className="right num">{fmt(d.amount)}</td>
                   <td style={{ display: "flex", gap: 2 }}>

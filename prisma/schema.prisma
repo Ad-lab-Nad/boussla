@@ -499,6 +499,14 @@ model Expense {
   amount      Float
   category    ExpenseCategory @default(OTHER)
 
+  // When set (>= 2), this expense's amount is split evenly across this many
+  // consecutive months for the net-profit (accrual) calculation, starting
+  // at `date`'s month — matériel/fournitures durables shouldn't hit the
+  // month they were bought in all at once. Trésorerie (cash) still counts
+  // the full amount in the purchase month regardless: that's when the money
+  // actually left the account. Null/1 means "not spread" (today's behavior).
+  spreadMonths Int?
+
   createdAt DateTime @default(now())
 
   @@map("expenses")
