@@ -5,7 +5,8 @@ import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/current-user";
 import { parseDateInput, todayStr } from "@/lib/gestion/format";
 import { EXPENSE_CATEGORY_OPTIONS } from "@/lib/gestion/expense-categories";
-import type { ExpenseCategory } from "@prisma/client";
+import { SELL_UNIT_OPTIONS } from "@/lib/gestion/product-units";
+import type { ExpenseCategory, SellUnit } from "@prisma/client";
 
 function revalidateGestion(path?: string) {
   revalidatePath("/gestion");
@@ -27,6 +28,13 @@ function dateOf(formData: FormData, key: string) {
 
 // ---------- PRODUITS ----------
 
+const SELL_UNITS = SELL_UNIT_OPTIONS.map((o) => o.value as string);
+
+function sellUnitOf(formData: FormData): SellUnit {
+  const raw = str(formData, "sellUnit");
+  return (SELL_UNITS.includes(raw) ? raw : "PIECE") as SellUnit;
+}
+
 export async function createProduct(formData: FormData) {
   const user = await getCurrentUser();
   const name = str(formData, "name");
@@ -37,6 +45,7 @@ export async function createProduct(formData: FormData) {
       name,
       sellPrice: num(formData, "sellPrice"),
       unitCost: num(formData, "unitCost"),
+      sellUnit: sellUnitOf(formData),
     },
   });
   revalidateGestion("/gestion/produits");
@@ -64,6 +73,7 @@ export async function updateProduct(formData: FormData) {
       name,
       sellPrice: num(formData, "sellPrice"),
       unitCost: num(formData, "unitCost"),
+      sellUnit: sellUnitOf(formData),
     },
   });
   revalidateGestion("/gestion/produits");
@@ -156,6 +166,7 @@ export async function createOrder(formData: FormData) {
             quantity: l.quantity,
             sellPriceSnapshot: product ? product.sellPrice : 0,
             unitCostSnapshot: product ? product.unitCost : 0,
+            sellUnitSnapshot: product ? product.sellUnit : "PIECE",
           };
         }),
       },
@@ -257,6 +268,7 @@ export async function updateOrder(formData: FormData) {
               quantity: l.quantity,
               sellPriceSnapshot: product ? product.sellPrice : 0,
               unitCostSnapshot: product ? product.unitCost : 0,
+              sellUnitSnapshot: product ? product.sellUnit : "PIECE",
             };
           }),
         },
@@ -401,7 +413,7 @@ export async function deleteStockUsage(formData: FormData) {
 export async function createProductionBatch(formData: FormData) {
   const user = await getCurrentUser();
   const productId = str(formData, "productId");
-  const quantity = Math.trunc(num(formData, "quantity"));
+  const quantity = num(formData, "quantity");
   const product = await prisma.product.findFirst({ where: { id: productId, userId: user.id } });
   if (!product || quantity <= 0) {
     throw new Error("Choisissez un produit et une quantité valide.");
@@ -427,7 +439,7 @@ export async function updateProductionBatch(formData: FormData) {
   const user = await getCurrentUser();
   const id = str(formData, "id");
   const productId = str(formData, "productId");
-  const quantity = Math.trunc(num(formData, "quantity"));
+  const quantity = num(formData, "quantity");
   const product = await prisma.product.findFirst({ where: { id: productId, userId: user.id } });
   if (!product || quantity <= 0) {
     throw new Error("Choisissez un produit et une quantité valide.");

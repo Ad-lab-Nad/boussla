@@ -3,6 +3,7 @@ import { getCurrentUser } from "@/lib/current-user";
 import { getFinishedStock, getProductionBatches, getProducts } from "@/lib/gestion/queries";
 import { createProductionBatch, deleteProductionBatch, updateProductionBatch } from "@/lib/gestion/actions";
 import { todayStr } from "@/lib/gestion/format";
+import { fmtQty } from "@/lib/gestion/product-units";
 import { ConfirmSubmitButton } from "@/components/gestion/ConfirmSubmitButton";
 import { EditProductionBatchButton } from "@/components/gestion/EditProductionBatchButton";
 
@@ -39,7 +40,7 @@ export default async function ProduitsFinisPage() {
           </div>
           <div className="g-field">
             <label>Quantité produite</label>
-            <input type="number" name="quantity" min="1" step="1" required />
+            <input type="number" name="quantity" min="0.001" step="any" required />
           </div>
           <button type="submit" className="g-btn" disabled={products.length === 0}>
             <Plus size={15} /> Ajouter le lot
@@ -63,13 +64,13 @@ export default async function ProduitsFinisPage() {
               {finishedStock.map(({ product, totalProduced, totalSold, available }) => (
                 <tr key={product.id}>
                   <td>{product.name}</td>
-                  <td className="right num">{totalProduced}</td>
-                  <td className="right num">{totalSold}</td>
+                  <td className="right num">{fmtQty(totalProduced, product.sellUnit)}</td>
+                  <td className="right num">{fmtQty(totalSold, product.sellUnit)}</td>
                   <td
                     className="right num"
                     style={available <= 0 ? { color: "var(--g-critical)", fontWeight: 700 } : undefined}
                   >
-                    {available}
+                    {fmtQty(available, product.sellUnit)}
                   </td>
                 </tr>
               ))}
@@ -98,7 +99,7 @@ export default async function ProduitsFinisPage() {
                 <tr key={b.id}>
                   <td className="num">{b.date.toISOString().slice(0, 10)}</td>
                   <td>{b.product.name}</td>
-                  <td className="right num">{b.quantity}</td>
+                  <td className="right num">{fmtQty(b.quantity, b.product.sellUnit)}</td>
                   <td style={{ display: "flex", gap: 2 }}>
                     <EditProductionBatchButton
                       batch={b}

@@ -4,8 +4,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Pencil, Plus, X } from "lucide-react";
 import { fmt } from "@/lib/gestion/format";
+import { fmtPrice } from "@/lib/gestion/product-units";
 
-type Product = { id: string; name: string; sellPrice: number; unitCost: number };
+type Product = { id: string; name: string; sellPrice: number; unitCost: number; sellUnit: string };
 type OrderLine = { productId: string | null; quantity: number };
 type Order = {
   id: string;
@@ -178,20 +179,20 @@ export function EditOrderButton({
                       >
                         {products.map((p) => (
                           <option key={p.id} value={p.id}>
-                            {p.name}
+                            {p.name} — {fmtPrice(p.sellPrice, p.sellUnit)}
                           </option>
                         ))}
                       </select>
                       <input
                         type="number"
-                        min="1"
-                        step="1"
+                        min="0.001"
+                        step="any"
                         value={line.quantity}
                         onChange={(e) =>
                           setLines((prev) =>
                             prev.map((l) =>
                               l.id === line.id
-                                ? { ...l, quantity: parseInt(e.target.value, 10) || 0 }
+                                ? { ...l, quantity: parseFloat(e.target.value) || 0 }
                                 : l
                             )
                           )

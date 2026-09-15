@@ -18,6 +18,7 @@ import {
   todayStr,
   monthKeyFromDateStr,
 } from "@/lib/gestion/format";
+import { fmtQty } from "@/lib/gestion/product-units";
 import { AutoSubmitSelect } from "@/components/gestion/AutoSubmitSelect";
 import { KpiCard } from "@/components/gestion/KpiCard";
 import { RevenueTrendChart } from "@/components/gestion/RevenueTrendChart";
@@ -154,7 +155,7 @@ export default async function DashboardPage({
               {totals.topProducts.map((r) => (
                 <tr key={r.key}>
                   <td>{r.name}</td>
-                  <td className="right num">{fmtNumber(r.quantity)}</td>
+                  <td className="right num">{fmtQty(r.quantity, r.sellUnit)}</td>
                   <td className="right num">{fmt(r.revenue)}</td>
                 </tr>
               ))}

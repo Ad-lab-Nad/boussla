@@ -3,8 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Pencil, X } from "lucide-react";
+import { SELL_UNIT_OPTIONS } from "@/lib/gestion/product-units";
 
-type Product = { id: string; name: string; sellPrice: number; unitCost: number };
+type Product = { id: string; name: string; sellPrice: number; unitCost: number; sellUnit: string };
 
 export function EditProductButton({
   product,
@@ -99,6 +100,18 @@ export function EditProductButton({
                       required
                     />
                   </div>
+                  {!isServices && (
+                    <div className="g-field">
+                      <label>Unité de vente</label>
+                      <select name="sellUnit" defaultValue={product.sellUnit}>
+                        {SELL_UNIT_OPTIONS.map((opt) => (
+                          <option key={opt.value} value={opt.value}>
+                            {opt.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
                 </div>
                 <div className="g-hint" style={{ marginTop: 12, marginBottom: 0 }}>
                   Les commandes déjà enregistrées gardent leur prix et coût d&apos;origine —

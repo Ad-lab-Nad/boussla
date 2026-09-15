@@ -84,8 +84,8 @@ export function EditProductionBatchButton({
                     <input
                       type="number"
                       name="quantity"
-                      min="1"
-                      step="1"
+                      min="0.001"
+                      step="any"
                       defaultValue={batch.quantity}
                       required
                     />

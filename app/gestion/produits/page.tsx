@@ -2,7 +2,7 @@ import { Plus } from "lucide-react";
 import { getCurrentUser } from "@/lib/current-user";
 import { getProducts } from "@/lib/gestion/queries";
 import { createProduct, deleteProduct, updateProduct } from "@/lib/gestion/actions";
-import { fmt } from "@/lib/gestion/format";
+import { SELL_UNIT_LABELS, SELL_UNIT_OPTIONS, fmtPrice } from "@/lib/gestion/product-units";
 import { ConfirmSubmitButton } from "@/components/gestion/ConfirmSubmitButton";
 import { ImportProductsButton } from "@/components/gestion/ImportProductsButton";
 import { EditProductButton } from "@/components/gestion/EditProductButton";
@@ -42,6 +42,18 @@ export default async function ProduitsPage() {
             <label>Coût unitaire (DT)</label>
             <input type="number" name="unitCost" min="0" step="0.01" required />
           </div>
+          {!isServices && (
+            <div className="g-field">
+              <label>Unité de vente</label>
+              <select name="sellUnit" defaultValue="PIECE">
+                {SELL_UNIT_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
           <button type="submit" className="g-btn">
             <Plus size={15} /> Ajouter
           </button>
@@ -65,6 +77,7 @@ export default async function ProduitsPage() {
             <thead>
               <tr>
                 <th>{isServices ? "Prestation" : "Produit"}</th>
+                {!isServices && <th>Unité</th>}
                 <th className="right">Prix vente</th>
                 <th className="right">Coût unitaire</th>
                 <th className="right">Marge/unité</th>
@@ -75,9 +88,10 @@ export default async function ProduitsPage() {
               {products.map((p) => (
                 <tr key={p.id}>
                   <td>{p.name}</td>
-                  <td className="right num">{fmt(p.sellPrice)}</td>
-                  <td className="right num">{fmt(p.unitCost)}</td>
-                  <td className="right num">{fmt(p.sellPrice - p.unitCost)}</td>
+                  {!isServices && <td>{SELL_UNIT_LABELS[p.sellUnit]}</td>}
+                  <td className="right num">{fmtPrice(p.sellPrice, p.sellUnit)}</td>
+                  <td className="right num">{fmtPrice(p.unitCost, p.sellUnit)}</td>
+                  <td className="right num">{fmtPrice(p.sellPrice - p.unitCost, p.sellUnit)}</td>
                   <td style={{ display: "flex", gap: 2 }}>
                     <EditProductButton
                       product={p}

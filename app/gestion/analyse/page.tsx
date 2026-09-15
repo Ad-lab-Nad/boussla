@@ -5,7 +5,8 @@ import {
   getProductMovement,
   type AnalysisPeriod,
 } from "@/lib/gestion/queries";
-import { fmt, fmtNumber, monthLabel, monthKeyFromDateStr, todayStr } from "@/lib/gestion/format";
+import { fmt, monthLabel, monthKeyFromDateStr, todayStr } from "@/lib/gestion/format";
+import { fmtQty } from "@/lib/gestion/product-units";
 import { AutoSubmitSelect } from "@/components/gestion/AutoSubmitSelect";
 import { AnalysisTrendChart } from "@/components/gestion/AnalysisTrendChart";
 import { ExpenseCategoryChart } from "@/components/gestion/ExpenseCategoryChart";
@@ -140,8 +141,8 @@ export default async function AnalysePage({
                 {productMovement.map((row) => (
                   <tr key={row.product.id}>
                     <td>{row.product.name}</td>
-                    <td className="right num">{fmtNumber(row.soldThisMonth)}</td>
-                    <td className="right num">{fmtNumber(row.producedThisMonth)}</td>
+                    <td className="right num">{fmtQty(row.soldThisMonth, row.product.sellUnit)}</td>
+                    <td className="right num">{fmtQty(row.producedThisMonth, row.product.sellUnit)}</td>
                     <td
                       className="right num"
                       style={
@@ -150,7 +151,7 @@ export default async function AnalysePage({
                           : undefined
                       }
                     >
-                      {fmtNumber(row.availableAtMonthEnd)}
+                      {fmtQty(row.availableAtMonthEnd, row.product.sellUnit)}
                     </td>
                   </tr>
                 ))}

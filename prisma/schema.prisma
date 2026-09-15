@@ -320,6 +320,13 @@ enum PaymentMethod {
   OTHER
 }
 
+enum SellUnit {
+  PIECE
+  KG
+  GRAM
+  LITRE
+}
+
 model Product {
   id     String @id @default(cuid())
   userId String
@@ -328,6 +335,10 @@ model Product {
   name      String
   sellPrice Float
   unitCost  Float
+  // sellPrice/unitCost are "per sellUnit" — 25 for a Kg-priced product means
+  // 25 DT/kg, not 25 DT for the whole batch. Pièce (the default) is the one
+  // unit that needed no explicit callout before this field existed.
+  sellUnit  SellUnit @default(PIECE)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -389,7 +400,9 @@ model ProductionBatch {
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   date     DateTime
-  quantity Int
+  // Float, not Int: a Kg/Gramme/Litre-priced product can produce a
+  // fractional batch (1.5 kg of confiture), same reasoning as OrderLine.
+  quantity Float
 
   createdAt DateTime @default(now())
 
@@ -433,9 +446,14 @@ model OrderLine {
   product   Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
 
   productNameSnapshot String
-  quantity            Int
+  // Float, not Int: a Kg/Gramme/Litre-priced product sells in fractional
+  // amounts (1.5 kg, 250 g).
+  quantity            Float
   sellPriceSnapshot   Float
   unitCostSnapshot    Float
+  // Snapshotted alongside the price/cost so a later change to the product's
+  // sellUnit never reinterprets what an already-placed order line meant.
+  sellUnitSnapshot    SellUnit
 
   createdAt DateTime @default(now())
 

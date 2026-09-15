@@ -31,6 +31,7 @@ export type OrderLineLike = {
   quantity: number;
   sellPriceSnapshot: number;
   unitCostSnapshot: number;
+  sellUnitSnapshot: string;
 };
 
 export type OrderLike = {
@@ -61,7 +62,13 @@ export function orderCashDate(order: Pick<OrderLike, "date" | "paymentMethod" | 
   return order.date;
 }
 
-export type TopProductRow = { key: string; name: string; quantity: number; revenue: number };
+export type TopProductRow = {
+  key: string;
+  name: string;
+  quantity: number;
+  revenue: number;
+  sellUnit: string;
+};
 
 export type DashboardTotals = {
   revenue: number; // CA (livré)
@@ -112,6 +119,7 @@ export function computeDashboardTotals(params: {
         name: line.productNameSnapshot,
         quantity: 0,
         revenue: 0,
+        sellUnit: line.sellUnitSnapshot,
       };
       row.quantity += line.quantity;
       row.revenue += lineAmount;

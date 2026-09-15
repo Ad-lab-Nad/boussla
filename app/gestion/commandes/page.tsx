@@ -9,6 +9,7 @@ import {
   updateOrderStatus,
 } from "@/lib/gestion/actions";
 import { fmt } from "@/lib/gestion/format";
+import { fmtQty } from "@/lib/gestion/product-units";
 import { ConfirmSubmitButton } from "@/components/gestion/ConfirmSubmitButton";
 import { AutoSubmitSelect } from "@/components/gestion/AutoSubmitSelect";
 import { EditOrderButton } from "@/components/gestion/EditOrderButton";
@@ -115,7 +116,7 @@ export default async function CommandesPage({
             <tbody>
               {orders.map((order) => {
                 const label = order.lines
-                  .map((l) => `${l.productNameSnapshot} ×${l.quantity}`)
+                  .map((l) => `${l.productNameSnapshot} ×${fmtQty(l.quantity, l.sellUnitSnapshot)}`)
                   .join(", ");
                 return (
                   <tr key={order.id}>
