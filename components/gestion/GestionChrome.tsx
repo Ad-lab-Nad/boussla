@@ -15,8 +15,10 @@ import {
   Menu,
   X,
   LogOut,
+  ShieldCheck,
 } from "lucide-react";
 import { signOut } from "@/lib/auth-actions";
+import { ADMIN_EMAIL } from "@/lib/admin-email";
 
 type ActivityType = "PRODUCTS" | "SERVICES";
 
@@ -111,6 +113,12 @@ export function GestionChrome({
             <CreditCard />
             Abonnement
           </Link>
+          {userEmail === ADMIN_EMAIL && (
+            <Link href="/admin" className="g-nav-item" onClick={() => setOpen(false)}>
+              <ShieldCheck />
+              Back office
+            </Link>
+          )}
           <form action={signOut}>
             <button type="submit" className="g-nav-item g-logout-btn">
               <LogOut />

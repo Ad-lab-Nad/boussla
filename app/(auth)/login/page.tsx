@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { LoginForm } from "./LoginForm";
+import { FeedbackForm } from "@/components/FeedbackForm";
 
 export default async function LoginPage({
   searchParams,
@@ -32,6 +33,8 @@ export default async function LoginPage({
       <div className="g-auth-footer">
         Pas encore de compte ? <Link href="/signup">Créer un compte</Link>
       </div>
+
+      <FeedbackForm />
     </div>
   );
 }

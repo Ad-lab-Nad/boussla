@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { ADMIN_EMAIL } from "@/lib/admin-email";
 
 const AUTH_PAGES = ["/login", "/signup", "/forgot-password"];
 
@@ -36,7 +37,8 @@ export async function updateSession(request: NextRequest) {
   const isAuthenticated = Boolean(data?.claims);
 
   const { pathname } = request.nextUrl;
-  const isProtected = pathname.startsWith("/gestion");
+  const isAdminRoute = pathname.startsWith("/admin");
+  const isProtected = pathname.startsWith("/gestion") || isAdminRoute;
   // The password-recovery link signs the visitor into a temporary session so
   // they can set a new one — never bounce them away from this page for
   // "already being logged in".
@@ -46,6 +48,16 @@ export async function updateSession(request: NextRequest) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     url.searchParams.set("next", pathname);
+    return NextResponse.redirect(url);
+  }
+
+  // /admin is further restricted to a single account — everyone else who's
+  // authenticated gets bounced to their own dashboard, not to /login (which
+  // would look like a broken link rather than "not for you").
+  if (isAuthenticated && isAdminRoute && data?.claims?.email !== ADMIN_EMAIL) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/gestion";
+    url.search = "";
     return NextResponse.redirect(url);
   }
 

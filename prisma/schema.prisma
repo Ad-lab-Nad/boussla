@@ -458,6 +458,19 @@ enum ExpenseCategory {
   OTHER
 }
 
+// Submitted from the public login page's feedback form — not tied to a
+// User row, since someone locked out or without an account yet may still
+// want to reach out.
+model Feedback {
+  id      String @id @default(cuid())
+  email   String
+  message String
+
+  createdAt DateTime @default(now())
+
+  @@map("feedback")
+}
+
 model Expense {
   id     String @id @default(cuid())
   userId String

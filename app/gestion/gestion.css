@@ -312,7 +312,8 @@
 }
 
 .g-field input,
-.g-field select {
+.g-field select,
+.g-field textarea {
   border: 1.5px solid var(--g-border);
   background: var(--g-surface-2);
   border-radius: 9px;
@@ -323,8 +324,13 @@
   font-family: inherit;
 }
 
+.g-field textarea {
+  resize: vertical;
+}
+
 .g-field input:focus,
-.g-field select:focus {
+.g-field select:focus,
+.g-field textarea:focus {
   outline: none;
   border-color: var(--g-blue);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--g-blue) 18%, transparent);
