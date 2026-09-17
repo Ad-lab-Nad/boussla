@@ -532,15 +532,47 @@ select.g-status-select {
 
 /* ================== OBJECTIF DU MOIS ================== */
 
+.g-goal-stat {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  margin-bottom: 12px;
+}
+
+.g-goal-stat__value {
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.g-goal-stat__target {
+  font-size: 0.85rem;
+  color: var(--g-muted);
+}
+
+.g-goal-stat__pct {
+  margin-left: auto;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--g-blue);
+}
+
+.g-goal-stat__pct.reached {
+  color: var(--g-success-text);
+}
+
 .g-goal-bar {
-  height: 10px;
+  height: 12px;
   border-radius: 999px;
   background: var(--g-grid);
+  border: 1px solid var(--g-border);
   overflow: hidden;
 }
 
 .g-goal-bar__fill {
   height: 100%;
+  min-width: 4px;
   border-radius: 999px;
   background: var(--g-blue);
   transition: width 0.3s ease;
@@ -550,10 +582,26 @@ select.g-status-select {
   background: var(--g-good);
 }
 
-.g-goal-bar__caption {
-  margin-top: 8px;
-  font-size: 0.82rem;
+.g-goal-message {
+  margin-top: 14px;
+  font-size: 0.88rem;
   color: var(--g-ink-2);
+}
+
+.g-goal-message strong {
+  color: var(--g-ink);
+}
+
+.g-goal-message--pace {
+  margin-top: 6px;
+  font-size: 0.78rem;
+  color: var(--g-muted);
+}
+
+.g-goal-form__actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
 }
 
 /* ================== KPI / STAT TILES ================== */

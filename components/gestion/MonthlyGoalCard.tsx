@@ -59,9 +59,9 @@ export function MonthlyGoalCard({
           Fixe un objectif de chiffre d&apos;affaires pour {monthLabel(month)} — le reste se
           calcule tout seul.
         </div>
-        <form action={handleSubmit} className="g-field-grid">
+        <form action={handleSubmit}>
           <input type="hidden" name="month" value={month} />
-          <div className="g-field">
+          <div className="g-field" style={{ maxWidth: 220 }}>
             <label>Objectif de CA (DT)</label>
             <input
               type="number"
@@ -72,14 +72,16 @@ export function MonthlyGoalCard({
               required
             />
           </div>
-          <button type="submit" className="g-btn" disabled={submitting}>
-            {submitting ? "Enregistrement..." : "Définir l'objectif"}
-          </button>
-          {targetRevenue !== null && (
-            <button type="button" className="g-btn secondary" onClick={() => setEditing(false)}>
-              Annuler
+          <div className="g-goal-form__actions">
+            <button type="submit" className="g-btn" disabled={submitting}>
+              {submitting ? "Enregistrement..." : "Définir l'objectif"}
             </button>
-          )}
+            {targetRevenue !== null && (
+              <button type="button" className="g-btn secondary" onClick={() => setEditing(false)}>
+                Annuler
+              </button>
+            )}
+          </div>
         </form>
         {error && (
           <div className="g-auth-error" style={{ marginTop: 12, marginBottom: 0 }}>
@@ -113,34 +115,37 @@ export function MonthlyGoalCard({
         </button>
       </div>
 
+      <div className="g-goal-stat">
+        <span className="g-goal-stat__value num">{fmt(revenueSoFar)}</span>
+        <span className="g-goal-stat__target">
+          sur <strong className="num">{fmt(targetRevenue)}</strong>
+        </span>
+        <span className={`g-goal-stat__pct ${reached ? "reached" : ""}`}>
+          {Math.round(progressPct)}%
+        </span>
+      </div>
+
       <div className="g-goal-bar">
         <div
           className={`g-goal-bar__fill ${reached ? "reached" : ""}`}
           style={{ width: `${Math.min(100, Math.max(0, progressPct))}%` }}
         />
       </div>
-      <div className="g-goal-bar__caption">
-        <strong className="num">{fmt(revenueSoFar)}</strong> sur{" "}
-        <strong className="num">{fmt(targetRevenue)}</strong> ({Math.round(progressPct)}%)
-      </div>
 
       {reached ? (
-        <div
-          className="g-hint"
-          style={{ marginTop: 12, marginBottom: 0, color: "var(--g-success-text)" }}
-        >
+        <div className="g-goal-message" style={{ color: "var(--g-success-text)" }}>
           🎉 Objectif atteint
           {revenueSoFar > targetRevenue && ` — dépassé de ${fmt(revenueSoFar - targetRevenue)}`} !
         </div>
       ) : (
-        <div className="g-hint" style={{ marginTop: 12, marginBottom: 0 }}>
+        <div className="g-goal-message">
           Il te reste <strong className="num">{fmt(remaining)}</strong> à vendre pour atteindre
           l&apos;objectif.
         </div>
       )}
 
       {isCurrentMonth && !reached && (
-        <div className="g-hint" style={{ marginBottom: 0 }}>
+        <div className="g-goal-message--pace">
           {daysLeft} jour{daysLeft > 1 ? "s" : ""} restant{daysLeft > 1 ? "s" : ""} ce mois-ci
           {unitsPerDayRounded !== null
             ? ` — environ ${fmtNumber(unitsPerDayRounded)} unité${unitsPerDayRounded > 1 ? "s" : ""}/jour pour y arriver, au prix moyen de ton catalogue.`
@@ -149,7 +154,7 @@ export function MonthlyGoalCard({
       )}
 
       {!isCurrentMonth && !reached && (
-        <div className="g-hint" style={{ marginBottom: 0 }}>
+        <div className="g-goal-message--pace">
           Passe sur le mois en cours pour voir le rythme quotidien à tenir.
         </div>
       )}
