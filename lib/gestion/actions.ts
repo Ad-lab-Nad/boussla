@@ -528,3 +528,21 @@ export async function deleteExpense(formData: FormData) {
   await prisma.expense.deleteMany({ where: { id, userId: user.id } });
   revalidateGestion("/gestion/depenses");
 }
+
+// ---------- OBJECTIF MENSUEL ----------
+
+export async function setMonthlyGoal(formData: FormData) {
+  const user = await getCurrentUser();
+  const month = str(formData, "month");
+  const targetRevenue = num(formData, "targetRevenue");
+  if (!/^\d{4}-\d{2}$/.test(month)) throw new Error("Mois invalide.");
+  if (targetRevenue <= 0) {
+    throw new Error("Indique un objectif de chiffre d'affaires valide.");
+  }
+  await prisma.monthlyGoal.upsert({
+    where: { userId_month: { userId: user.id, month } },
+    update: { targetRevenue },
+    create: { userId: user.id, month, targetRevenue },
+  });
+  revalidateGestion("/gestion");
+}

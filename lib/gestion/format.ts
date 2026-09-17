@@ -25,6 +25,12 @@ export function monthKeyFromDateStr(d: string): string {
   return d.slice(0, 7);
 }
 
+/** Days left in `now`'s calendar month, counting today itself. */
+export function daysRemainingInMonth(now: Date = new Date()): number {
+  const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+  return lastDay - now.getDate() + 1;
+}
+
 /** A stored DateTime (always parsed at UTC midnight) -> "YYYY-MM" */
 export function monthKeyFromDate(d: Date): string {
   return d.toISOString().slice(0, 7);

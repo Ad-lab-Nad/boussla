@@ -208,3 +208,39 @@ export function rankAndFoldCategories(
     chartCategories: fallbackOption ? [...shown, fallbackOption] : shown,
   };
 }
+
+export type MonthlyGoalProgress = {
+  targetRevenue: number;
+  revenueSoFar: number;
+  remaining: number; // max(0, target - soFar) — never negative, nothing to "catch up on" once past it
+  progressPct: number; // uncapped (can exceed 100 once the goal is beaten) — the UI clamps the bar itself
+  reached: boolean;
+};
+
+export function computeGoalProgress(targetRevenue: number, revenueSoFar: number): MonthlyGoalProgress {
+  return {
+    targetRevenue,
+    revenueSoFar,
+    remaining: Math.max(0, targetRevenue - revenueSoFar),
+    progressPct: targetRevenue > 0 ? (revenueSoFar / targetRevenue) * 100 : 0,
+    reached: revenueSoFar >= targetRevenue,
+  };
+}
+
+/**
+ * Roughly how many catalog units/day would need to sell to close the
+ * remaining gap by month end, from the average sell price across the
+ * product catalog — a deliberately simple estimate, not unit-aware (mixing
+ * Kg/Gramme/Litre/Pièce products averages their prices as plain numbers).
+ * Null when there isn't enough information to estimate: no days left in
+ * the month, or an empty/free catalog.
+ */
+export function estimateUnitsPerDay(
+  remaining: number,
+  daysLeft: number,
+  avgSellPrice: number | null
+): number | null {
+  if (remaining <= 0) return 0;
+  if (daysLeft <= 0 || !avgSellPrice || avgSellPrice <= 0) return null;
+  return remaining / avgSellPrice / daysLeft;
+}

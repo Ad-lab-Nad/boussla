@@ -24,6 +24,17 @@ export async function getProducts(userId: string) {
   });
 }
 
+/** Simple mean of sellPrice across the catalog — null with an empty catalog. */
+export async function getAverageSellPrice(userId: string): Promise<number | null> {
+  const products = await getProducts(userId);
+  if (products.length === 0) return null;
+  return products.reduce((sum, p) => sum + p.sellPrice, 0) / products.length;
+}
+
+export async function getMonthlyGoal(userId: string, month: string) {
+  return prisma.monthlyGoal.findUnique({ where: { userId_month: { userId, month } } });
+}
+
 export async function getStockItems(userId: string) {
   const items = await prisma.stockItem.findMany({
     where: { userId },

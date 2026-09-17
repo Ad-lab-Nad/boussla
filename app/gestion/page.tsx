@@ -9,7 +9,14 @@ import {
   Wallet,
 } from "lucide-react";
 import { getCurrentUser } from "@/lib/current-user";
-import { getAvailableMonthKeys, getDashboardData } from "@/lib/gestion/queries";
+import {
+  getAverageSellPrice,
+  getAvailableMonthKeys,
+  getDashboardData,
+  getMonthlyGoal,
+} from "@/lib/gestion/queries";
+import { setMonthlyGoal } from "@/lib/gestion/actions";
+import { computeGoalProgress, estimateUnitsPerDay } from "@/lib/gestion/calculations";
 import {
   fmt,
   fmtNumber,
@@ -17,10 +24,12 @@ import {
   monthLabel,
   todayStr,
   monthKeyFromDateStr,
+  daysRemainingInMonth,
 } from "@/lib/gestion/format";
 import { fmtQty } from "@/lib/gestion/product-units";
 import { AutoSubmitSelect } from "@/components/gestion/AutoSubmitSelect";
 import { KpiCard } from "@/components/gestion/KpiCard";
+import { MonthlyGoalCard } from "@/components/gestion/MonthlyGoalCard";
 import { RevenueTrendChart } from "@/components/gestion/RevenueTrendChart";
 import { TopProductsChart } from "@/components/gestion/TopProductsChart";
 
@@ -37,7 +46,20 @@ export default async function DashboardPage({
   const month =
     requestedMonth && monthOptions.includes(requestedMonth) ? requestedMonth : currentMonth;
 
-  const { totals, previousTotals, trend, stockAlerts } = await getDashboardData(user.id, month);
+  const [{ totals, previousTotals, trend, stockAlerts }, monthlyGoal, avgSellPrice] =
+    await Promise.all([
+      getDashboardData(user.id, month),
+      getMonthlyGoal(user.id, month),
+      getAverageSellPrice(user.id),
+    ]);
+
+  const isCurrentMonth = month === currentMonth;
+  const daysLeft = isCurrentMonth ? daysRemainingInMonth() : 0;
+  const goalProgress = monthlyGoal ? computeGoalProgress(monthlyGoal.targetRevenue, totals.revenue) : null;
+  const unitsPerDay =
+    goalProgress && isCurrentMonth
+      ? estimateUnitsPerDay(goalProgress.remaining, daysLeft, avgSellPrice)
+      : null;
 
   return (
     <>
@@ -51,6 +73,19 @@ export default async function DashboardPage({
           />
         </div>
       </form>
+
+      <MonthlyGoalCard
+        month={month}
+        targetRevenue={monthlyGoal?.targetRevenue ?? null}
+        revenueSoFar={totals.revenue}
+        remaining={goalProgress?.remaining ?? 0}
+        progressPct={goalProgress?.progressPct ?? 0}
+        reached={goalProgress?.reached ?? false}
+        isCurrentMonth={isCurrentMonth}
+        daysLeft={daysLeft}
+        unitsPerDay={unitsPerDay}
+        setMonthlyGoalAction={setMonthlyGoal}
+      />
 
       <div className="g-kpi-grid">
         <KpiCard
