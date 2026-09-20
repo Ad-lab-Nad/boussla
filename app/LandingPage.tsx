@@ -1,7 +1,15 @@
 import Link from "next/link";
-import { CheckCircle2, Eye, Package, Trophy, Wallet } from "lucide-react";
+import { Eye, Package, Trophy, Wallet } from "lucide-react";
 import { AmbianceIllustration } from "./AmbianceIllustration";
 import { DashboardPreview } from "./DashboardPreview";
+import { getActiveHomepageBlocks } from "@/lib/homepage/queries";
+import {
+  parseArgumentaireContent,
+  parseHeroContent,
+  parseOffresContent,
+  parseTemoignagesContent,
+} from "@/lib/homepage/types";
+import { ArgumentaireSection, HeroSection, OffresSection, TemoignagesSection } from "./HomepageBlocks";
 import "./landing.css";
 
 const VALUES = [
@@ -31,7 +39,46 @@ const VALUES = [
   },
 ];
 
-export function LandingPage() {
+// The illustration+dashboard-preview demo and the "Nos valeurs" grid don't
+// match any of the block types Nada asked for (Argumentaire is a single
+// title/text/image, not an icon grid) — converting them would be a visual
+// regression she didn't request, so they stay fixed here, piggybacked onto
+// the Hero block's position in the ordered list.
+function DefaultHeroVisual() {
+  return (
+    <section className="l-media">
+      <div className="l-ambiance">
+        <AmbianceIllustration />
+      </div>
+      <DashboardPreview />
+    </section>
+  );
+}
+
+function ValuesSection() {
+  return (
+    <section className="l-values">
+      <div className="l-value-grid">
+        {VALUES.map((v) => {
+          const Icon = v.icon;
+          return (
+            <div className="l-value-card" key={v.title}>
+              <div className={`l-value-card__icon g-kpi__icon--${v.tone}`}>
+                <Icon />
+              </div>
+              <h3>{v.title}</h3>
+              <p>{v.text}</p>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+export async function LandingPage() {
+  const blocks = await getActiveHomepageBlocks();
+
   return (
     <div className="gestion landing">
       <nav className="l-nav">
@@ -44,62 +91,42 @@ export function LandingPage() {
         </Link>
       </nav>
 
-      <section className="l-hero">
-        <h1>Sais-tu vraiment combien tu gagnes ce mois-ci ?</h1>
-        <p>
-          Entre les commandes, le stock et les dépenses, la gestion prend vite le dessus. Résultat
-          : tes vrais chiffres — ce qu&apos;il te reste une fois tout payé — arrivent toujours en
-          dernier, quand il est trop tard pour réagir.
-        </p>
-        <p className="l-solution">
-          Boussla te dit, chaque mois, combien ton activité gagne réellement — sans tableur, sans
-          prise de tête.
-        </p>
-
-        <div className="l-cta-group">
-          <Link href="/signup" className="g-btn l-btn-large">
-            Essayer gratuitement
-          </Link>
-          <span className="l-trial-pill">
-            <CheckCircle2 />
-            14 jours gratuits, sans carte bancaire requise
-          </span>
-        </div>
-      </section>
-
-      <section className="l-media">
-        <div className="l-ambiance">
-          <AmbianceIllustration />
-        </div>
-        <DashboardPreview />
-      </section>
-
-      <section className="l-values">
-        <div className="l-value-grid">
-          {VALUES.map((v) => {
-            const Icon = v.icon;
+      {blocks.map((block) => {
+        switch (block.type) {
+          case "HERO": {
+            const content = parseHeroContent(block.content);
             return (
-              <div className="l-value-card" key={v.title}>
-                <div className={`l-value-card__icon g-kpi__icon--${v.tone}`}>
-                  <Icon />
-                </div>
-                <h3>{v.title}</h3>
-                <p>{v.text}</p>
+              <div key={block.id}>
+                <HeroSection content={content} />
+                {content.imageUrl ? (
+                  <section className="l-media">
+                    <div className="l-ambiance">
+                      {/* eslint-disable-next-line @next/next/no-img-element -- admin-uploaded
+                          Supabase Storage URL, not a static asset next/image can optimize. */}
+                      <img src={content.imageUrl} alt="" className="l-ambiance-svg" />
+                    </div>
+                  </section>
+                ) : (
+                  <DefaultHeroVisual />
+                )}
+                <ValuesSection />
               </div>
             );
-          })}
-        </div>
-      </section>
-
-      <section className="l-pricing">
-        <div className="l-pricing-card">
-          <div className="l-price">39 DT/mois</div>
-          <div className="l-price-note">après l&apos;essai gratuit de 14 jours</div>
-          <Link href="/signup" className="g-btn l-btn-large">
-            Essayer gratuitement
-          </Link>
-        </div>
-      </section>
+          }
+          case "ARGUMENTAIRE":
+            return <ArgumentaireSection key={block.id} content={parseArgumentaireContent(block.content)} />;
+          case "OFFRES":
+            return <OffresSection key={block.id} content={parseOffresContent(block.content)} />;
+          case "TEMOIGNAGES": {
+            const content = parseTemoignagesContent(block.content);
+            if (content.items.length === 0) return null;
+            return <TemoignagesSection key={block.id} content={content} />;
+          }
+          default:
+            // FAQ is reserved in the model but has no public renderer yet.
+            return null;
+        }
+      })}
 
       <footer className="l-footer">Boussla — gestion simple pour petites activités</footer>
     </div>

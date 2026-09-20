@@ -224,32 +224,124 @@
   margin: 0;
 }
 
-.l-pricing {
-  max-width: 640px;
+.l-offers {
+  max-width: 1080px;
   margin: 0 auto;
-  padding: 0 24px 72px;
+  padding: 24px 24px 72px;
+}
+
+.l-offer-features {
+  list-style: none;
+  margin: 14px 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: left;
+  font-size: 0.85rem;
+  color: var(--g-ink-2);
+}
+
+.l-offer-features li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.l-offer-features svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--g-good);
+}
+
+.l-argumentaire {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 24px 24px 64px;
+}
+
+.l-argumentaire-inner {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+
+.l-argumentaire-inner > div {
+  flex: 1 1 320px;
+}
+
+.l-argumentaire-inner h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0 0 12px;
+}
+
+.l-argumentaire-inner p {
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: var(--g-ink-2);
+  margin: 0;
+  white-space: pre-line;
+}
+
+.l-argumentaire-image {
+  flex: 1 1 320px;
+  max-width: 420px;
+  width: 100%;
+  border-radius: var(--g-radius);
+  box-shadow: var(--g-shadow);
+  display: block;
+}
+
+.l-temoignages {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 24px 24px 72px;
   text-align: center;
 }
 
-.l-pricing-card {
+.l-temoignages h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0 0 24px;
+}
+
+.l-temoignage-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  text-align: left;
+}
+
+.l-temoignage-card {
   background: var(--g-surface);
   border: 1px solid var(--g-border);
   border-radius: var(--g-radius);
   box-shadow: var(--g-shadow);
-  padding: 40px 32px;
+  padding: 22px 20px;
 }
 
-.l-pricing-card .l-price {
-  font-family: var(--font-gestion-mono), ui-monospace, monospace;
-  font-size: 2.1rem;
+.l-temoignage-quote {
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: var(--g-ink-2);
+  margin: 0 0 14px;
+}
+
+.l-temoignage-author {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   font-weight: 700;
-  margin: 6px 0 4px;
+  font-size: 0.85rem;
 }
 
-.l-pricing-card .l-price-note {
-  font-size: 0.82rem;
-  color: var(--g-muted);
-  margin: 0 0 26px;
+.l-temoignage-photo {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 .l-footer {

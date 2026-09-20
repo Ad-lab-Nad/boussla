@@ -23,10 +23,18 @@ export const metadata: Metadata = {
     "Boussla te dit, chaque mois, combien ton activité gagne réellement : bénéfice réel, impayés, alertes stock, top produits. 14 jours gratuits, sans carte bancaire.",
 };
 
-export default async function Home() {
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<{ preview?: string }>;
+}) {
+  const { preview } = await searchParams;
   const supabase = await createClient();
   const { data } = await supabase.auth.getClaims();
-  if (data?.claims) redirect("/gestion");
+  // Logged-in visitors normally get bounced to their dashboard — except the
+  // admin's own "Aperçu" link from /admin/accueil, which needs to actually
+  // show the public page while she's signed in to edit it.
+  if (data?.claims && preview !== "1") redirect("/gestion");
 
   return (
     <div className={`${inter.variable} ${jetbrainsMono.variable}`}>

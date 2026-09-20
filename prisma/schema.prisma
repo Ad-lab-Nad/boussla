@@ -529,3 +529,32 @@ model Expense {
 
   @@map("expenses")
 }
+
+// ==================== HOMEPAGE CMS ====================
+// Public landing page content, editable from /admin/accueil without a
+// developer. Not scoped to a User — this is global site content, not
+// per-tenant business data.
+
+enum HomepageBlockType {
+  HERO
+  ARGUMENTAIRE
+  OFFRES
+  TEMOIGNAGES
+  FAQ // reserved — no editor or public rendering yet
+}
+
+model HomepageBlock {
+  id     String            @id @default(cuid())
+  type   HomepageBlockType
+  // Position across ALL blocks (active or not) — see lib/homepage/actions.ts.
+  order  Int
+  active Boolean           @default(true)
+  // Shape depends on `type` — see lib/homepage/types.ts for the per-type
+  // TypeScript shape and the defensive parser that reads this back.
+  content Json
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("homepage_blocks")
+}

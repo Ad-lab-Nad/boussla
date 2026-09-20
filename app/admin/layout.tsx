@@ -4,6 +4,7 @@ import Link from "next/link";
 import { LayoutDashboard, LogOut } from "lucide-react";
 import { requireAdmin } from "@/lib/admin";
 import { signOut } from "@/lib/auth-actions";
+import { AdminTabs } from "@/components/AdminTabs";
 import "@/app/gestion/gestion.css";
 
 // Reads live subscription/feedback data — never prerender at build time.
@@ -44,6 +45,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           </form>
         </div>
       </div>
+      <AdminTabs />
       <div className="g-page-body">{children}</div>
     </div>
   );
