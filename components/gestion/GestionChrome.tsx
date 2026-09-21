@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   LineChart,
   ShoppingCart,
+  Users,
   Package,
   Boxes,
   Tag,
@@ -35,6 +36,7 @@ function buildFullNav(activityType: ActivityType) {
       label: isServices ? "Ventes" : "Commandes",
       icon: ShoppingCart,
     },
+    { href: "/gestion/clients", label: "Clients", icon: Users },
     { href: "/gestion/stock", label: "Stock", icon: Package },
     { href: "/gestion/produits-finis", label: "Stock produits finis", icon: Boxes },
     {

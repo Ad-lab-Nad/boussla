@@ -43,6 +43,7 @@ model User {
   orders       Order[]
   expenses     Expense[]
   monthlyGoals MonthlyGoal[]
+  clients      Client[]
 
   @@map("users")
 }
@@ -447,9 +448,64 @@ model Order {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  lines OrderLine[]
+  lines       OrderLine[]
+  receivables Receivable[]
 
   @@map("orders")
+}
+
+// A client directory for tracking money owed — independent of Order.clientName
+// (free text on the order itself), since credit can be extended informally,
+// not only through a recorded commande.
+model Client {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  name  String
+  phone String?
+  email String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  receivables Receivable[]
+
+  @@index([userId])
+  @@map("clients")
+}
+
+enum ReceivableStatus {
+  PENDING
+  PARTIAL
+  PAID
+}
+
+// A créance — money a client owes. "En retard" isn't its own status: it's
+// derived (dueDate passed and status isn't PAID) rather than stored, so it
+// can never go stale — see describeReceivable in lib/gestion/calculations.ts.
+model Receivable {
+  id       String @id @default(cuid())
+  clientId String
+  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  // Optional: a receivable can stand alone (credit extended informally) or
+  // reference the order it came from.
+  orderId String?
+  order   Order?  @relation(fields: [orderId], references: [id], onDelete: SetNull)
+
+  amount     Float
+  amountPaid Float            @default(0)
+  dueDate    DateTime
+  status     ReceivableStatus @default(PENDING)
+  note       String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([clientId])
+  @@index([orderId])
+  @@map("receivables")
 }
 
 // Order lines snapshot the product's name/price/cost at order time, so a later

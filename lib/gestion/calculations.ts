@@ -244,3 +244,31 @@ export function estimateUnitsPerDay(
   if (daysLeft <= 0 || !avgSellPrice || avgSellPrice <= 0) return null;
   return remaining / avgSellPrice / daysLeft;
 }
+
+export type ReceivableLike = {
+  amount: number;
+  amountPaid: number;
+  dueDate: Date;
+  status: "PENDING" | "PARTIAL" | "PAID";
+};
+
+/**
+ * "En retard" is deliberately not a stored status — it's derived from
+ * dueDate vs. now, so it can never go stale the way a manually-set flag
+ * could (e.g. if nobody revisits a receivable after its due date passes).
+ */
+export function describeReceivable(receivable: ReceivableLike, now: Date) {
+  const remaining = Math.max(0, receivable.amount - receivable.amountPaid);
+  const isLate = receivable.status !== "PAID" && receivable.dueDate < now;
+
+  if (receivable.status === "PAID") {
+    return { label: "Payée", badge: "status-valid" as const, remaining: 0, isLate: false };
+  }
+  if (isLate) {
+    return { label: "En retard", badge: "status-error" as const, remaining, isLate: true };
+  }
+  if (receivable.status === "PARTIAL") {
+    return { label: "Partielle", badge: "status-warning" as const, remaining, isLate: false };
+  }
+  return { label: "En attente", badge: "status-warning" as const, remaining, isLate: false };
+}

@@ -546,3 +546,105 @@ export async function setMonthlyGoal(formData: FormData) {
   });
   revalidateGestion("/gestion");
 }
+
+// ---------- CLIENTS & CREANCES ----------
+
+export async function createClient(formData: FormData) {
+  const user = await getCurrentUser();
+  const name = str(formData, "name");
+  if (!name) throw new Error("Indique un nom de client.");
+  await prisma.client.create({
+    data: {
+      userId: user.id,
+      name,
+      phone: str(formData, "phone") || null,
+      email: str(formData, "email") || null,
+    },
+  });
+  revalidateGestion("/gestion/clients");
+}
+
+export async function updateClient(formData: FormData) {
+  const user = await getCurrentUser();
+  const id = str(formData, "id");
+  const name = str(formData, "name");
+  if (!name) throw new Error("Indique un nom de client.");
+  await prisma.client.updateMany({
+    where: { id, userId: user.id },
+    data: {
+      name,
+      phone: str(formData, "phone") || null,
+      email: str(formData, "email") || null,
+    },
+  });
+  revalidateGestion("/gestion/clients");
+}
+
+export async function deleteClient(formData: FormData) {
+  const user = await getCurrentUser();
+  const id = str(formData, "id");
+  await prisma.client.deleteMany({ where: { id, userId: user.id } });
+  revalidateGestion("/gestion/clients");
+}
+
+const RECEIVABLE_STATUSES = ["PENDING", "PARTIAL", "PAID"];
+
+export async function createReceivable(formData: FormData) {
+  const user = await getCurrentUser();
+  const clientId = str(formData, "clientId");
+  const amount = num(formData, "amount");
+  const client = await prisma.client.findFirst({ where: { id: clientId, userId: user.id } });
+  if (!client || amount <= 0) {
+    throw new Error("Choisis un client et un montant valide.");
+  }
+  await prisma.receivable.create({
+    data: {
+      clientId: client.id,
+      amount,
+      dueDate: dateOf(formData, "dueDate"),
+      note: str(formData, "note") || null,
+    },
+  });
+  revalidateGestion("/gestion/clients");
+}
+
+export async function updateReceivable(formData: FormData) {
+  const user = await getCurrentUser();
+  const id = str(formData, "id");
+  const amount = num(formData, "amount");
+  const amountPaid = num(formData, "amountPaid");
+  const statusRaw = str(formData, "status");
+  const status = RECEIVABLE_STATUSES.includes(statusRaw) ? statusRaw : "PENDING";
+  if (amount <= 0) throw new Error("Indique un montant valide.");
+  await prisma.receivable.updateMany({
+    where: { id, client: { userId: user.id } },
+    data: {
+      amount,
+      amountPaid,
+      dueDate: dateOf(formData, "dueDate"),
+      status: status as "PENDING" | "PARTIAL" | "PAID",
+      note: str(formData, "note") || null,
+    },
+  });
+  revalidateGestion("/gestion/clients");
+}
+
+/** Quick shortcut from the table row — marks fully paid without opening the edit modal. */
+export async function markReceivablePaid(formData: FormData) {
+  const user = await getCurrentUser();
+  const id = str(formData, "id");
+  const receivable = await prisma.receivable.findFirst({ where: { id, client: { userId: user.id } } });
+  if (!receivable) return;
+  await prisma.receivable.update({
+    where: { id },
+    data: { status: "PAID", amountPaid: receivable.amount },
+  });
+  revalidateGestion("/gestion/clients");
+}
+
+export async function deleteReceivable(formData: FormData) {
+  const user = await getCurrentUser();
+  const id = str(formData, "id");
+  await prisma.receivable.deleteMany({ where: { id, client: { userId: user.id } } });
+  revalidateGestion("/gestion/clients");
+}

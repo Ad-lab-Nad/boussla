@@ -67,6 +67,22 @@ export async function getExpenses(userId: string) {
   });
 }
 
+export async function getClients(userId: string) {
+  return prisma.client.findMany({
+    where: { userId },
+    include: { receivables: true },
+    orderBy: { name: "asc" },
+  });
+}
+
+export async function getReceivables(userId: string) {
+  return prisma.receivable.findMany({
+    where: { client: { userId } },
+    include: { client: true },
+    orderBy: { dueDate: "asc" },
+  });
+}
+
 export async function getOrders(userId: string) {
   return prisma.order.findMany({
     where: { userId },
