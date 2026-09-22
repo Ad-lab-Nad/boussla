@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Pencil } from "lucide-react";
 import { fmt, fmtNumber, monthLabel } from "@/lib/gestion/format";
+import { useLocale } from "@/components/i18n/LocaleProvider";
+import { plural } from "@/lib/i18n/translate";
 
 export function MonthlyGoalCard({
   month,
@@ -28,6 +30,7 @@ export function MonthlyGoalCard({
   unitsPerDay: number | null;
   setMonthlyGoalAction: (formData: FormData) => Promise<void>;
 }) {
+  const { t, locale } = useLocale();
   const router = useRouter();
   const [editing, setEditing] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -41,7 +44,7 @@ export function MonthlyGoalCard({
       setEditing(false);
       router.refresh();
     } catch {
-      setError("Impossible d'enregistrer cet objectif. Réessaie.");
+      setError(t("gestion.dashboard.goal.saveError"));
     } finally {
       setSubmitting(false);
     }
@@ -54,15 +57,12 @@ export function MonthlyGoalCard({
   if (editing || targetRevenue === null) {
     return (
       <div className="g-card">
-        <h2>Objectif du mois</h2>
-        <div className="g-hint">
-          Fixe un objectif de chiffre d&apos;affaires pour {monthLabel(month)} — le reste se
-          calcule tout seul.
-        </div>
+        <h2>{t("gestion.dashboard.goal.title")}</h2>
+        <div className="g-hint">{t("gestion.dashboard.goal.hint", { month: monthLabel(month, locale) })}</div>
         <form action={handleSubmit}>
           <input type="hidden" name="month" value={month} />
           <div className="g-field" style={{ maxWidth: 220 }}>
-            <label>Objectif de CA (DT)</label>
+            <label>{t("gestion.dashboard.goal.targetRevenueLabel")}</label>
             <input
               type="number"
               name="targetRevenue"
@@ -74,11 +74,11 @@ export function MonthlyGoalCard({
           </div>
           <div className="g-goal-form__actions">
             <button type="submit" className="g-btn" disabled={submitting}>
-              {submitting ? "Enregistrement..." : "Définir l'objectif"}
+              {submitting ? t("gestion.editCommon.saving") : t("gestion.dashboard.goal.setGoalButton")}
             </button>
             {targetRevenue !== null && (
               <button type="button" className="g-btn secondary" onClick={() => setEditing(false)}>
-                Annuler
+                {t("gestion.editCommon.cancel")}
               </button>
             )}
           </div>
@@ -104,11 +104,11 @@ export function MonthlyGoalCard({
           marginBottom: 4,
         }}
       >
-        <h2 style={{ margin: 0 }}>Objectif du mois</h2>
+        <h2 style={{ margin: 0 }}>{t("gestion.dashboard.goal.title")}</h2>
         <button
           type="button"
           className="g-del-btn"
-          title="Modifier l'objectif"
+          title={t("gestion.dashboard.goal.editGoalTitle")}
           onClick={() => setEditing(true)}
         >
           <Pencil size={15} />
@@ -118,7 +118,7 @@ export function MonthlyGoalCard({
       <div className="g-goal-stat">
         <span className="g-goal-stat__value num">{fmt(revenueSoFar)}</span>
         <span className="g-goal-stat__target">
-          sur <strong className="num">{fmt(targetRevenue)}</strong>
+          {t("gestion.dashboard.goal.ofLabel")} <strong className="num">{fmt(targetRevenue)}</strong>
         </span>
         <span className={`g-goal-stat__pct ${reached ? "reached" : ""}`}>
           {Math.round(progressPct)}%
@@ -134,29 +134,32 @@ export function MonthlyGoalCard({
 
       {reached ? (
         <div className="g-goal-message" style={{ color: "var(--g-success-text)" }}>
-          🎉 Objectif atteint
-          {revenueSoFar > targetRevenue && ` — dépassé de ${fmt(revenueSoFar - targetRevenue)}`} !
+          {t("gestion.dashboard.goal.reached")}
+          {revenueSoFar > targetRevenue &&
+            ` ${t("gestion.dashboard.goal.exceededBy", { amount: fmt(revenueSoFar - targetRevenue) })}`}{" "}
+          !
         </div>
       ) : (
-        <div className="g-goal-message">
-          Il te reste <strong className="num">{fmt(remaining)}</strong> à vendre pour atteindre
-          l&apos;objectif.
-        </div>
+        <div className="g-goal-message">{t("gestion.dashboard.goal.remainingMessage", { amount: fmt(remaining) })}</div>
       )}
 
       {isCurrentMonth && !reached && (
         <div className="g-goal-message--pace">
-          {daysLeft} jour{daysLeft > 1 ? "s" : ""} restant{daysLeft > 1 ? "s" : ""} ce mois-ci
+          {plural(daysLeft, {
+            one: t("gestion.dashboard.goal.daysLeftOne", { days: daysLeft }),
+            other: t("gestion.dashboard.goal.daysLeftOther", { days: daysLeft }),
+          })}
           {unitsPerDayRounded !== null
-            ? ` — environ ${fmtNumber(unitsPerDayRounded)} unité${unitsPerDayRounded > 1 ? "s" : ""}/jour pour y arriver, au prix moyen de ton catalogue.`
-            : " — ajoute des produits à ton catalogue pour une estimation par jour."}
+            ? plural(unitsPerDayRounded, {
+                one: t("gestion.dashboard.goal.paceUnitsOne", { units: fmtNumber(unitsPerDayRounded) }),
+                other: t("gestion.dashboard.goal.paceUnitsOther", { units: fmtNumber(unitsPerDayRounded) }),
+              })
+            : t("gestion.dashboard.goal.paceNoData")}
         </div>
       )}
 
       {!isCurrentMonth && !reached && (
-        <div className="g-goal-message--pace">
-          Passe sur le mois en cours pour voir le rythme quotidien à tenir.
-        </div>
+        <div className="g-goal-message--pace">{t("gestion.dashboard.goal.switchToCurrentMonth")}</div>
       )}
     </div>
   );

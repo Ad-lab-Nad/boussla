@@ -1,23 +1,9 @@
 "use client";
 
-import { createContext, useContext, useMemo, useSyncExternalStore, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useMemo, useSyncExternalStore, type ReactNode } from "react";
 import { DEFAULT_LOCALE, LOCALE_COOKIE, dirFor, isLocale, type Locale } from "@/lib/i18n/config";
 import { arabicFont } from "@/lib/i18n/fonts";
-import fr from "@/lib/i18n/locales/fr.json";
-import ar from "@/lib/i18n/locales/ar.json";
-import en from "@/lib/i18n/locales/en.json";
-
-type Dictionary = typeof fr;
-const DICTIONARIES: Record<Locale, Dictionary> = { fr, ar, en };
-
-function readPath(dict: Dictionary, path: string): string | undefined {
-  return path
-    .split(".")
-    .reduce<unknown>(
-      (acc, key) => (acc && typeof acc === "object" ? (acc as Record<string, unknown>)[key] : undefined),
-      dict
-    ) as string | undefined;
-}
+import { createTranslator, type TFunction } from "@/lib/i18n/translate";
 
 function detectBrowserLocale(): Locale {
   const candidates = navigator.languages && navigator.languages.length > 0 ? navigator.languages : [navigator.language];
@@ -42,7 +28,7 @@ function writeCookieLocale(locale: Locale) {
 // value (cookie + phone-language detection), shared across every consumer.
 // useSyncExternalStore lets the client settle on it after hydration without
 // the cascading-render setState-in-effect that a useState+useEffect pair
-// would need, while the server snapshot keeps SSR output at the default.
+// would need.
 let cachedLocale: Locale | null = null;
 const listeners = new Set<() => void>();
 
@@ -51,10 +37,6 @@ function getSnapshot(): Locale {
     cachedLocale = readCookieLocale() ?? detectBrowserLocale();
   }
   return cachedLocale;
-}
-
-function getServerSnapshot(): Locale {
-  return DEFAULT_LOCALE;
 }
 
 function subscribe(listener: () => void) {
@@ -72,20 +54,38 @@ type LocaleContextValue = {
   locale: Locale;
   dir: "ltr" | "rtl";
   setLocale: (locale: Locale) => void;
-  t: (key: string) => string;
+  t: TFunction;
 };
 
 const LocaleContext = createContext<LocaleContextValue | null>(null);
 
-export function LocaleProvider({ children }: { children: ReactNode }) {
+export function LocaleProvider({
+  children,
+  mirrorLayout = false,
+  initialLocale,
+}: {
+  children: ReactNode;
+  /**
+   * Whether to actually flip the DOM to `dir="rtl"`/swap the Arabic font for
+   * this subtree. Defaults to false so untranslated content never mirrors
+   * with mismatched text. Pass true only once everything inside is actually
+   * translated.
+   */
+  mirrorLayout?: boolean;
+  /** Locale the server already resolved from the cookie (see
+   * lib/i18n/server.ts), so SSR markup matches instead of always starting
+   * from the default. */
+  initialLocale?: Locale;
+}) {
+  // A per-render closure (not module-level shared state, which would risk
+  // leaking one request's locale into another's concurrent SSR render) —
+  // only used for the SSR pass and the client's first hydration snapshot,
+  // so it matches what the server already saw in the cookie.
+  const getServerSnapshot = useCallback(() => initialLocale ?? DEFAULT_LOCALE, [initialLocale]);
   const locale = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
-  const dir = dirFor(locale);
+  const dir = mirrorLayout ? dirFor(locale) : "ltr";
 
-  const t = useMemo(() => {
-    const dict = DICTIONARIES[locale];
-    const fallback = DICTIONARIES[DEFAULT_LOCALE];
-    return (key: string) => readPath(dict, key) ?? readPath(fallback, key) ?? key;
-  }, [locale]);
+  const t = useMemo(() => createTranslator(locale), [locale]);
 
   const value = useMemo<LocaleContextValue>(
     () => ({ locale, dir, setLocale: setStoreLocale, t }),

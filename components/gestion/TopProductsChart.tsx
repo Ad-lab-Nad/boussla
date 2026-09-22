@@ -4,10 +4,12 @@ import { Bar, BarChart, CartesianGrid, Cell, LabelList, ResponsiveContainer, Too
 import { useColorScheme } from "@/components/gestion/useColorScheme";
 import { CHART_COLORS } from "@/lib/gestion/chart-colors";
 import { fmt } from "@/lib/gestion/format";
+import { useLocale } from "@/components/i18n/LocaleProvider";
 
 type Row = { key: string; name: string; revenue: number };
 
 export function TopProductsChart({ products }: { products: Row[] }) {
+  const { t } = useLocale();
   const c = CHART_COLORS[useColorScheme()];
   // One hue, magnitude ranking — sequential, not categorical (products aren't
   // "identities" being compared here, their revenue is).
@@ -33,7 +35,7 @@ export function TopProductsChart({ products }: { products: Row[] }) {
           tickLine={false}
         />
         <Tooltip
-          formatter={(value) => [fmt(Number(value)), "CA généré"]}
+          formatter={(value) => [fmt(Number(value)), t("gestion.dashboard.revenueGeneratedColumn")]}
           contentStyle={{
             background: c.surface,
             border: `1px solid ${c.grid}`,

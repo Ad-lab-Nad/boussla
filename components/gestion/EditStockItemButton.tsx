@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Pencil, X } from "lucide-react";
+import { useLocale } from "@/components/i18n/LocaleProvider";
 
 type StockItem = { id: string; name: string; unit: string; alertThreshold: number };
 
@@ -13,6 +14,7 @@ export function EditStockItemButton({
   item: StockItem;
   updateStockItemAction: (formData: FormData) => Promise<void>;
 }) {
+  const { t } = useLocale();
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -31,7 +33,7 @@ export function EditStockItemButton({
       setOpen(false);
       router.refresh();
     } catch {
-      setError("Impossible d'enregistrer cette matière. Réessaie.");
+      setError(t("gestion.stock.saveItemError"));
     } finally {
       setSubmitting(false);
     }
@@ -39,7 +41,7 @@ export function EditStockItemButton({
 
   return (
     <>
-      <button type="button" className="g-del-btn" title="Modifier" onClick={() => setOpen(true)}>
+      <button type="button" className="g-del-btn" title={t("gestion.editCommon.edit")} onClick={() => setOpen(true)}>
         <Pencil size={15} />
       </button>
 
@@ -47,8 +49,8 @@ export function EditStockItemButton({
         <div className="g-modal-overlay" onClick={closeModal}>
           <div className="g-modal" onClick={(e) => e.stopPropagation()}>
             <div className="g-modal__header">
-              <h2>Modifier la matière</h2>
-              <button type="button" className="g-modal__close" onClick={closeModal} aria-label="Fermer">
+              <h2>{t("gestion.stock.editItemTitle")}</h2>
+              <button type="button" className="g-modal__close" onClick={closeModal} aria-label={t("gestion.editCommon.close")}>
                 <X size={18} />
               </button>
             </div>
@@ -58,15 +60,15 @@ export function EditStockItemButton({
                 <input type="hidden" name="id" value={item.id} />
                 <div className="g-field-grid">
                   <div className="g-field">
-                    <label>Nom</label>
+                    <label>{t("gestion.stock.nameLabel")}</label>
                     <input type="text" name="name" defaultValue={item.name} required />
                   </div>
                   <div className="g-field">
-                    <label>Unité</label>
+                    <label>{t("gestion.stock.unitLabel")}</label>
                     <input type="text" name="unit" defaultValue={item.unit} />
                   </div>
                   <div className="g-field">
-                    <label>Seuil d&apos;alerte</label>
+                    <label>{t("gestion.stock.alertThresholdLabel")}</label>
                     <input
                       type="number"
                       name="alertThreshold"
@@ -84,10 +86,10 @@ export function EditStockItemButton({
               </div>
               <div className="g-modal__footer">
                 <button type="button" className="g-btn secondary" onClick={closeModal}>
-                  Annuler
+                  {t("gestion.editCommon.cancel")}
                 </button>
                 <button type="submit" className="g-btn" disabled={submitting}>
-                  {submitting ? "Enregistrement..." : "Enregistrer"}
+                  {submitting ? t("gestion.editCommon.saving") : t("gestion.editCommon.save")}
                 </button>
               </div>
             </form>

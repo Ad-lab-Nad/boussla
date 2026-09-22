@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Pencil, X } from "lucide-react";
-import { SELL_UNIT_OPTIONS } from "@/lib/gestion/product-units";
+import { sellUnitOptions } from "@/lib/gestion/product-units";
+import { useLocale } from "@/components/i18n/LocaleProvider";
 
 type Product = { id: string; name: string; sellPrice: number; unitCost: number; sellUnit: string };
 
@@ -16,6 +17,7 @@ export function EditProductButton({
   updateProductAction: (formData: FormData) => Promise<void>;
   isServices?: boolean;
 }) {
+  const { t } = useLocale();
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -34,11 +36,7 @@ export function EditProductButton({
       setOpen(false);
       router.refresh();
     } catch {
-      setError(
-        isServices
-          ? "Impossible d'enregistrer cette prestation. Réessaie."
-          : "Impossible d'enregistrer ce produit. Réessaie."
-      );
+      setError(isServices ? t("gestion.produits.saveServiceError") : t("gestion.produits.saveProductError"));
     } finally {
       setSubmitting(false);
     }
@@ -49,7 +47,7 @@ export function EditProductButton({
       <button
         type="button"
         className="g-del-btn"
-        title="Modifier"
+        title={t("gestion.editCommon.edit")}
         onClick={() => setOpen(true)}
       >
         <Pencil size={15} />
@@ -59,12 +57,12 @@ export function EditProductButton({
         <div className="g-modal-overlay" onClick={closeModal}>
           <div className="g-modal" onClick={(e) => e.stopPropagation()}>
             <div className="g-modal__header">
-              <h2>{isServices ? "Modifier la prestation" : "Modifier le produit"}</h2>
+              <h2>{isServices ? t("gestion.produits.editServiceTitle") : t("gestion.produits.editProductTitle")}</h2>
               <button
                 type="button"
                 className="g-modal__close"
                 onClick={closeModal}
-                aria-label="Fermer"
+                aria-label={t("gestion.editCommon.close")}
               >
                 <X size={18} />
               </button>
@@ -75,11 +73,11 @@ export function EditProductButton({
                 <input type="hidden" name="id" value={product.id} />
                 <div className="g-field-grid">
                   <div className="g-field">
-                    <label>Nom</label>
+                    <label>{t("gestion.clients.nameLabel")}</label>
                     <input type="text" name="name" defaultValue={product.name} required />
                   </div>
                   <div className="g-field">
-                    <label>Prix de vente (DT)</label>
+                    <label>{t("gestion.produits.sellPriceLabel")}</label>
                     <input
                       type="number"
                       name="sellPrice"
@@ -90,7 +88,7 @@ export function EditProductButton({
                     />
                   </div>
                   <div className="g-field">
-                    <label>Coût unitaire (DT)</label>
+                    <label>{t("gestion.editCommon.unitCostLabel")}</label>
                     <input
                       type="number"
                       name="unitCost"
@@ -102,9 +100,9 @@ export function EditProductButton({
                   </div>
                   {!isServices && (
                     <div className="g-field">
-                      <label>Unité de vente</label>
+                      <label>{t("gestion.produits.sellUnitLabel")}</label>
                       <select name="sellUnit" defaultValue={product.sellUnit}>
-                        {SELL_UNIT_OPTIONS.map((opt) => (
+                        {sellUnitOptions(t).map((opt) => (
                           <option key={opt.value} value={opt.value}>
                             {opt.label}
                           </option>
@@ -114,8 +112,7 @@ export function EditProductButton({
                   )}
                 </div>
                 <div className="g-hint" style={{ marginTop: 12, marginBottom: 0 }}>
-                  Les commandes déjà enregistrées gardent leur prix et coût d&apos;origine —
-                  seules les prochaines commandes utiliseront ces nouvelles valeurs.
+                  {t("gestion.produits.editSnapshotHint")}
                 </div>
                 {error && (
                   <div className="g-auth-error" style={{ marginTop: 12 }}>
@@ -125,10 +122,10 @@ export function EditProductButton({
               </div>
               <div className="g-modal__footer">
                 <button type="button" className="g-btn secondary" onClick={closeModal}>
-                  Annuler
+                  {t("gestion.editCommon.cancel")}
                 </button>
                 <button type="submit" className="g-btn" disabled={submitting}>
-                  {submitting ? "Enregistrement..." : "Enregistrer"}
+                  {submitting ? t("gestion.editCommon.saving") : t("gestion.editCommon.save")}
                 </button>
               </div>
             </form>

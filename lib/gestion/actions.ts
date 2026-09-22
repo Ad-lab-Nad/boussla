@@ -5,8 +5,8 @@ import { prisma } from "@/lib/prisma";
 import { getCurrentBusiness } from "@/lib/current-business";
 import { assertPalier2Access } from "@/lib/subscription-access";
 import { parseDateInput, todayStr } from "@/lib/gestion/format";
-import { EXPENSE_CATEGORY_OPTIONS } from "@/lib/gestion/expense-categories";
-import { SELL_UNIT_OPTIONS } from "@/lib/gestion/product-units";
+import { EXPENSE_CATEGORY_VALUES } from "@/lib/gestion/expense-categories";
+import { SELL_UNIT_VALUES } from "@/lib/gestion/product-units";
 import { findRecurringExpenseSuggestion } from "@/lib/gestion/queries";
 import { uploadReceipt } from "@/lib/gestion/receipts";
 import type { ExpenseCategory, SellUnit } from "@prisma/client";
@@ -31,11 +31,9 @@ function dateOf(formData: FormData, key: string) {
 
 // ---------- PRODUITS ----------
 
-const SELL_UNITS = SELL_UNIT_OPTIONS.map((o) => o.value as string);
-
 function sellUnitOf(formData: FormData): SellUnit {
   const raw = str(formData, "sellUnit");
-  return (SELL_UNITS.includes(raw) ? raw : "PIECE") as SellUnit;
+  return (SELL_UNIT_VALUES.includes(raw) ? raw : "PIECE") as SellUnit;
 }
 
 export async function createProduct(formData: FormData) {
@@ -481,7 +479,7 @@ export async function updateProductionBatch(formData: FormData) {
 
 // ---------- DEPENSES ----------
 
-const EXPENSE_CATEGORIES = EXPENSE_CATEGORY_OPTIONS.map((o) => o.value as string);
+const EXPENSE_CATEGORIES = EXPENSE_CATEGORY_VALUES;
 
 /** null when the "plusieurs mois" checkbox isn't checked; otherwise the
  * validated month count (>= 2) to spread the amount across. */

@@ -2,19 +2,24 @@
 
 import { useState, useTransition } from "react";
 import { Plus } from "lucide-react";
-import { EXPENSE_CATEGORY_LABELS, EXPENSE_CATEGORY_OPTIONS } from "@/lib/gestion/expense-categories";
+import { expenseCategoryLabels, expenseCategoryOptions } from "@/lib/gestion/expense-categories";
 import { fmt, todayStr } from "@/lib/gestion/format";
 import { createExpense, suggestRecurringExpense } from "@/lib/gestion/actions";
+import { useLocale } from "@/components/i18n/LocaleProvider";
 
 type Suggestion = { category: string; amount: number; isPersonal: boolean } | null;
 
 export function ExpenseQuickForm() {
+  const { t } = useLocale();
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
   const [amount, setAmount] = useState("");
   const [isPersonal, setIsPersonal] = useState(false);
   const [suggestion, setSuggestion] = useState<Suggestion>(null);
   const [, startTransition] = useTransition();
+
+  const categoryOptions = expenseCategoryOptions(t);
+  const categoryLabels = expenseCategoryLabels(t);
 
   function handleDescriptionBlur() {
     const value = description.trim();
@@ -40,11 +45,11 @@ export function ExpenseQuickForm() {
     <form action={createExpense} className="g-field-grid" onSubmit={() => setSuggestion(null)}>
       <input type="hidden" name="date" value={todayStr()} />
       <div className="g-field">
-        <label>Description</label>
+        <label>{t("gestion.editCommon.descriptionLabel")}</label>
         <input
           type="text"
           name="description"
-          placeholder="ex: Ads Facebook"
+          placeholder={t("gestion.depenses.descriptionPlaceholder")}
           required
           value={description}
           onChange={(e) => setDescription(e.target.value)}
@@ -57,18 +62,21 @@ export function ExpenseQuickForm() {
             className="g-hint"
             style={{ cursor: "pointer", textAlign: "left", background: "none", border: "none", padding: 0 }}
           >
-            Dépense récurrente détectée : {EXPENSE_CATEGORY_LABELS[suggestion.category]},{" "}
-            {fmt(suggestion.amount)} ({suggestion.isPersonal ? "perso" : "pro"}) — cliquer pour appliquer
+            {t("gestion.palier1.recurringSuggestion", {
+              category: categoryLabels[suggestion.category],
+              amount: fmt(suggestion.amount),
+              kind: suggestion.isPersonal ? t("gestion.palier1.personal") : t("gestion.palier1.professional"),
+            })}
           </button>
         )}
       </div>
       <div className="g-field">
-        <label>Catégorie</label>
+        <label>{t("gestion.editCommon.categoryLabel")}</label>
         <select name="category" value={category} onChange={(e) => setCategory(e.target.value)} required>
           <option value="" disabled>
-            Choisir une catégorie
+            {t("gestion.depenses.categoryPlaceholder")}
           </option>
-          {EXPENSE_CATEGORY_OPTIONS.map((opt) => (
+          {categoryOptions.map((opt) => (
             <option key={opt.value} value={opt.value}>
               {opt.label}
             </option>
@@ -76,7 +84,7 @@ export function ExpenseQuickForm() {
         </select>
       </div>
       <div className="g-field">
-        <label>Montant (DT)</label>
+        <label>{t("gestion.editCommon.amountLabel")}</label>
         <input
           type="number"
           name="amount"
@@ -95,15 +103,15 @@ export function ExpenseQuickForm() {
             checked={isPersonal}
             onChange={(e) => setIsPersonal(e.target.checked)}
           />
-          Dépense personnelle
+          {t("gestion.palier1.personalExpenseCheckbox")}
         </label>
       </div>
       <div className="g-field">
-        <label>Photo du reçu (optionnel)</label>
+        <label>{t("gestion.palier1.receiptPhotoLabel")}</label>
         <input type="file" name="receipt" accept="image/*" />
       </div>
       <button type="submit" className="g-btn">
-        <Plus size={15} /> Ajouter la dépense
+        <Plus size={15} /> {t("gestion.depenses.addButton")}
       </button>
     </form>
   );

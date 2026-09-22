@@ -2,6 +2,7 @@
 // the original prototype's math 1:1 and stay easy to unit test.
 
 import { monthKeyFromDate, shiftMonthKey } from "@/lib/gestion/format";
+import type { TFunction } from "@/lib/i18n/translate";
 
 export type ExpenseLike = { date: Date; amount: number; spreadMonths: number | null };
 
@@ -257,18 +258,18 @@ export type ReceivableLike = {
  * dueDate vs. now, so it can never go stale the way a manually-set flag
  * could (e.g. if nobody revisits a receivable after its due date passes).
  */
-export function describeReceivable(receivable: ReceivableLike, now: Date) {
+export function describeReceivable(receivable: ReceivableLike, now: Date, t: TFunction) {
   const remaining = Math.max(0, receivable.amount - receivable.amountPaid);
   const isLate = receivable.status !== "PAID" && receivable.dueDate < now;
 
   if (receivable.status === "PAID") {
-    return { label: "Payée", badge: "status-valid" as const, remaining: 0, isLate: false };
+    return { label: t("gestion.receivableStatus.paid"), badge: "status-valid" as const, remaining: 0, isLate: false };
   }
   if (isLate) {
-    return { label: "En retard", badge: "status-error" as const, remaining, isLate: true };
+    return { label: t("gestion.receivableStatus.late"), badge: "status-error" as const, remaining, isLate: true };
   }
   if (receivable.status === "PARTIAL") {
-    return { label: "Partielle", badge: "status-warning" as const, remaining, isLate: false };
+    return { label: t("gestion.receivableStatus.partial"), badge: "status-warning" as const, remaining, isLate: false };
   }
-  return { label: "En attente", badge: "status-warning" as const, remaining, isLate: false };
+  return { label: t("gestion.receivableStatus.pending"), badge: "status-warning" as const, remaining, isLate: false };
 }

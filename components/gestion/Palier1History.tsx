@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Paperclip } from "lucide-react";
 import { fmt, monthLabel } from "@/lib/gestion/format";
+import { useLocale } from "@/components/i18n/LocaleProvider";
 
 export type Palier1HistoryEntryView = {
   type: "sale" | "expense";
@@ -21,12 +22,13 @@ export function Palier1History({
   monthKeys: string[];
   historyByMonth: Record<string, Palier1HistoryEntryView[]>;
 }) {
+  const { t, locale } = useLocale();
   const [activeMonth, setActiveMonth] = useState(monthKeys[0]);
   const entries = historyByMonth[activeMonth] ?? [];
 
   return (
     <div className="g-card">
-      <h2>Historique</h2>
+      <h2>{t("gestion.palier1.historyTitle")}</h2>
       <div style={{ display: "flex", gap: 6, marginBottom: 14, flexWrap: "wrap" }}>
         {monthKeys.map((key) => (
           <button
@@ -35,7 +37,7 @@ export function Palier1History({
             onClick={() => setActiveMonth(key)}
             className={`g-btn small ${key === activeMonth ? "" : "secondary"}`}
           >
-            {monthLabel(key)}
+            {monthLabel(key, locale)}
           </button>
         ))}
       </div>
@@ -44,9 +46,9 @@ export function Palier1History({
         <table className="g-table">
           <thead>
             <tr>
-              <th>Date</th>
-              <th>Description</th>
-              <th className="right">Montant</th>
+              <th>{t("gestion.palier1.dateColumn")}</th>
+              <th>{t("gestion.palier1.descriptionColumn")}</th>
+              <th className="right">{t("gestion.palier1.amountColumn")}</th>
               <th></th>
             </tr>
           </thead>
@@ -61,7 +63,7 @@ export function Palier1History({
                       className="g-hint"
                       style={{ marginLeft: 6 }}
                     >
-                      ({e.isPersonal ? "perso" : "pro"})
+                      ({e.isPersonal ? t("gestion.palier1.personal") : t("gestion.palier1.professional")})
                     </span>
                   )}
                 </td>
@@ -74,7 +76,7 @@ export function Palier1History({
                 </td>
                 <td>
                   {e.receiptUrl && (
-                    <a href={e.receiptUrl} target="_blank" rel="noopener noreferrer" title="Voir le reçu">
+                    <a href={e.receiptUrl} target="_blank" rel="noopener noreferrer" title={t("gestion.palier1.viewReceipt")}>
                       <Paperclip size={15} />
                     </a>
                   )}
@@ -84,7 +86,7 @@ export function Palier1History({
           </tbody>
         </table>
       </div>
-      {entries.length === 0 && <div className="g-empty">Rien pour ce mois.</div>}
+      {entries.length === 0 && <div className="g-empty">{t("gestion.palier1.emptyMonth")}</div>}
     </div>
   );
 }

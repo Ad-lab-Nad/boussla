@@ -14,6 +14,7 @@ import { useColorScheme } from "@/components/gestion/useColorScheme";
 import { CHART_COLORS } from "@/lib/gestion/chart-colors";
 import { fmt, monthLabelShort } from "@/lib/gestion/format";
 import type { ExpenseCategoryPoint } from "@/lib/gestion/queries";
+import { useLocale } from "@/components/i18n/LocaleProvider";
 
 // Fixed categorical order for whichever categories actually rank in this
 // period (never reassigned per render) — up to 5 fits the palette's soft
@@ -29,8 +30,9 @@ export function ExpenseCategoryChart({
   rows: ExpenseCategoryPoint[];
   categories: { value: string; label: string }[];
 }) {
+  const { locale } = useLocale();
   const c = CHART_COLORS[useColorScheme()];
-  const data = rows.map((r) => ({ ...r, label: monthLabelShort(r.month) }));
+  const data = rows.map((r) => ({ ...r, label: monthLabelShort(r.month, locale) }));
   const tickInterval = data.length > 18 ? Math.ceil(data.length / 12) - 1 : 0;
 
   return (

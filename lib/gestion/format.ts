@@ -1,6 +1,14 @@
 // Shared formatting helpers for the Gestion module. Mirrors the behavior of
 // the original localStorage prototype (gestion-complete1109.html) exactly.
 
+import type { Locale } from "@/lib/i18n/config";
+import type { TFunction } from "@/lib/i18n/translate";
+
+// Currency amounts always render as "DT" with fr-TN digit grouping regardless
+// of interface language — that's the locally-expected format in Tunisia for
+// everyone, not something that translates with the UI.
+const DATE_LOCALE: Record<Locale, string> = { fr: "fr-FR", ar: "ar-TN", en: "en-US" };
+
 /** "1234.5" -> "1 234.50 DT" */
 export function fmt(n: number | null | undefined): string {
   return (
@@ -41,19 +49,19 @@ export function parseDateInput(value: string): Date {
   return new Date(`${value}T00:00:00.000Z`);
 }
 
-/** "YYYY-MM" -> "septembre 2026" */
-export function monthLabel(key: string): string {
+/** "YYYY-MM" -> "septembre 2026" (localized) */
+export function monthLabel(key: string, locale: Locale = "fr"): string {
   const [y, m] = key.split("-").map(Number);
-  return new Date(y, m - 1, 1).toLocaleDateString("fr-FR", {
+  return new Date(y, m - 1, 1).toLocaleDateString(DATE_LOCALE[locale], {
     month: "long",
     year: "numeric",
   });
 }
 
 /** "YYYY-MM" -> "sept. 2026" (compact, for chart axes) */
-export function monthLabelShort(key: string): string {
+export function monthLabelShort(key: string, locale: Locale = "fr"): string {
   const [y, m] = key.split("-").map(Number);
-  return new Date(y, m - 1, 1).toLocaleDateString("fr-FR", {
+  return new Date(y, m - 1, 1).toLocaleDateString(DATE_LOCALE[locale], {
     month: "short",
     year: "2-digit",
   });
@@ -62,19 +70,19 @@ export function monthLabelShort(key: string): string {
 export type Delta = { direction: "up" | "down" | "flat"; text: string };
 
 /** Percentage change label for a KPI vs. its previous-period value. */
-export function formatDelta(current: number, previous: number): Delta {
+export function formatDelta(current: number, previous: number, t: TFunction): Delta {
   if (previous === 0) {
-    if (current === 0) return { direction: "flat", text: "stable vs mois dernier" };
+    if (current === 0) return { direction: "flat", text: t("gestion.format.stableVsLastMonth") };
     return {
       direction: current > 0 ? "up" : "down",
-      text: `${current > 0 ? "+" : ""}${fmt(current)} vs mois dernier`,
+      text: t("gestion.format.vsLastMonth", { value: `${current > 0 ? "+" : ""}${fmt(current)}` }),
     };
   }
   const pct = ((current - previous) / Math.abs(previous)) * 100;
-  if (Math.abs(pct) < 0.5) return { direction: "flat", text: "stable vs mois dernier" };
+  if (Math.abs(pct) < 0.5) return { direction: "flat", text: t("gestion.format.stableVsLastMonth") };
   return {
     direction: pct > 0 ? "up" : "down",
-    text: `${pct > 0 ? "+" : ""}${pct.toFixed(0)}% vs mois dernier`,
+    text: t("gestion.format.vsLastMonth", { value: `${pct > 0 ? "+" : ""}${pct.toFixed(0)}%` }),
   };
 }
 

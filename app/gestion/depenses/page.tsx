@@ -3,39 +3,40 @@ import { getCurrentBusiness } from "@/lib/current-business";
 import { getExpenses } from "@/lib/gestion/queries";
 import { createExpense, deleteExpense, updateExpense } from "@/lib/gestion/actions";
 import { fmt, todayStr } from "@/lib/gestion/format";
-import { EXPENSE_CATEGORY_LABELS, EXPENSE_CATEGORY_OPTIONS } from "@/lib/gestion/expense-categories";
+import { expenseCategoryLabels, expenseCategoryOptions } from "@/lib/gestion/expense-categories";
+import { getServerT } from "@/lib/i18n/server";
 import { ConfirmSubmitButton } from "@/components/gestion/ConfirmSubmitButton";
 import { EditExpenseButton } from "@/components/gestion/EditExpenseButton";
 import { SpreadExpenseFields } from "@/components/gestion/SpreadExpenseFields";
 
 export default async function DepensesPage() {
+  const { t } = await getServerT();
   const business = await getCurrentBusiness();
   const expenses = await getExpenses(business.id);
+  const categoryOptions = expenseCategoryOptions(t);
+  const categoryLabels = expenseCategoryLabels(t);
 
   return (
     <>
       <div className="g-card">
-        <h2>Nouvelle dépense (hors stock)</h2>
-        <div className="g-hint">
-          Publicité, charges fixes, transport... tout ce qui n&apos;est pas une matière de
-          stock.
-        </div>
+        <h2>{t("gestion.depenses.newExpenseTitle")}</h2>
+        <div className="g-hint">{t("gestion.depenses.hint")}</div>
         <form action={createExpense} className="g-field-grid">
           <div className="g-field">
-            <label>Date</label>
+            <label>{t("gestion.editCommon.dateLabel")}</label>
             <input type="date" name="date" defaultValue={todayStr()} required />
           </div>
           <div className="g-field">
-            <label>Description</label>
-            <input type="text" name="description" placeholder="ex: Ads Facebook" required />
+            <label>{t("gestion.editCommon.descriptionLabel")}</label>
+            <input type="text" name="description" placeholder={t("gestion.depenses.descriptionPlaceholder")} required />
           </div>
           <div className="g-field">
-            <label>Catégorie</label>
+            <label>{t("gestion.editCommon.categoryLabel")}</label>
             <select name="category" defaultValue="" required>
               <option value="" disabled>
-                Choisir une catégorie
+                {t("gestion.depenses.categoryPlaceholder")}
               </option>
-              {EXPENSE_CATEGORY_OPTIONS.map((opt) => (
+              {categoryOptions.map((opt) => (
                 <option key={opt.value} value={opt.value}>
                   {opt.label}
                 </option>
@@ -43,26 +44,26 @@ export default async function DepensesPage() {
             </select>
           </div>
           <div className="g-field">
-            <label>Montant (DT)</label>
+            <label>{t("gestion.editCommon.amountLabel")}</label>
             <input type="number" name="amount" min="0.01" step="0.01" required />
           </div>
           <SpreadExpenseFields />
           <button type="submit" className="g-btn">
-            <Plus size={15} /> Ajouter
+            <Plus size={15} /> {t("common.add")}
           </button>
         </form>
       </div>
 
       <div className="g-card">
-        <h2>Toutes les dépenses</h2>
+        <h2>{t("gestion.depenses.allExpensesTitle")}</h2>
         <div className="g-table-wrap">
           <table className="g-table">
             <thead>
               <tr>
-                <th>Date</th>
-                <th>Description</th>
-                <th>Catégorie</th>
-                <th className="right">Montant</th>
+                <th>{t("gestion.editCommon.dateLabel")}</th>
+                <th>{t("gestion.editCommon.descriptionLabel")}</th>
+                <th>{t("gestion.editCommon.categoryLabel")}</th>
+                <th className="right">{t("gestion.editCommon.amountLabel")}</th>
                 <th></th>
               </tr>
             </thead>
@@ -74,17 +75,20 @@ export default async function DepensesPage() {
                     {d.description}
                     {d.spreadMonths && d.spreadMonths > 1 && (
                       <div style={{ fontSize: "0.72rem", color: "var(--g-muted)" }}>
-                        Étalée sur {d.spreadMonths} mois ({fmt(d.amount / d.spreadMonths)}/mois)
+                        {t("gestion.depenses.spreadOver", {
+                          months: d.spreadMonths,
+                          perMonth: fmt(d.amount / d.spreadMonths),
+                        })}
                       </div>
                     )}
                   </td>
-                  <td>{EXPENSE_CATEGORY_LABELS[d.category]}</td>
+                  <td>{categoryLabels[d.category]}</td>
                   <td className="right num">{fmt(d.amount)}</td>
                   <td style={{ display: "flex", gap: 2 }}>
                     <EditExpenseButton expense={d} updateExpenseAction={updateExpense} />
                     <form action={deleteExpense}>
                       <input type="hidden" name="id" value={d.id} />
-                      <ConfirmSubmitButton confirmMessage="Supprimer cette dépense ?" />
+                      <ConfirmSubmitButton confirmMessage={t("gestion.confirm.deleteExpense")} title={t("common.delete")} />
                     </form>
                   </td>
                 </tr>
@@ -92,7 +96,7 @@ export default async function DepensesPage() {
             </tbody>
           </table>
         </div>
-        {expenses.length === 0 && <div className="g-empty">Aucune dépense enregistrée.</div>}
+        {expenses.length === 0 && <div className="g-empty">{t("gestion.depenses.emptyState")}</div>}
       </div>
     </>
   );

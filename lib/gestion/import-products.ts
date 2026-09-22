@@ -1,4 +1,5 @@
 import * as XLSX from "xlsx";
+import type { TFunction } from "@/lib/i18n/translate";
 
 export type ImportRowStatus = "valid" | "warning" | "error";
 
@@ -64,14 +65,14 @@ function parseNumber(raw: unknown): number | null {
  * entirely in the browser — the file never has to be uploaded just to be
  * previewed.
  */
-export async function parseProductsFile(file: File): Promise<ImportRow[]> {
+export async function parseProductsFile(file: File, t: TFunction): Promise<ImportRow[]> {
   const buffer = await file.arrayBuffer();
-  return parseWorkbookBuffer(buffer);
+  return parseWorkbookBuffer(buffer, t);
 }
 
 /** Pure core, split out from parseProductsFile so it's testable without a
  * browser File object (e.g. from a plain ArrayBuffer/Buffer in Node). */
-export function parseWorkbookBuffer(buffer: ArrayBuffer): ImportRow[] {
+export function parseWorkbookBuffer(buffer: ArrayBuffer, t: TFunction): ImportRow[] {
   const workbook = XLSX.read(buffer, { type: "array" });
   const sheetName = workbook.SheetNames[0];
   if (!sheetName) return [];
@@ -107,11 +108,11 @@ export function parseWorkbookBuffer(buffer: ArrayBuffer): ImportRow[] {
     const unitCost = parseNumber(row[unitCostIdx]);
 
     const errors: string[] = [];
-    if (!name) errors.push("Nom manquant");
-    if (sellPrice === null) errors.push("Prix de vente manquant ou invalide");
-    else if (sellPrice < 0) errors.push("Prix de vente négatif");
-    if (unitCost === null) errors.push("Coût unitaire manquant ou invalide");
-    else if (unitCost < 0) errors.push("Coût unitaire négatif");
+    if (!name) errors.push(t("gestion.import.errorNameMissing"));
+    if (sellPrice === null) errors.push(t("gestion.import.errorSellPriceInvalid"));
+    else if (sellPrice < 0) errors.push(t("gestion.import.errorSellPriceNegative"));
+    if (unitCost === null) errors.push(t("gestion.import.errorUnitCostInvalid"));
+    else if (unitCost < 0) errors.push(t("gestion.import.errorUnitCostNegative"));
 
     if (errors.length > 0) {
       results.push({ rowNumber, name, sellPrice, unitCost, status: "error", message: errors.join(" · ") });
@@ -125,7 +126,7 @@ export function parseWorkbookBuffer(buffer: ArrayBuffer): ImportRow[] {
         sellPrice,
         unitCost,
         status: "warning",
-        message: "Marge négative — coût supérieur au prix de vente",
+        message: t("gestion.import.warningNegativeMargin"),
       });
       return;
     }

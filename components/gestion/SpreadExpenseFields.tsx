@@ -1,12 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { useLocale } from "@/components/i18n/LocaleProvider";
 
 export function SpreadExpenseFields({
   defaultSpreadMonths,
 }: {
   defaultSpreadMonths?: number | null;
 }) {
+  const { t } = useLocale();
   const [spread, setSpread] = useState(Boolean(defaultSpreadMonths && defaultSpreadMonths > 1));
 
   return (
@@ -19,11 +21,11 @@ export function SpreadExpenseFields({
           checked={spread}
           onChange={(e) => setSpread(e.target.checked)}
         />
-        <label htmlFor="isSpread">Cette dépense concerne plusieurs mois ?</label>
+        <label htmlFor="isSpread">{t("gestion.depenses.spreadCheckbox")}</label>
       </div>
       {spread && (
         <div className="g-field">
-          <label>Étaler sur combien de mois</label>
+          <label>{t("gestion.depenses.spreadMonthsLabel")}</label>
           <input
             type="number"
             name="spreadMonths"

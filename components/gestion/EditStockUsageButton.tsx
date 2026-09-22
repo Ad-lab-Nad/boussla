@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Pencil, X } from "lucide-react";
+import { useLocale } from "@/components/i18n/LocaleProvider";
 
 type StockUsage = { id: string; date: Date; quantity: number };
 
@@ -13,6 +14,7 @@ export function EditStockUsageButton({
   usage: StockUsage;
   updateStockUsageAction: (formData: FormData) => Promise<void>;
 }) {
+  const { t } = useLocale();
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -31,7 +33,7 @@ export function EditStockUsageButton({
       setOpen(false);
       router.refresh();
     } catch {
-      setError("Impossible d'enregistrer cette utilisation. Réessaie.");
+      setError(t("gestion.stock.saveUsageError"));
     } finally {
       setSubmitting(false);
     }
@@ -39,7 +41,7 @@ export function EditStockUsageButton({
 
   return (
     <>
-      <button type="button" className="g-del-btn" title="Modifier" onClick={() => setOpen(true)}>
+      <button type="button" className="g-del-btn" title={t("gestion.editCommon.edit")} onClick={() => setOpen(true)}>
         <Pencil size={15} />
       </button>
 
@@ -47,8 +49,8 @@ export function EditStockUsageButton({
         <div className="g-modal-overlay" onClick={closeModal}>
           <div className="g-modal" onClick={(e) => e.stopPropagation()}>
             <div className="g-modal__header">
-              <h2>Modifier l&apos;utilisation</h2>
-              <button type="button" className="g-modal__close" onClick={closeModal} aria-label="Fermer">
+              <h2>{t("gestion.stock.editUsageTitle")}</h2>
+              <button type="button" className="g-modal__close" onClick={closeModal} aria-label={t("gestion.editCommon.close")}>
                 <X size={18} />
               </button>
             </div>
@@ -58,7 +60,7 @@ export function EditStockUsageButton({
                 <input type="hidden" name="id" value={usage.id} />
                 <div className="g-field-grid">
                   <div className="g-field">
-                    <label>Date</label>
+                    <label>{t("gestion.editCommon.dateLabel")}</label>
                     <input
                       type="date"
                       name="date"
@@ -67,7 +69,7 @@ export function EditStockUsageButton({
                     />
                   </div>
                   <div className="g-field">
-                    <label>Quantité utilisée</label>
+                    <label>{t("gestion.stock.quantityUsedLabel")}</label>
                     <input
                       type="number"
                       name="quantity"
@@ -86,10 +88,10 @@ export function EditStockUsageButton({
               </div>
               <div className="g-modal__footer">
                 <button type="button" className="g-btn secondary" onClick={closeModal}>
-                  Annuler
+                  {t("gestion.editCommon.cancel")}
                 </button>
                 <button type="submit" className="g-btn" disabled={submitting}>
-                  {submitting ? "Enregistrement..." : "Enregistrer"}
+                  {submitting ? t("gestion.editCommon.saving") : t("gestion.editCommon.save")}
                 </button>
               </div>
             </form>

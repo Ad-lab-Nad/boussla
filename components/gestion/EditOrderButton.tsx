@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Pencil, Plus, X } from "lucide-react";
 import { fmt } from "@/lib/gestion/format";
 import { fmtPrice } from "@/lib/gestion/product-units";
+import { useLocale } from "@/components/i18n/LocaleProvider";
 
 type Product = { id: string; name: string; sellPrice: number; unitCost: number; sellUnit: string };
 type OrderLine = { productId: string | null; quantity: number };
@@ -42,6 +43,7 @@ export function EditOrderButton({
   updateOrderAction: (formData: FormData) => Promise<void>;
   isServices?: boolean;
 }) {
+  const { t } = useLocale();
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -69,11 +71,7 @@ export function EditOrderButton({
       setOpen(false);
       router.refresh();
     } catch {
-      setError(
-        isServices
-          ? "Impossible d'enregistrer cette vente. Réessaie."
-          : "Impossible d'enregistrer cette commande. Réessaie."
-      );
+      setError(isServices ? t("gestion.commandes.saveSaleError") : t("gestion.commandes.saveOrderError"));
     } finally {
       setSubmitting(false);
     }
@@ -86,7 +84,7 @@ export function EditOrderButton({
 
   return (
     <>
-      <button type="button" className="g-del-btn" title="Modifier" onClick={openModal}>
+      <button type="button" className="g-del-btn" title={t("gestion.editCommon.edit")} onClick={openModal}>
         <Pencil size={15} />
       </button>
 
@@ -94,8 +92,8 @@ export function EditOrderButton({
         <div className="g-modal-overlay" onClick={closeModal}>
           <div className="g-modal" onClick={(e) => e.stopPropagation()}>
             <div className="g-modal__header">
-              <h2>{isServices ? "Modifier la vente" : "Modifier la commande"}</h2>
-              <button type="button" className="g-modal__close" onClick={closeModal} aria-label="Fermer">
+              <h2>{isServices ? t("gestion.commandes.editSaleTitle") : t("gestion.commandes.editOrderTitle")}</h2>
+              <button type="button" className="g-modal__close" onClick={closeModal} aria-label={t("gestion.editCommon.close")}>
                 <X size={18} />
               </button>
             </div>
@@ -105,7 +103,7 @@ export function EditOrderButton({
                 <input type="hidden" name="id" value={order.id} />
                 <div className="g-field-grid">
                   <div className="g-field">
-                    <label>Date</label>
+                    <label>{t("gestion.editCommon.dateLabel")}</label>
                     <input
                       type="date"
                       name="date"
@@ -114,41 +112,41 @@ export function EditOrderButton({
                     />
                   </div>
                   <div className="g-field">
-                    <label>Client (optionnel)</label>
+                    <label>{t("gestion.commandes.clientOptionalLabel")}</label>
                     <input type="text" name="clientName" defaultValue={order.clientName ?? ""} />
                   </div>
                   <div className="g-field">
-                    <label>Statut</label>
+                    <label>{t("gestion.clients.statusLabel")}</label>
                     <select name="status" defaultValue={order.status}>
-                      <option value="IN_PROGRESS">En cours</option>
-                      <option value="DELIVERED">Livré</option>
-                      <option value="RETURNED">Retour</option>
+                      <option value="IN_PROGRESS">{t("gestion.commandes.statusInProgress")}</option>
+                      <option value="DELIVERED">{t("gestion.commandes.statusDelivered")}</option>
+                      <option value="RETURNED">{t("gestion.commandes.statusReturned")}</option>
                     </select>
                   </div>
                   <div className="g-field">
-                    <label>Paiement</label>
+                    <label>{t("gestion.commandes.paymentColumn")}</label>
                     <select name="paymentStatus" defaultValue={order.paymentStatus}>
-                      <option value="PENDING">En attente</option>
-                      <option value="PAID">Payé</option>
-                      <option value="UNPAID">Impayé</option>
+                      <option value="PENDING">{t("gestion.commandes.paymentPending")}</option>
+                      <option value="PAID">{t("gestion.commandes.paymentPaid")}</option>
+                      <option value="UNPAID">{t("gestion.commandes.paymentUnpaid")}</option>
                     </select>
                   </div>
                   <div className="g-field">
-                    <label>Moyen de paiement</label>
+                    <label>{t("gestion.commandes.methodColumn")}</label>
                     <select
                       name="paymentMethod"
                       value={paymentMethod}
                       onChange={(e) => setPaymentMethod(e.target.value)}
                     >
-                      <option value="CASH">Espèces</option>
-                      <option value="CHECK">Chèque</option>
-                      <option value="TRANSFER">Virement</option>
-                      <option value="OTHER">Autre</option>
+                      <option value="CASH">{t("gestion.commandes.methodCash")}</option>
+                      <option value="CHECK">{t("gestion.commandes.methodCheck")}</option>
+                      <option value="TRANSFER">{t("gestion.commandes.methodTransfer")}</option>
+                      <option value="OTHER">{t("gestion.commandes.methodOther")}</option>
                     </select>
                   </div>
                   {paymentMethod === "CHECK" && (
                     <div className="g-field">
-                      <label>Date d&apos;échéance (optionnel)</label>
+                      <label>{t("gestion.commandes.checkDueDateOptionalLabel")}</label>
                       <input
                         type="date"
                         name="checkDueDate"
@@ -160,8 +158,8 @@ export function EditOrderButton({
 
                 <div style={{ marginTop: 16 }}>
                   <div className="g-line-header">
-                    <label>{isServices ? "Prestation" : "Parfum / produit"}</label>
-                    <label>Quantité</label>
+                    <label>{isServices ? t("gestion.commandes.lineServiceLabel") : t("gestion.commandes.lineProductLabel")}</label>
+                    <label>{t("gestion.commandes.quantityLabel")}</label>
                     <span></span>
                   </div>
 
@@ -201,7 +199,7 @@ export function EditOrderButton({
                       <button
                         type="button"
                         className="g-del-btn"
-                        title="Retirer"
+                        title={t("gestion.commandes.removeLine")}
                         disabled={lines.length <= 1}
                         onClick={() => setLines((prev) => prev.filter((l) => l.id !== line.id))}
                       >
@@ -225,7 +223,7 @@ export function EditOrderButton({
                       ])
                     }
                   >
-                    <Plus size={13} /> {isServices ? "Ajouter une prestation" : "Ajouter un parfum"}
+                    <Plus size={13} /> {isServices ? t("gestion.commandes.addServiceLine") : t("gestion.commandes.addProductLine")}
                   </button>
                 </div>
 
@@ -236,13 +234,12 @@ export function EditOrderButton({
                     color: "var(--g-muted)",
                   }}
                 >
-                  {isServices ? "Total vente" : "Total commande"} :{" "}
+                  {isServices ? t("gestion.commandes.totalSale") : t("gestion.commandes.totalOrder")} :{" "}
                   <strong className="num">{fmt(total)}</strong>
                 </div>
 
                 <div className="g-hint" style={{ marginTop: 12, marginBottom: 0 }}>
-                  Les prix et coûts des lignes sont repris depuis le catalogue au moment de
-                  l&apos;enregistrement — les autres commandes ne sont pas affectées.
+                  {t("gestion.commandes.editSnapshotHint")}
                 </div>
                 {error && (
                   <div className="g-auth-error" style={{ marginTop: 12 }}>
@@ -252,10 +249,10 @@ export function EditOrderButton({
               </div>
               <div className="g-modal__footer">
                 <button type="button" className="g-btn secondary" onClick={closeModal}>
-                  Annuler
+                  {t("gestion.editCommon.cancel")}
                 </button>
                 <button type="submit" className="g-btn" disabled={submitting}>
-                  {submitting ? "Enregistrement..." : "Enregistrer"}
+                  {submitting ? t("gestion.editCommon.saving") : t("gestion.editCommon.save")}
                 </button>
               </div>
             </form>

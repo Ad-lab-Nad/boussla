@@ -14,6 +14,7 @@ import {
   updateStockUsage,
 } from "@/lib/gestion/actions";
 import { fmt, fmtNumber, todayStr } from "@/lib/gestion/format";
+import { getServerT } from "@/lib/i18n/server";
 import { ConfirmSubmitButton } from "@/components/gestion/ConfirmSubmitButton";
 import { EditStockItemButton } from "@/components/gestion/EditStockItemButton";
 import { EditStockPurchaseButton } from "@/components/gestion/EditStockPurchaseButton";
@@ -21,6 +22,7 @@ import { EditStockUsageButton } from "@/components/gestion/EditStockUsageButton"
 
 export default async function StockPage() {
   await requirePalier2Page();
+  const { t } = await getServerT();
   const business = await getCurrentBusiness();
   const [stockItems, purchases, usages] = await Promise.all([
     getStockItems(business.id),
@@ -31,38 +33,36 @@ export default async function StockPage() {
   return (
     <>
       <div className="g-card">
-        <h2>Nouvelle matière / fourniture</h2>
-        <div className="g-hint">
-          Ex : Pots en verre, Étiquettes, Sacs carton, Figue fraîche...
-        </div>
+        <h2>{t("gestion.stock.newItemTitle")}</h2>
+        <div className="g-hint">{t("gestion.stock.newItemHint")}</div>
         <form action={createStockItem} className="g-field-grid">
           <div className="g-field">
-            <label>Nom</label>
-            <input type="text" name="name" placeholder="ex: Étiquettes" required />
+            <label>{t("gestion.stock.nameLabel")}</label>
+            <input type="text" name="name" placeholder={t("gestion.stock.namePlaceholder")} required />
           </div>
           <div className="g-field">
-            <label>Unité</label>
-            <input type="text" name="unit" placeholder="ex: unité, kg" defaultValue="unité" />
+            <label>{t("gestion.stock.unitLabel")}</label>
+            <input type="text" name="unit" placeholder={t("gestion.stock.unitPlaceholder")} defaultValue="unité" />
           </div>
           <div className="g-field">
-            <label>Seuil d&apos;alerte</label>
+            <label>{t("gestion.stock.alertThresholdLabel")}</label>
             <input type="number" name="alertThreshold" min="0" step="1" defaultValue={10} />
           </div>
           <button type="submit" className="g-btn">
-            <Plus size={15} /> Créer
+            <Plus size={15} /> {t("gestion.stock.createButton")}
           </button>
         </form>
       </div>
 
       <div className="g-card">
-        <h2>Enregistrer un achat de stock</h2>
+        <h2>{t("gestion.stock.newPurchaseTitle")}</h2>
         <form action={createStockPurchase} className="g-field-grid">
           <div className="g-field">
-            <label>Date</label>
+            <label>{t("gestion.editCommon.dateLabel")}</label>
             <input type="date" name="date" defaultValue={todayStr()} required />
           </div>
           <div className="g-field">
-            <label>Matière</label>
+            <label>{t("gestion.stock.materialLabel")}</label>
             <select name="stockItemId" required>
               {stockItems.map(({ item }) => (
                 <option key={item.id} value={item.id}>
@@ -72,28 +72,28 @@ export default async function StockPage() {
             </select>
           </div>
           <div className="g-field">
-            <label>Quantité achetée</label>
+            <label>{t("gestion.stock.quantityPurchasedLabel")}</label>
             <input type="number" name="quantity" min="0" step="0.01" required />
           </div>
           <div className="g-field">
-            <label>Coût unitaire (DT)</label>
+            <label>{t("gestion.stock.unitCostLabel")}</label>
             <input type="number" name="unitCost" min="0" step="0.01" required />
           </div>
           <button type="submit" className="g-btn" disabled={stockItems.length === 0}>
-            <Plus size={15} /> Enregistrer l&apos;achat
+            <Plus size={15} /> {t("gestion.stock.registerPurchaseButton")}
           </button>
         </form>
       </div>
 
       <div className="g-card">
-        <h2>Enregistrer une utilisation</h2>
+        <h2>{t("gestion.stock.newUsageTitle")}</h2>
         <form action={createStockUsage} className="g-field-grid">
           <div className="g-field">
-            <label>Date</label>
+            <label>{t("gestion.editCommon.dateLabel")}</label>
             <input type="date" name="date" defaultValue={todayStr()} required />
           </div>
           <div className="g-field">
-            <label>Matière</label>
+            <label>{t("gestion.stock.materialLabel")}</label>
             <select name="stockItemId" required>
               {stockItems.map(({ item }) => (
                 <option key={item.id} value={item.id}>
@@ -103,7 +103,7 @@ export default async function StockPage() {
             </select>
           </div>
           <div className="g-field">
-            <label>Quantité utilisée</label>
+            <label>{t("gestion.stock.quantityUsedLabel")}</label>
             <input type="number" name="quantity" min="0" step="0.01" required />
           </div>
           <button
@@ -111,22 +111,22 @@ export default async function StockPage() {
             className="g-btn secondary"
             disabled={stockItems.length === 0}
           >
-            Enregistrer l&apos;utilisation
+            {t("gestion.stock.registerUsageButton")}
           </button>
         </form>
       </div>
 
       <div className="g-card">
-        <h2>État du stock</h2>
+        <h2>{t("gestion.stock.stateTitle")}</h2>
         <div className="g-table-wrap">
           <table className="g-table">
             <thead>
               <tr>
-                <th>Matière</th>
-                <th className="right">Achetée</th>
-                <th className="right">Utilisée</th>
-                <th className="right">Restante</th>
-                <th className="right">Valeur restante</th>
+                <th>{t("gestion.stock.materialLabel")}</th>
+                <th className="right">{t("gestion.stock.purchasedColumn")}</th>
+                <th className="right">{t("gestion.stock.usedColumn")}</th>
+                <th className="right">{t("gestion.stock.remainingColumn")}</th>
+                <th className="right">{t("gestion.stock.remainingValueColumn")}</th>
                 <th></th>
               </tr>
             </thead>
@@ -154,7 +154,7 @@ export default async function StockPage() {
                       <EditStockItemButton item={item} updateStockItemAction={updateStockItem} />
                       <form action={deleteStockItem}>
                         <input type="hidden" name="id" value={item.id} />
-                        <ConfirmSubmitButton confirmMessage="Supprimer cette matière et son historique ?" />
+                        <ConfirmSubmitButton confirmMessage={t("gestion.confirm.deleteMaterialAndHistory")} title={t("common.delete")} />
                       </form>
                     </td>
                   </tr>
@@ -163,19 +163,19 @@ export default async function StockPage() {
             </tbody>
           </table>
         </div>
-        {stockItems.length === 0 && <div className="g-empty">Aucune matière enregistrée.</div>}
+        {stockItems.length === 0 && <div className="g-empty">{t("gestion.stock.emptyItems")}</div>}
       </div>
 
       <div className="g-card">
-        <h2>Historique des achats</h2>
+        <h2>{t("gestion.stock.purchaseHistoryTitle")}</h2>
         <div className="g-table-wrap">
           <table className="g-table">
             <thead>
               <tr>
-                <th>Date</th>
-                <th>Matière</th>
-                <th className="right">Quantité</th>
-                <th className="right">Coût unitaire</th>
+                <th>{t("gestion.editCommon.dateLabel")}</th>
+                <th>{t("gestion.stock.materialLabel")}</th>
+                <th className="right">{t("gestion.commandes.quantityLabel")}</th>
+                <th className="right">{t("gestion.stock.unitCostLabel")}</th>
                 <th></th>
               </tr>
             </thead>
@@ -190,7 +190,7 @@ export default async function StockPage() {
                     <EditStockPurchaseButton purchase={p} updateStockPurchaseAction={updateStockPurchase} />
                     <form action={deleteStockPurchase}>
                       <input type="hidden" name="id" value={p.id} />
-                      <ConfirmSubmitButton confirmMessage="Supprimer cet achat ?" />
+                      <ConfirmSubmitButton confirmMessage={t("gestion.confirm.deletePurchase")} title={t("common.delete")} />
                     </form>
                   </td>
                 </tr>
@@ -198,18 +198,18 @@ export default async function StockPage() {
             </tbody>
           </table>
         </div>
-        {purchases.length === 0 && <div className="g-empty">Aucun achat enregistré.</div>}
+        {purchases.length === 0 && <div className="g-empty">{t("gestion.stock.emptyPurchases")}</div>}
       </div>
 
       <div className="g-card">
-        <h2>Historique des utilisations</h2>
+        <h2>{t("gestion.stock.usageHistoryTitle")}</h2>
         <div className="g-table-wrap">
           <table className="g-table">
             <thead>
               <tr>
-                <th>Date</th>
-                <th>Matière</th>
-                <th className="right">Quantité</th>
+                <th>{t("gestion.editCommon.dateLabel")}</th>
+                <th>{t("gestion.stock.materialLabel")}</th>
+                <th className="right">{t("gestion.commandes.quantityLabel")}</th>
                 <th></th>
               </tr>
             </thead>
@@ -223,7 +223,7 @@ export default async function StockPage() {
                     <EditStockUsageButton usage={u} updateStockUsageAction={updateStockUsage} />
                     <form action={deleteStockUsage}>
                       <input type="hidden" name="id" value={u.id} />
-                      <ConfirmSubmitButton confirmMessage="Supprimer cette utilisation ?" />
+                      <ConfirmSubmitButton confirmMessage={t("gestion.confirm.deleteUsage")} title={t("common.delete")} />
                     </form>
                   </td>
                 </tr>
@@ -231,7 +231,7 @@ export default async function StockPage() {
             </tbody>
           </table>
         </div>
-        {usages.length === 0 && <div className="g-empty">Aucune utilisation enregistrée.</div>}
+        {usages.length === 0 && <div className="g-empty">{t("gestion.stock.emptyUsages")}</div>}
       </div>
     </>
   );

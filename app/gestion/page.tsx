@@ -12,6 +12,7 @@ import { getCurrentUser } from "@/lib/current-user";
 import { getCurrentBusiness } from "@/lib/current-business";
 import { getOrCreateSubscription } from "@/lib/subscription";
 import { canAccessPalier2 } from "@/lib/subscription-access";
+import { getServerT } from "@/lib/i18n/server";
 import {
   getAverageSellPrice,
   getAvailableMonthKeys,
@@ -45,6 +46,7 @@ export default async function DashboardPage({
 }) {
   const { month: requestedMonth } = await searchParams;
 
+  const { t, locale } = await getServerT();
   const user = await getCurrentUser();
   const business = await getCurrentBusiness();
   const subscription = await getOrCreateSubscription(user.id);
@@ -84,11 +86,11 @@ export default async function DashboardPage({
     <>
       <form method="get">
         <div className="g-month-pill">
-          <span style={{ fontSize: "0.8rem", color: "var(--g-muted)" }}>Mois analysé</span>
+          <span style={{ fontSize: "0.8rem", color: "var(--g-muted)" }}>{t("gestion.dashboard.monthAnalyzed")}</span>
           <AutoSubmitSelect
             name="month"
             defaultValue={month}
-            options={monthOptions.map((k) => ({ value: k, label: monthLabel(k) }))}
+            options={monthOptions.map((k) => ({ value: k, label: monthLabel(k, locale) }))}
           />
         </div>
       </form>
@@ -108,47 +110,47 @@ export default async function DashboardPage({
 
       <div className="g-kpi-grid">
         <KpiCard
-          label="CA (livré)"
+          label={t("gestion.dashboard.revenue")}
           value={fmt(totals.revenue)}
           icon={TrendingUp}
           tone="blue"
-          delta={formatDelta(totals.revenue, previousTotals.revenue)}
+          delta={formatDelta(totals.revenue, previousTotals.revenue, t)}
           deltaGoodWhenUp
         />
         <KpiCard
-          label="Coût réel"
+          label={t("gestion.dashboard.realCost")}
           value={fmt(totals.cost)}
           icon={PackageMinus}
           tone="orange"
-          delta={formatDelta(totals.cost, previousTotals.cost)}
+          delta={formatDelta(totals.cost, previousTotals.cost, t)}
           deltaGoodWhenUp={false}
         />
         <KpiCard
-          label="Dépenses (pub, etc.)"
+          label={t("gestion.dashboard.expenses")}
           value={fmt(totals.expensesTotal)}
           icon={Receipt}
           tone="violet"
-          delta={formatDelta(totals.expensesTotal, previousTotals.expensesTotal)}
+          delta={formatDelta(totals.expensesTotal, previousTotals.expensesTotal, t)}
           deltaGoodWhenUp={false}
         />
         <KpiCard
-          label="Bénéfice net réel"
+          label={t("gestion.dashboard.netProfit")}
           value={fmt(totals.netProfit)}
           icon={Wallet}
           tone={totals.netProfit >= 0 ? "good" : "critical"}
-          delta={formatDelta(totals.netProfit, previousTotals.netProfit)}
+          delta={formatDelta(totals.netProfit, previousTotals.netProfit, t)}
           deltaGoodWhenUp
         />
         <KpiCard
-          label="Trésorerie du mois (cash)"
+          label={t("gestion.dashboard.cashFlow")}
           value={fmt(totals.cashFlow)}
           icon={Landmark}
           tone={totals.cashFlow >= 0 ? "aqua" : "critical"}
-          delta={formatDelta(totals.cashFlow, previousTotals.cashFlow)}
+          delta={formatDelta(totals.cashFlow, previousTotals.cashFlow, t)}
           deltaGoodWhenUp
         />
         <KpiCard
-          label="Montant impayé"
+          label={t("gestion.dashboard.unpaidAmount")}
           value={fmt(totals.unpaidAmount)}
           icon={AlertTriangle}
           tone={totals.unpaidAmount > 0 ? "warning" : "good"}
@@ -162,7 +164,7 @@ export default async function DashboardPage({
           </span>
           <div>
             <div className="g-stat-chip__value">{totals.inProgressCount}</div>
-            <div className="g-stat-chip__label">Commandes en cours</div>
+            <div className="g-stat-chip__label">{t("gestion.dashboard.ordersInProgress")}</div>
           </div>
         </div>
         <div className="g-stat-chip">
@@ -171,23 +173,23 @@ export default async function DashboardPage({
           </span>
           <div>
             <div className="g-stat-chip__value">{totals.returnedCount}</div>
-            <div className="g-stat-chip__label">Commandes retournées</div>
+            <div className="g-stat-chip__label">{t("gestion.dashboard.ordersReturned")}</div>
           </div>
         </div>
       </div>
 
       <div className="g-charts-row">
         <div className="g-chart-card">
-          <h2>Évolution du CA</h2>
-          <div className="g-hint">CA (livré) et bénéfice net réel, 6 derniers mois.</div>
+          <h2>{t("gestion.dashboard.revenueEvolution")}</h2>
+          <div className="g-hint">{t("gestion.dashboard.revenueEvolutionHint")}</div>
           <RevenueTrendChart trend={trend} />
         </div>
 
         <div className="g-chart-card">
-          <h2>Produits les plus vendus</h2>
-          <div className="g-hint">CA généré ce mois-ci, par produit.</div>
+          <h2>{t("gestion.dashboard.topProducts")}</h2>
+          <div className="g-hint">{t("gestion.dashboard.topProductsHint")}</div>
           {totals.topProducts.length === 0 ? (
-            <div className="g-empty">Aucune commande livrée ce mois-ci.</div>
+            <div className="g-empty">{t("gestion.dashboard.noDeliveredOrders")}</div>
           ) : (
             <TopProductsChart products={totals.topProducts} />
           )}
@@ -195,14 +197,14 @@ export default async function DashboardPage({
       </div>
 
       <div className="g-card">
-        <h2>Détail des produits vendus ce mois</h2>
+        <h2>{t("gestion.dashboard.productsDetailTitle")}</h2>
         <div className="g-table-wrap">
           <table className="g-table">
             <thead>
               <tr>
-                <th>Produit</th>
-                <th className="right">Quantité livrée</th>
-                <th className="right">CA généré</th>
+                <th>{t("gestion.dashboard.productColumn")}</th>
+                <th className="right">{t("gestion.dashboard.quantityDeliveredColumn")}</th>
+                <th className="right">{t("gestion.dashboard.revenueGeneratedColumn")}</th>
               </tr>
             </thead>
             <tbody>
@@ -217,14 +219,14 @@ export default async function DashboardPage({
           </table>
         </div>
         {totals.topProducts.length === 0 && (
-          <div className="g-empty">Aucune commande livrée ce mois-ci.</div>
+          <div className="g-empty">{t("gestion.dashboard.noDeliveredOrders")}</div>
         )}
       </div>
 
       <div className="g-card">
-        <h2>Alertes stock</h2>
+        <h2>{t("gestion.dashboard.stockAlertsTitle")}</h2>
         {stockAlerts.length === 0 ? (
-          <div className="g-empty">Aucune alerte — tous les stocks sont au-dessus du seuil.</div>
+          <div className="g-empty">{t("gestion.dashboard.noStockAlerts")}</div>
         ) : (
           stockAlerts.map(({ item, remaining }) => (
             <div className="g-alert-row" key={item.id}>
@@ -233,7 +235,7 @@ export default async function DashboardPage({
               </span>
               <span className="g-alert-row__name">{item.name}</span>
               <span className="num g-alert-row__value">
-                {fmtNumber(remaining)} {item.unit} restant(es)
+                {t("gestion.dashboard.remainingUnits", { quantity: fmtNumber(remaining), unit: item.unit })}
               </span>
             </div>
           ))

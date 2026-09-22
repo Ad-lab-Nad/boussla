@@ -1,17 +1,24 @@
 // A product's sellPrice/unitCost are "per sellUnit" — 25 for a Kg-priced
 // product means 25 DT/kg, not 25 DT for the whole batch.
 import { fmt, fmtNumber } from "@/lib/gestion/format";
+import type { TFunction } from "@/lib/i18n/translate";
 
-export const SELL_UNIT_OPTIONS = [
-  { value: "PIECE", label: "Pièce" },
-  { value: "KG", label: "Kg" },
-  { value: "GRAM", label: "Gramme" },
-  { value: "LITRE", label: "Litre" },
+const SELL_UNIT_KEYS = [
+  { value: "PIECE", labelKey: "gestion.sellUnits.piece" },
+  { value: "KG", labelKey: "gestion.sellUnits.kg" },
+  { value: "GRAM", labelKey: "gestion.sellUnits.gram" },
+  { value: "LITRE", labelKey: "gestion.sellUnits.litre" },
 ] as const;
 
-export const SELL_UNIT_LABELS: Record<string, string> = Object.fromEntries(
-  SELL_UNIT_OPTIONS.map((o) => [o.value, o.label])
-);
+export const SELL_UNIT_VALUES: string[] = SELL_UNIT_KEYS.map((o) => o.value);
+
+export function sellUnitOptions(t: TFunction): { value: string; label: string }[] {
+  return SELL_UNIT_KEYS.map((o) => ({ value: o.value, label: t(o.labelKey) }));
+}
+
+export function sellUnitLabels(t: TFunction): Record<string, string> {
+  return Object.fromEntries(SELL_UNIT_KEYS.map((o) => [o.value, t(o.labelKey)]));
+}
 
 // Pièce is the original, unambiguous default — left suffix-free so the
 // common case looks exactly as clean as it did before this field existed.

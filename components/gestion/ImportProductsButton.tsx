@@ -6,8 +6,11 @@ import { AlertTriangle, CheckCircle2, Upload, X, XCircle } from "lucide-react";
 import { parseProductsFile, type ImportRow } from "@/lib/gestion/import-products";
 import { bulkCreateProducts } from "@/lib/gestion/actions";
 import { fmt } from "@/lib/gestion/format";
+import { useLocale } from "@/components/i18n/LocaleProvider";
+import type { TFunction } from "@/lib/i18n/translate";
 
 export function ImportProductsButton() {
+  const { t } = useLocale();
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [fileName, setFileName] = useState("");
@@ -30,16 +33,14 @@ export function ImportProductsButton() {
     setResultMessage(null);
     setRows(null);
     try {
-      const parsed = await parseProductsFile(file);
+      const parsed = await parseProductsFile(file, t);
       if (parsed.length === 0) {
-        setParseError("Aucune ligne de données détectée dans ce fichier.");
+        setParseError(t("gestion.import.errorNoRows"));
         return;
       }
       setRows(parsed);
     } catch {
-      setParseError(
-        "Impossible de lire ce fichier. Vérifie qu'il s'agit bien d'un fichier Excel (.xlsx) ou CSV."
-      );
+      setParseError(t("gestion.import.errorUnreadableFile"));
     }
   }
 
@@ -55,12 +56,10 @@ export function ImportProductsButton() {
         validRows.map((r) => ({ name: r.name, sellPrice: r.sellPrice!, unitCost: r.unitCost! }))
       );
       setRows(null);
-      setResultMessage(
-        `${count} produit${count > 1 ? "s" : ""} importé${count > 1 ? "s" : ""} avec succès.`
-      );
+      setResultMessage(t("gestion.import.successMessage", { count }));
       router.refresh();
     } catch {
-      setParseError("L'import a échoué côté serveur. Réessaie.");
+      setParseError(t("gestion.import.errorServerImport"));
     } finally {
       setSubmitting(false);
     }
@@ -69,15 +68,15 @@ export function ImportProductsButton() {
   return (
     <>
       <button type="button" className="g-btn secondary" onClick={() => setOpen(true)}>
-        <Upload size={15} /> Importer depuis Excel
+        <Upload size={15} /> {t("gestion.import.buttonLabel")}
       </button>
 
       {open && (
         <div className="g-modal-overlay" onClick={closeModal}>
           <div className="g-modal" onClick={(e) => e.stopPropagation()}>
             <div className="g-modal__header">
-              <h2>Importer des produits</h2>
-              <button type="button" className="g-modal__close" onClick={closeModal} aria-label="Fermer">
+              <h2>{t("gestion.import.modalTitle")}</h2>
+              <button type="button" className="g-modal__close" onClick={closeModal} aria-label={t("gestion.editCommon.close")}>
                 <X size={18} />
               </button>
             </div>
@@ -85,14 +84,9 @@ export function ImportProductsButton() {
             <div className="g-modal__body">
               {!rows && !resultMessage && (
                 <>
-                  <div className="g-hint">
-                    Fichier Excel (.xlsx) ou CSV avec les colonnes <strong>Nom</strong>,{" "}
-                    <strong>Prix de vente</strong> et <strong>Coût unitaire</strong>. Si les
-                    en-têtes ne correspondent à aucun de ces noms, les 3 premières colonnes sont
-                    utilisées dans cet ordre.
-                  </div>
+                  <div className="g-hint">{t("gestion.import.hint")}</div>
                   <label className="g-file-input">
-                    {fileName || "Choisir un fichier .xlsx ou .csv"}
+                    {fileName || t("gestion.import.filePlaceholder")}
                     <input
                       type="file"
                       accept=".xlsx,.xls,.csv"
@@ -114,12 +108,11 @@ export function ImportProductsButton() {
                   <div className="g-import-summary">
                     <span>{fileName}</span>
                     <span>
-                      <strong>{validRows.length}</strong> ligne{validRows.length > 1 ? "s" : ""}{" "}
-                      valide{validRows.length > 1 ? "s" : ""}
+                      {t("gestion.import.validRowsSummary", { count: validRows.length })}
                       {errorCount > 0 && (
                         <>
                           {" · "}
-                          <strong>{errorCount}</strong> en erreur
+                          {t("gestion.import.errorRowsSummary", { count: errorCount })}
                         </>
                       )}
                     </span>
@@ -128,11 +121,11 @@ export function ImportProductsButton() {
                     <table className="g-table">
                       <thead>
                         <tr>
-                          <th>Ligne</th>
-                          <th>Nom</th>
-                          <th className="right">Prix vente</th>
-                          <th className="right">Coût unitaire</th>
-                          <th>Statut</th>
+                          <th>{t("gestion.import.rowColumn")}</th>
+                          <th>{t("gestion.clients.nameLabel")}</th>
+                          <th className="right">{t("gestion.produits.sellPriceColumn")}</th>
+                          <th className="right">{t("gestion.editCommon.unitCostLabel")}</th>
+                          <th>{t("gestion.clients.statusLabel")}</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -147,7 +140,7 @@ export function ImportProductsButton() {
                               {r.unitCost !== null ? fmt(r.unitCost) : "—"}
                             </td>
                             <td>
-                              <ImportStatusBadge row={r} />
+                              <ImportStatusBadge row={r} t={t} />
                             </td>
                           </tr>
                         ))}
@@ -160,7 +153,7 @@ export function ImportProductsButton() {
 
             <div className="g-modal__footer">
               <button type="button" className="g-btn secondary" onClick={closeModal}>
-                {resultMessage ? "Fermer" : "Annuler"}
+                {resultMessage ? t("gestion.editCommon.close") : t("gestion.editCommon.cancel")}
               </button>
               {rows && !resultMessage && (
                 <button
@@ -170,8 +163,8 @@ export function ImportProductsButton() {
                   onClick={handleConfirm}
                 >
                   {submitting
-                    ? "Import..."
-                    : `Importer ${validRows.length} produit${validRows.length > 1 ? "s" : ""}`}
+                    ? t("gestion.import.importingButton")
+                    : t("gestion.import.importButton", { count: validRows.length })}
                 </button>
               )}
             </div>
@@ -182,12 +175,12 @@ export function ImportProductsButton() {
   );
 }
 
-function ImportStatusBadge({ row }: { row: ImportRow }) {
+function ImportStatusBadge({ row, t }: { row: ImportRow; t: TFunction }) {
   if (row.status === "valid") {
     return (
       <span className="g-badge status-valid">
         <CheckCircle2 size={12} />
-        Valide
+        {t("gestion.import.statusValid")}
       </span>
     );
   }

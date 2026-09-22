@@ -2,6 +2,18 @@ import { TrendingUp, Wallet } from "lucide-react";
 import { KpiCard } from "@/components/gestion/KpiCard";
 import { RevenueTrendChart } from "@/components/gestion/RevenueTrendChart";
 import { fmt, formatDelta } from "@/lib/gestion/format";
+import { createTranslator } from "@/lib/i18n/translate";
+import { LocaleProvider } from "@/components/i18n/LocaleProvider";
+
+// This marketing preview is deliberately French-only (out of scope for the
+// Gestion module's translation) — a fixed fr translator for its own text.
+// RevenueTrendChart still needs a LocaleProvider ancestor to render at all
+// (it calls useLocale() internally); that provider reads the same shared
+// locale cookie as the rest of the app, so in the rare case a visitor
+// switched to Arabic while in /gestion and then lands here, only the
+// chart's month labels would follow — accepted as a minor, low-traffic edge
+// case rather than adding a "force this locale" escape hatch for one spot.
+const t = createTranslator("fr");
 
 // Example numbers only — never a real account's data. Deliberately climbing,
 // per the brief, to show the story at a glance: "ça peut monter comme ça".
@@ -33,7 +45,7 @@ export function DashboardPreview() {
             value={fmt(last.revenue)}
             icon={TrendingUp}
             tone="blue"
-            delta={formatDelta(last.revenue, prev.revenue)}
+            delta={formatDelta(last.revenue, prev.revenue, t)}
             deltaGoodWhenUp
           />
           <KpiCard
@@ -41,14 +53,16 @@ export function DashboardPreview() {
             value={fmt(last.netProfit)}
             icon={Wallet}
             tone="good"
-            delta={formatDelta(last.netProfit, prev.netProfit)}
+            delta={formatDelta(last.netProfit, prev.netProfit, t)}
             deltaGoodWhenUp
           />
         </div>
         <div className="g-chart-card">
           <h2>Évolution du CA</h2>
           <div className="g-hint">CA (livré) et bénéfice net réel, 6 derniers mois. Exemple.</div>
-          <RevenueTrendChart trend={EXAMPLE_TREND} />
+          <LocaleProvider>
+            <RevenueTrendChart trend={EXAMPLE_TREND} />
+          </LocaleProvider>
         </div>
       </div>
     </div>

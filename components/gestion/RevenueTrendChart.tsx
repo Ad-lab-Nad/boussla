@@ -13,12 +13,14 @@ import {
 import { useColorScheme } from "@/components/gestion/useColorScheme";
 import { CHART_COLORS } from "@/lib/gestion/chart-colors";
 import { fmt, monthLabelShort } from "@/lib/gestion/format";
+import { useLocale } from "@/components/i18n/LocaleProvider";
 
 type Point = { month: string; revenue: number; netProfit: number };
 
 export function RevenueTrendChart({ trend }: { trend: Point[] }) {
+  const { t, locale } = useLocale();
   const c = CHART_COLORS[useColorScheme()];
-  const data = trend.map((p) => ({ ...p, label: monthLabelShort(p.month) }));
+  const data = trend.map((p) => ({ ...p, label: monthLabelShort(p.month, locale) }));
 
   return (
     <ResponsiveContainer width="100%" height={260}>
@@ -57,7 +59,7 @@ export function RevenueTrendChart({ trend }: { trend: Point[] }) {
         <Line
           type="monotone"
           dataKey="revenue"
-          name="CA (livré)"
+          name={t("gestion.charts.revenueLivree")}
           stroke={c.blue}
           strokeWidth={2}
           dot={{ r: 4, fill: c.blue, strokeWidth: 2, stroke: c.surface }}
@@ -66,7 +68,7 @@ export function RevenueTrendChart({ trend }: { trend: Point[] }) {
         <Line
           type="monotone"
           dataKey="netProfit"
-          name="Bénéfice net"
+          name={t("gestion.charts.netProfit")}
           stroke={c.orange}
           strokeWidth={2}
           dot={{ r: 4, fill: c.orange, strokeWidth: 2, stroke: c.surface }}

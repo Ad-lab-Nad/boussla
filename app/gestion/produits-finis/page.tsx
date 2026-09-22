@@ -5,11 +5,13 @@ import { getFinishedStock, getProductionBatches, getProducts } from "@/lib/gesti
 import { createProductionBatch, deleteProductionBatch, updateProductionBatch } from "@/lib/gestion/actions";
 import { todayStr } from "@/lib/gestion/format";
 import { fmtQty } from "@/lib/gestion/product-units";
+import { getServerT } from "@/lib/i18n/server";
 import { ConfirmSubmitButton } from "@/components/gestion/ConfirmSubmitButton";
 import { EditProductionBatchButton } from "@/components/gestion/EditProductionBatchButton";
 
 export default async function ProduitsFinisPage() {
   await requirePalier2Page();
+  const { t } = await getServerT();
   const business = await getCurrentBusiness();
   const [products, batches, finishedStock] = await Promise.all([
     getProducts(business.id),
@@ -20,18 +22,15 @@ export default async function ProduitsFinisPage() {
   return (
     <>
       <div className="g-card">
-        <h2>Enregistrer un lot produit</h2>
-        <div className="g-hint">
-          À chaque session de production, notez ici ce que vous avez fait — le stock disponible
-          se calcule tout seul en comparant à vos commandes livrées.
-        </div>
+        <h2>{t("gestion.produitsFinis.newBatchTitle")}</h2>
+        <div className="g-hint">{t("gestion.produitsFinis.newBatchHint")}</div>
         <form action={createProductionBatch} className="g-field-grid">
           <div className="g-field">
-            <label>Date</label>
+            <label>{t("gestion.editCommon.dateLabel")}</label>
             <input type="date" name="date" defaultValue={todayStr()} required />
           </div>
           <div className="g-field">
-            <label>Produit</label>
+            <label>{t("gestion.produits.productColumn")}</label>
             <select name="productId" required>
               {products.map((p) => (
                 <option key={p.id} value={p.id}>
@@ -41,25 +40,25 @@ export default async function ProduitsFinisPage() {
             </select>
           </div>
           <div className="g-field">
-            <label>Quantité produite</label>
+            <label>{t("gestion.produitsFinis.quantityProducedLabel")}</label>
             <input type="number" name="quantity" min="0.001" step="any" required />
           </div>
           <button type="submit" className="g-btn" disabled={products.length === 0}>
-            <Plus size={15} /> Ajouter le lot
+            <Plus size={15} /> {t("gestion.produitsFinis.addBatchButton")}
           </button>
         </form>
       </div>
 
       <div className="g-card">
-        <h2>Stock disponible par produit</h2>
+        <h2>{t("gestion.produitsFinis.availableStockTitle")}</h2>
         <div className="g-table-wrap">
           <table className="g-table">
             <thead>
               <tr>
-                <th>Produit</th>
-                <th className="right">Produit au total</th>
-                <th className="right">Vendu (livré)</th>
-                <th className="right">Stock disponible</th>
+                <th>{t("gestion.produits.productColumn")}</th>
+                <th className="right">{t("gestion.produitsFinis.totalProducedColumn")}</th>
+                <th className="right">{t("gestion.produitsFinis.soldColumn")}</th>
+                <th className="right">{t("gestion.produitsFinis.availableColumn")}</th>
               </tr>
             </thead>
             <tbody>
@@ -80,19 +79,19 @@ export default async function ProduitsFinisPage() {
           </table>
         </div>
         {products.length === 0 && (
-          <div className="g-empty">Aucun lot enregistré pour l&apos;instant.</div>
+          <div className="g-empty">{t("gestion.produitsFinis.emptyStock")}</div>
         )}
       </div>
 
       <div className="g-card">
-        <h2>Historique des lots produits</h2>
+        <h2>{t("gestion.produitsFinis.batchHistoryTitle")}</h2>
         <div className="g-table-wrap">
           <table className="g-table">
             <thead>
               <tr>
-                <th>Date</th>
-                <th>Produit</th>
-                <th className="right">Quantité</th>
+                <th>{t("gestion.editCommon.dateLabel")}</th>
+                <th>{t("gestion.produits.productColumn")}</th>
+                <th className="right">{t("gestion.commandes.quantityLabel")}</th>
                 <th></th>
               </tr>
             </thead>
@@ -110,7 +109,7 @@ export default async function ProduitsFinisPage() {
                     />
                     <form action={deleteProductionBatch}>
                       <input type="hidden" name="id" value={b.id} />
-                      <ConfirmSubmitButton confirmMessage="Supprimer ce lot ?" />
+                      <ConfirmSubmitButton confirmMessage={t("gestion.confirm.deleteBatch")} title={t("common.delete")} />
                     </form>
                   </td>
                 </tr>
@@ -118,7 +117,7 @@ export default async function ProduitsFinisPage() {
             </tbody>
           </table>
         </div>
-        {batches.length === 0 && <div className="g-empty">Aucun lot enregistré.</div>}
+        {batches.length === 0 && <div className="g-empty">{t("gestion.produitsFinis.emptyBatches")}</div>}
       </div>
     </>
   );

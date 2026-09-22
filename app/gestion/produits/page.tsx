@@ -4,53 +4,54 @@ import { getCurrentBusiness } from "@/lib/current-business";
 import { requirePalier2Page } from "@/lib/subscription-access";
 import { getProducts } from "@/lib/gestion/queries";
 import { createProduct, deleteProduct, updateProduct } from "@/lib/gestion/actions";
-import { SELL_UNIT_LABELS, SELL_UNIT_OPTIONS, fmtPrice } from "@/lib/gestion/product-units";
+import { sellUnitLabels, sellUnitOptions, fmtPrice } from "@/lib/gestion/product-units";
+import { getServerT } from "@/lib/i18n/server";
 import { ConfirmSubmitButton } from "@/components/gestion/ConfirmSubmitButton";
 import { ImportProductsButton } from "@/components/gestion/ImportProductsButton";
 import { EditProductButton } from "@/components/gestion/EditProductButton";
 
 export default async function ProduitsPage() {
   await requirePalier2Page();
+  const { t } = await getServerT();
   const user = await getCurrentUser();
   const business = await getCurrentBusiness();
   const products = await getProducts(business.id);
   const isServices = user.activityType === "SERVICES";
   const deleteConfirmMessage = isServices
-    ? "Supprimer cette prestation ?"
-    : "Supprimer ce produit ?";
+    ? t("gestion.confirm.deleteService")
+    : t("gestion.confirm.deleteProduct");
+  const unitLabels = sellUnitLabels(t);
 
   return (
     <>
       <div className="g-card">
-        <h2>{isServices ? "Nouvelle prestation" : "Nouveau produit"}</h2>
+        <h2>{isServices ? t("gestion.produits.newServiceTitle") : t("gestion.produits.newProductTitle")}</h2>
         <div className="g-hint">
-          {isServices
-            ? "Le coût unitaire correspond au coût de revient de votre prestation (temps, matériel, sous-traitance...)."
-            : "Le coût unitaire vient de votre calculateur de prix (fruit + sucre + pot + étiquette + emballage + pub)."}
+          {isServices ? t("gestion.produits.newServiceHint") : t("gestion.produits.newProductHint")}
         </div>
         <form action={createProduct} className="g-field-grid">
           <div className="g-field">
-            <label>Nom</label>
+            <label>{t("gestion.clients.nameLabel")}</label>
             <input
               type="text"
               name="name"
-              placeholder={isServices ? "ex: Consultation 1h" : "ex: Confiture Figue"}
+              placeholder={isServices ? t("gestion.produits.namePlaceholderServices") : t("gestion.produits.namePlaceholder")}
               required
             />
           </div>
           <div className="g-field">
-            <label>Prix de vente (DT)</label>
+            <label>{t("gestion.produits.sellPriceLabel")}</label>
             <input type="number" name="sellPrice" min="0" step="0.01" required />
           </div>
           <div className="g-field">
-            <label>Coût unitaire (DT)</label>
+            <label>{t("gestion.editCommon.unitCostLabel")}</label>
             <input type="number" name="unitCost" min="0" step="0.01" required />
           </div>
           {!isServices && (
             <div className="g-field">
-              <label>Unité de vente</label>
+              <label>{t("gestion.produits.sellUnitLabel")}</label>
               <select name="sellUnit" defaultValue="PIECE">
-                {SELL_UNIT_OPTIONS.map((opt) => (
+                {sellUnitOptions(t).map((opt) => (
                   <option key={opt.value} value={opt.value}>
                     {opt.label}
                   </option>
@@ -59,7 +60,7 @@ export default async function ProduitsPage() {
             </div>
           )}
           <button type="submit" className="g-btn">
-            <Plus size={15} /> Ajouter
+            <Plus size={15} /> {t("common.add")}
           </button>
         </form>
       </div>
@@ -73,18 +74,18 @@ export default async function ProduitsPage() {
             marginBottom: 14,
           }}
         >
-          <h2 style={{ margin: 0 }}>{isServices ? "Catalogue prestations" : "Catalogue produits"}</h2>
+          <h2 style={{ margin: 0 }}>{isServices ? t("gestion.produits.catalogServicesTitle") : t("gestion.produits.catalogProductsTitle")}</h2>
           <ImportProductsButton />
         </div>
         <div className="g-table-wrap">
           <table className="g-table">
             <thead>
               <tr>
-                <th>{isServices ? "Prestation" : "Produit"}</th>
-                {!isServices && <th>Unité</th>}
-                <th className="right">Prix vente</th>
-                <th className="right">Coût unitaire</th>
-                <th className="right">Marge/unité</th>
+                <th>{isServices ? t("gestion.produits.serviceColumn") : t("gestion.produits.productColumn")}</th>
+                {!isServices && <th>{t("gestion.produits.sellUnitLabel")}</th>}
+                <th className="right">{t("gestion.produits.sellPriceColumn")}</th>
+                <th className="right">{t("gestion.editCommon.unitCostLabel")}</th>
+                <th className="right">{t("gestion.produits.marginColumn")}</th>
                 <th></th>
               </tr>
             </thead>
@@ -92,7 +93,7 @@ export default async function ProduitsPage() {
               {products.map((p) => (
                 <tr key={p.id}>
                   <td>{p.name}</td>
-                  {!isServices && <td>{SELL_UNIT_LABELS[p.sellUnit]}</td>}
+                  {!isServices && <td>{unitLabels[p.sellUnit]}</td>}
                   <td className="right num">{fmtPrice(p.sellPrice, p.sellUnit)}</td>
                   <td className="right num">{fmtPrice(p.unitCost, p.sellUnit)}</td>
                   <td className="right num">{fmtPrice(p.sellPrice - p.unitCost, p.sellUnit)}</td>
@@ -104,7 +105,7 @@ export default async function ProduitsPage() {
                     />
                     <form action={deleteProduct}>
                       <input type="hidden" name="id" value={p.id} />
-                      <ConfirmSubmitButton confirmMessage={deleteConfirmMessage} />
+                      <ConfirmSubmitButton confirmMessage={deleteConfirmMessage} title={t("common.delete")} />
                     </form>
                   </td>
                 </tr>
@@ -114,7 +115,7 @@ export default async function ProduitsPage() {
         </div>
         {products.length === 0 && (
           <div className="g-empty">
-            {isServices ? "Aucune prestation enregistrée." : "Aucun produit enregistré."}
+            {isServices ? t("gestion.produits.emptyServices") : t("gestion.produits.emptyProducts")}
           </div>
         )}
       </div>

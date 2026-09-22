@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Plus, X } from "lucide-react";
 import { fmt, todayStr } from "@/lib/gestion/format";
 import { fmtPrice } from "@/lib/gestion/product-units";
+import { useLocale } from "@/components/i18n/LocaleProvider";
 
 type Product = { id: string; name: string; sellPrice: number; unitCost: number; sellUnit: string };
 type Line = { id: string; productId: string; quantity: number };
@@ -25,6 +26,7 @@ export function OrderForm({
   createOrderAction: (formData: FormData) => Promise<void>;
   isServices?: boolean;
 }) {
+  const { t } = useLocale();
   const [lines, setLines] = useState<Line[]>(() =>
     products.length > 0 ? [newLine(products)] : []
   );
@@ -38,9 +40,7 @@ export function OrderForm({
   if (products.length === 0) {
     return (
       <div className="g-hint">
-        {isServices
-          ? "Créez d'abord une prestation dans l'onglet Prestations."
-          : "Créez d'abord un produit dans l'onglet Produits."}
+        {isServices ? t("gestion.commandes.emptyCatalogServices") : t("gestion.commandes.emptyCatalogProducts")}
       </div>
     );
   }
@@ -56,45 +56,45 @@ export function OrderForm({
     >
       <div className="g-field-grid">
         <div className="g-field">
-          <label>Date</label>
+          <label>{t("gestion.editCommon.dateLabel")}</label>
           <input type="date" name="date" defaultValue={todayStr()} required />
         </div>
         <div className="g-field">
-          <label>Client (optionnel)</label>
-          <input type="text" name="clientName" placeholder="Nom" />
+          <label>{t("gestion.commandes.clientOptionalLabel")}</label>
+          <input type="text" name="clientName" placeholder={t("gestion.commandes.namePlaceholder")} />
         </div>
         <div className="g-field">
-          <label>Statut</label>
+          <label>{t("gestion.clients.statusLabel")}</label>
           <select name="status" defaultValue="IN_PROGRESS">
-            <option value="IN_PROGRESS">En cours</option>
-            <option value="DELIVERED">Livré</option>
-            <option value="RETURNED">Retour</option>
+            <option value="IN_PROGRESS">{t("gestion.commandes.statusInProgress")}</option>
+            <option value="DELIVERED">{t("gestion.commandes.statusDelivered")}</option>
+            <option value="RETURNED">{t("gestion.commandes.statusReturned")}</option>
           </select>
         </div>
         <div className="g-field">
-          <label>Paiement</label>
+          <label>{t("gestion.commandes.paymentColumn")}</label>
           <select name="paymentStatus" defaultValue="PENDING">
-            <option value="PENDING">En attente</option>
-            <option value="PAID">Payé</option>
-            <option value="UNPAID">Impayé</option>
+            <option value="PENDING">{t("gestion.commandes.paymentPending")}</option>
+            <option value="PAID">{t("gestion.commandes.paymentPaid")}</option>
+            <option value="UNPAID">{t("gestion.commandes.paymentUnpaid")}</option>
           </select>
         </div>
         <div className="g-field">
-          <label>Moyen de paiement</label>
+          <label>{t("gestion.commandes.methodColumn")}</label>
           <select
             name="paymentMethod"
             value={paymentMethod}
             onChange={(e) => setPaymentMethod(e.target.value)}
           >
-            <option value="CASH">Espèces</option>
-            <option value="CHECK">Chèque</option>
-            <option value="TRANSFER">Virement</option>
-            <option value="OTHER">Autre</option>
+            <option value="CASH">{t("gestion.commandes.methodCash")}</option>
+            <option value="CHECK">{t("gestion.commandes.methodCheck")}</option>
+            <option value="TRANSFER">{t("gestion.commandes.methodTransfer")}</option>
+            <option value="OTHER">{t("gestion.commandes.methodOther")}</option>
           </select>
         </div>
         {paymentMethod === "CHECK" && (
           <div className="g-field">
-            <label>Date d&apos;échéance (optionnel)</label>
+            <label>{t("gestion.commandes.checkDueDateOptionalLabel")}</label>
             <input type="date" name="checkDueDate" />
           </div>
         )}
@@ -102,8 +102,8 @@ export function OrderForm({
 
       <div style={{ marginTop: 16 }}>
         <div className="g-line-header">
-          <label>{isServices ? "Prestation" : "Parfum / produit"}</label>
-          <label>Quantité</label>
+          <label>{isServices ? t("gestion.commandes.lineServiceLabel") : t("gestion.commandes.lineProductLabel")}</label>
+          <label>{t("gestion.commandes.quantityLabel")}</label>
           <span></span>
         </div>
 
@@ -143,7 +143,7 @@ export function OrderForm({
             <button
               type="button"
               className="g-del-btn"
-              title="Retirer"
+              title={t("gestion.commandes.removeLine")}
               disabled={lines.length <= 1}
               onClick={() => setLines((prev) => prev.filter((l) => l.id !== line.id))}
             >
@@ -158,7 +158,7 @@ export function OrderForm({
           style={{ marginTop: 8 }}
           onClick={() => setLines((prev) => [...prev, newLine(products)])}
         >
-          <Plus size={13} /> {isServices ? "Ajouter une prestation" : "Ajouter un parfum"}
+          <Plus size={13} /> {isServices ? t("gestion.commandes.addServiceLine") : t("gestion.commandes.addProductLine")}
         </button>
       </div>
 
@@ -171,11 +171,11 @@ export function OrderForm({
         }}
       >
         <span style={{ fontSize: "0.85rem", color: "var(--g-muted)" }}>
-          {isServices ? "Total vente" : "Total commande"} :{" "}
+          {isServices ? t("gestion.commandes.totalSale") : t("gestion.commandes.totalOrder")} :{" "}
           <strong className="num">{fmt(total)}</strong>
         </span>
         <button type="submit" className="g-btn">
-          {isServices ? "Enregistrer la vente" : "Enregistrer la commande"}
+          {isServices ? t("gestion.commandes.registerSale") : t("gestion.commandes.registerOrder")}
         </button>
       </div>
     </form>

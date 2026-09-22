@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Pencil, X } from "lucide-react";
+import { useLocale } from "@/components/i18n/LocaleProvider";
 
 type Client = { id: string; name: string; phone: string | null; email: string | null };
 
@@ -13,6 +14,7 @@ export function EditClientButton({
   client: Client;
   updateClientAction: (formData: FormData) => Promise<void>;
 }) {
+  const { t } = useLocale();
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -31,7 +33,7 @@ export function EditClientButton({
       setOpen(false);
       router.refresh();
     } catch {
-      setError("Impossible d'enregistrer ce client. Réessaie.");
+      setError(t("gestion.clients.saveError"));
     } finally {
       setSubmitting(false);
     }
@@ -39,7 +41,7 @@ export function EditClientButton({
 
   return (
     <>
-      <button type="button" className="g-del-btn" title="Modifier" onClick={() => setOpen(true)}>
+      <button type="button" className="g-del-btn" title={t("gestion.editCommon.edit")} onClick={() => setOpen(true)}>
         <Pencil size={15} />
       </button>
 
@@ -47,8 +49,8 @@ export function EditClientButton({
         <div className="g-modal-overlay" onClick={closeModal}>
           <div className="g-modal" onClick={(e) => e.stopPropagation()}>
             <div className="g-modal__header">
-              <h2>Modifier le client</h2>
-              <button type="button" className="g-modal__close" onClick={closeModal} aria-label="Fermer">
+              <h2>{t("gestion.clients.editTitle")}</h2>
+              <button type="button" className="g-modal__close" onClick={closeModal} aria-label={t("gestion.editCommon.close")}>
                 <X size={18} />
               </button>
             </div>
@@ -57,15 +59,15 @@ export function EditClientButton({
                 <input type="hidden" name="id" value={client.id} />
                 <div className="g-field-grid">
                   <div className="g-field">
-                    <label>Nom</label>
+                    <label>{t("gestion.clients.nameLabel")}</label>
                     <input type="text" name="name" defaultValue={client.name} required />
                   </div>
                   <div className="g-field">
-                    <label>Téléphone</label>
+                    <label>{t("gestion.clients.phoneLabel")}</label>
                     <input type="text" name="phone" defaultValue={client.phone ?? ""} />
                   </div>
                   <div className="g-field">
-                    <label>Email</label>
+                    <label>{t("gestion.clients.emailLabel")}</label>
                     <input type="email" name="email" defaultValue={client.email ?? ""} />
                   </div>
                 </div>
@@ -77,10 +79,10 @@ export function EditClientButton({
               </div>
               <div className="g-modal__footer">
                 <button type="button" className="g-btn secondary" onClick={closeModal}>
-                  Annuler
+                  {t("gestion.editCommon.cancel")}
                 </button>
                 <button type="submit" className="g-btn" disabled={submitting}>
-                  {submitting ? "Enregistrement..." : "Enregistrer"}
+                  {submitting ? t("gestion.editCommon.saving") : t("gestion.editCommon.save")}
                 </button>
               </div>
             </form>

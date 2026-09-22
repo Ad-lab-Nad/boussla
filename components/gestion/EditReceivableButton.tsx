@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Pencil, X } from "lucide-react";
+import { useLocale } from "@/components/i18n/LocaleProvider";
+import type { TFunction } from "@/lib/i18n/translate";
 
 type Receivable = {
   id: string;
@@ -13,11 +15,13 @@ type Receivable = {
   note: string | null;
 };
 
-const STATUS_OPTIONS = [
-  { value: "PENDING", label: "En attente" },
-  { value: "PARTIAL", label: "Partielle" },
-  { value: "PAID", label: "Payée" },
-];
+function statusOptions(t: TFunction) {
+  return [
+    { value: "PENDING", label: t("gestion.receivableStatus.pending") },
+    { value: "PARTIAL", label: t("gestion.receivableStatus.partial") },
+    { value: "PAID", label: t("gestion.receivableStatus.paid") },
+  ];
+}
 
 export function EditReceivableButton({
   receivable,
@@ -26,6 +30,7 @@ export function EditReceivableButton({
   receivable: Receivable;
   updateReceivableAction: (formData: FormData) => Promise<void>;
 }) {
+  const { t } = useLocale();
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -44,7 +49,7 @@ export function EditReceivableButton({
       setOpen(false);
       router.refresh();
     } catch {
-      setError("Impossible d'enregistrer cette créance. Réessaie.");
+      setError(t("gestion.clients.saveReceivableError"));
     } finally {
       setSubmitting(false);
     }
@@ -52,7 +57,7 @@ export function EditReceivableButton({
 
   return (
     <>
-      <button type="button" className="g-del-btn" title="Modifier" onClick={() => setOpen(true)}>
+      <button type="button" className="g-del-btn" title={t("gestion.editCommon.edit")} onClick={() => setOpen(true)}>
         <Pencil size={15} />
       </button>
 
@@ -60,8 +65,8 @@ export function EditReceivableButton({
         <div className="g-modal-overlay" onClick={closeModal}>
           <div className="g-modal" onClick={(e) => e.stopPropagation()}>
             <div className="g-modal__header">
-              <h2>Modifier la créance</h2>
-              <button type="button" className="g-modal__close" onClick={closeModal} aria-label="Fermer">
+              <h2>{t("gestion.clients.editReceivableTitle")}</h2>
+              <button type="button" className="g-modal__close" onClick={closeModal} aria-label={t("gestion.editCommon.close")}>
                 <X size={18} />
               </button>
             </div>
@@ -70,7 +75,7 @@ export function EditReceivableButton({
                 <input type="hidden" name="id" value={receivable.id} />
                 <div className="g-field-grid">
                   <div className="g-field">
-                    <label>Montant (DT)</label>
+                    <label>{t("gestion.editCommon.amountLabel")}</label>
                     <input
                       type="number"
                       name="amount"
@@ -81,7 +86,7 @@ export function EditReceivableButton({
                     />
                   </div>
                   <div className="g-field">
-                    <label>Déjà payé (DT)</label>
+                    <label>{t("gestion.clients.amountPaidLabel")}</label>
                     <input
                       type="number"
                       name="amountPaid"
@@ -91,7 +96,7 @@ export function EditReceivableButton({
                     />
                   </div>
                   <div className="g-field">
-                    <label>Échéance</label>
+                    <label>{t("gestion.clients.dueDateLabel")}</label>
                     <input
                       type="date"
                       name="dueDate"
@@ -100,9 +105,9 @@ export function EditReceivableButton({
                     />
                   </div>
                   <div className="g-field">
-                    <label>Statut</label>
+                    <label>{t("gestion.clients.statusLabel")}</label>
                     <select name="status" defaultValue={receivable.status}>
-                      {STATUS_OPTIONS.map((opt) => (
+                      {statusOptions(t).map((opt) => (
                         <option key={opt.value} value={opt.value}>
                           {opt.label}
                         </option>
@@ -111,7 +116,7 @@ export function EditReceivableButton({
                   </div>
                 </div>
                 <div className="g-field" style={{ marginTop: 12 }}>
-                  <label>Note</label>
+                  <label>{t("gestion.clients.noteLabel")}</label>
                   <input type="text" name="note" defaultValue={receivable.note ?? ""} />
                 </div>
                 {error && (
@@ -122,10 +127,10 @@ export function EditReceivableButton({
               </div>
               <div className="g-modal__footer">
                 <button type="button" className="g-btn secondary" onClick={closeModal}>
-                  Annuler
+                  {t("gestion.editCommon.cancel")}
                 </button>
                 <button type="submit" className="g-btn" disabled={submitting}>
-                  {submitting ? "Enregistrement..." : "Enregistrer"}
+                  {submitting ? t("gestion.editCommon.saving") : t("gestion.editCommon.save")}
                 </button>
               </div>
             </form>

@@ -12,46 +12,56 @@ import {
 } from "@/lib/gestion/actions";
 import { fmt } from "@/lib/gestion/format";
 import { fmtQty } from "@/lib/gestion/product-units";
+import { getServerT } from "@/lib/i18n/server";
+import type { TFunction } from "@/lib/i18n/translate";
 import { ConfirmSubmitButton } from "@/components/gestion/ConfirmSubmitButton";
 import { AutoSubmitSelect } from "@/components/gestion/AutoSubmitSelect";
 import { EditOrderButton } from "@/components/gestion/EditOrderButton";
 import { OrderForm } from "./OrderForm";
 
-const STATUS_OPTIONS = [
-  { value: "IN_PROGRESS", label: "En cours" },
-  { value: "DELIVERED", label: "Livré" },
-  { value: "RETURNED", label: "Retour" },
-];
+function statusOptions(t: TFunction) {
+  return [
+    { value: "IN_PROGRESS", label: t("gestion.commandes.statusInProgress") },
+    { value: "DELIVERED", label: t("gestion.commandes.statusDelivered") },
+    { value: "RETURNED", label: t("gestion.commandes.statusReturned") },
+  ];
+}
 const STATUS_BADGE_CLASS: Record<string, string> = {
   IN_PROGRESS: "in_progress",
   DELIVERED: "delivered",
   RETURNED: "returned",
 };
 
-const PAYMENT_OPTIONS = [
-  { value: "PENDING", label: "En attente" },
-  { value: "PAID", label: "Payé" },
-  { value: "UNPAID", label: "Impayé" },
-];
+function paymentOptions(t: TFunction) {
+  return [
+    { value: "PENDING", label: t("gestion.commandes.paymentPending") },
+    { value: "PAID", label: t("gestion.commandes.paymentPaid") },
+    { value: "UNPAID", label: t("gestion.commandes.paymentUnpaid") },
+  ];
+}
 const PAYMENT_BADGE_CLASS: Record<string, string> = {
   PAID: "paid",
   PENDING: "pending",
   UNPAID: "unpaid",
 };
 
-const PAYMENT_METHOD_LABELS: Record<string, string> = {
-  CASH: "Espèces",
-  CHECK: "Chèque",
-  TRANSFER: "Virement",
-  OTHER: "Autre",
-};
-const PAYMENT_METHOD_FILTER_OPTIONS = [
-  { value: "ALL", label: "Tous les moyens de paiement" },
-  { value: "CASH", label: "Espèces" },
-  { value: "CHECK", label: "Chèque" },
-  { value: "TRANSFER", label: "Virement" },
-  { value: "OTHER", label: "Autre" },
-];
+function paymentMethodLabels(t: TFunction): Record<string, string> {
+  return {
+    CASH: t("gestion.commandes.methodCash"),
+    CHECK: t("gestion.commandes.methodCheck"),
+    TRANSFER: t("gestion.commandes.methodTransfer"),
+    OTHER: t("gestion.commandes.methodOther"),
+  };
+}
+function paymentMethodFilterOptions(t: TFunction) {
+  return [
+    { value: "ALL", label: t("gestion.commandes.methodFilterAll") },
+    { value: "CASH", label: t("gestion.commandes.methodCash") },
+    { value: "CHECK", label: t("gestion.commandes.methodCheck") },
+    { value: "TRANSFER", label: t("gestion.commandes.methodTransfer") },
+    { value: "OTHER", label: t("gestion.commandes.methodOther") },
+  ];
+}
 
 export default async function CommandesPage({
   searchParams,
@@ -59,25 +69,25 @@ export default async function CommandesPage({
   searchParams: Promise<{ method?: string }>;
 }) {
   await requirePalier2Page();
+  const { t } = await getServerT();
   const { method } = await searchParams;
   const user = await getCurrentUser();
   const business = await getCurrentBusiness();
   const [allOrders, products] = await Promise.all([getOrders(business.id), getProducts(business.id)]);
   const isServices = user.activityType === "SERVICES";
+  const methodLabels = paymentMethodLabels(t);
 
   const methodFilter =
-    method && method in PAYMENT_METHOD_LABELS ? method : "ALL";
+    method && method in methodLabels ? method : "ALL";
   const orders =
     methodFilter === "ALL" ? allOrders : allOrders.filter((o) => o.paymentMethod === methodFilter);
 
   return (
     <>
       <div className="g-card">
-        <h2>{isServices ? "Nouvelle vente" : "Nouvelle commande"}</h2>
+        <h2>{isServices ? t("gestion.commandes.newSaleTitle") : t("gestion.commandes.newOrderTitle")}</h2>
         <div className="g-hint">
-          {isServices
-            ? "Une vente peut contenir plusieurs prestations différentes — ajoutez une ligne par prestation."
-            : "Une commande peut contenir plusieurs parfums différents — ajoutez une ligne par parfum."}
+          {isServices ? t("gestion.commandes.newSaleHint") : t("gestion.commandes.newOrderHint")}
         </div>
         <OrderForm products={products} createOrderAction={createOrder} isServices={isServices} />
       </div>
@@ -93,12 +103,12 @@ export default async function CommandesPage({
             gap: 10,
           }}
         >
-          <h2 style={{ margin: 0 }}>{isServices ? "Toutes les ventes" : "Toutes les commandes"}</h2>
+          <h2 style={{ margin: 0 }}>{isServices ? t("gestion.commandes.allSalesTitle") : t("gestion.commandes.allOrdersTitle")}</h2>
           <form method="get">
             <AutoSubmitSelect
               name="method"
               defaultValue={methodFilter}
-              options={PAYMENT_METHOD_FILTER_OPTIONS}
+              options={paymentMethodFilterOptions(t)}
               className="g-status-select"
             />
           </form>
@@ -107,13 +117,13 @@ export default async function CommandesPage({
           <table className="g-table">
             <thead>
               <tr>
-                <th>Date</th>
-                <th>Client</th>
-                <th>{isServices ? "Prestations" : "Produits"}</th>
-                <th className="right">Montant</th>
-                <th>Statut</th>
-                <th>Paiement</th>
-                <th>Mode</th>
+                <th>{t("gestion.editCommon.dateLabel")}</th>
+                <th>{t("gestion.commandes.clientColumn")}</th>
+                <th>{isServices ? t("gestion.nav.services") : t("gestion.nav.products")}</th>
+                <th className="right">{t("gestion.editCommon.amountLabel")}</th>
+                <th>{t("gestion.clients.statusLabel")}</th>
+                <th>{t("gestion.commandes.paymentColumn")}</th>
+                <th>{t("gestion.commandes.methodColumn")}</th>
                 <th></th>
               </tr>
             </thead>
@@ -134,7 +144,7 @@ export default async function CommandesPage({
                         <AutoSubmitSelect
                           name="status"
                           defaultValue={order.status}
-                          options={STATUS_OPTIONS}
+                          options={statusOptions(t)}
                           className={`g-status-select g-badge ${STATUS_BADGE_CLASS[order.status]}`}
                         />
                       </form>
@@ -145,16 +155,16 @@ export default async function CommandesPage({
                         <AutoSubmitSelect
                           name="paymentStatus"
                           defaultValue={order.paymentStatus}
-                          options={PAYMENT_OPTIONS}
+                          options={paymentOptions(t)}
                           className={`g-status-select g-badge ${PAYMENT_BADGE_CLASS[order.paymentStatus]}`}
                         />
                       </form>
                     </td>
                     <td>
-                      {PAYMENT_METHOD_LABELS[order.paymentMethod]}
+                      {methodLabels[order.paymentMethod]}
                       {order.paymentMethod === "CHECK" && order.checkDueDate && (
                         <div style={{ fontSize: "0.72rem", color: "var(--g-muted)" }}>
-                          échéance {order.checkDueDate.toISOString().slice(0, 10)}
+                          {t("gestion.commandes.checkDueDate", { date: order.checkDueDate.toISOString().slice(0, 10) })}
                         </div>
                       )}
                     </td>
@@ -168,7 +178,8 @@ export default async function CommandesPage({
                       <form action={deleteOrder}>
                         <input type="hidden" name="id" value={order.id} />
                         <ConfirmSubmitButton
-                          confirmMessage={isServices ? "Supprimer cette vente ?" : "Supprimer cette commande ?"}
+                          confirmMessage={isServices ? t("gestion.confirm.deleteSale") : t("gestion.confirm.deleteOrder")}
+                          title={t("common.delete")}
                         />
                       </form>
                     </td>
@@ -181,10 +192,10 @@ export default async function CommandesPage({
         {orders.length === 0 && (
           <div className="g-empty">
             {methodFilter !== "ALL"
-              ? "Aucune commande pour ce moyen de paiement."
+              ? t("gestion.commandes.emptyForMethod")
               : isServices
-                ? "Aucune vente enregistrée."
-                : "Aucune commande enregistrée."}
+                ? t("gestion.commandes.emptySales")
+                : t("gestion.commandes.emptyOrders")}
           </div>
         )}
       </div>

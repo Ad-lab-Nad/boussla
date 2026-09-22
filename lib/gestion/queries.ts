@@ -5,7 +5,6 @@ import {
   orderCashDate,
   rankAndFoldCategories,
   stockTotals,
-  type CategoryOption,
   type OrderLike,
 } from "@/lib/gestion/calculations";
 import {
@@ -16,7 +15,8 @@ import {
   shiftMonthKey,
   todayStr,
 } from "@/lib/gestion/format";
-import { EXPENSE_CATEGORY_OPTIONS } from "@/lib/gestion/expense-categories";
+import { expenseCategoryOptions } from "@/lib/gestion/expense-categories";
+import type { TFunction } from "@/lib/i18n/translate";
 
 export async function getProducts(businessId: string) {
   return prisma.product.findMany({
@@ -393,7 +393,7 @@ function monthRange(startKey: string, endKey: string): string[] {
   return keys;
 }
 
-export async function getAnalysisData(businessId: string, period: AnalysisPeriod) {
+export async function getAnalysisData(businessId: string, period: AnalysisPeriod, t: TFunction) {
   const [orders, expenses, stockItems] = await Promise.all([
     getOrders(businessId),
     getExpenses(businessId),
@@ -416,13 +416,13 @@ export async function getAnalysisData(businessId: string, period: AnalysisPeriod
   }
 
   const monthlyTotals: AnalysisMonthRow[] = monthKeys.map((month) => {
-    const t = totalsForMonth(month, orders, expenses, stockItems);
+    const totals = totalsForMonth(month, orders, expenses, stockItems);
     return {
       month,
-      revenue: t.revenue,
-      cost: t.cost,
-      expensesTotal: t.expensesTotal,
-      netProfit: t.netProfit,
+      revenue: totals.revenue,
+      cost: totals.cost,
+      expensesTotal: totals.expensesTotal,
+      netProfit: totals.netProfit,
     };
   });
 
@@ -430,9 +430,10 @@ export async function getAnalysisData(businessId: string, period: AnalysisPeriod
   // clearly (dataviz soft cap is ~5-6 series) — fold whatever doesn't rank
   // into the top 5 by spend into "Autre" rather than a fixed slice. See
   // rankAndFoldCategories's own doc comment for why.
+  const categoryOptions = expenseCategoryOptions(t);
   const monthKeySet = new Set(monthKeys);
   const totalsByCategory: Record<string, number> = {};
-  for (const opt of EXPENSE_CATEGORY_OPTIONS) totalsByCategory[opt.value] = 0;
+  for (const opt of categoryOptions) totalsByCategory[opt.value] = 0;
   for (const e of expenses) {
     if (monthKeySet.has(monthKeyFromDate(e.date))) {
       totalsByCategory[e.category] += e.amount;
@@ -440,7 +441,7 @@ export async function getAnalysisData(businessId: string, period: AnalysisPeriod
   }
 
   const { folded: foldedValues, chartCategories } = rankAndFoldCategories(
-    EXPENSE_CATEGORY_OPTIONS as unknown as CategoryOption[],
+    categoryOptions,
     totalsByCategory,
     5,
     "OTHER"

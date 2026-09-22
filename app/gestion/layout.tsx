@@ -4,6 +4,7 @@ import { GestionChrome } from "@/components/gestion/GestionChrome";
 import { getCurrentUser } from "@/lib/current-user";
 import { getOrCreateSubscription } from "@/lib/subscription";
 import { canAccessPalier2 } from "@/lib/subscription-access";
+import { getServerLocale } from "@/lib/i18n/server";
 import "./gestion.css";
 
 // Every Gestion page reads live, mutable data (orders, stock, expenses...) —
@@ -31,10 +32,16 @@ export default async function GestionLayout({ children }: { children: React.Reac
   const user = await getCurrentUser();
   const subscription = await getOrCreateSubscription(user.id);
   const hasPalier2 = canAccessPalier2(subscription);
+  const initialLocale = await getServerLocale();
 
   return (
     <div className={`gestion ${inter.variable} ${jetbrainsMono.variable}`}>
-      <GestionChrome userEmail={user.email} activityType={user.activityType} hasPalier2={hasPalier2}>
+      <GestionChrome
+        userEmail={user.email}
+        activityType={user.activityType}
+        hasPalier2={hasPalier2}
+        initialLocale={initialLocale}
+      >
         {children}
       </GestionChrome>
     </div>

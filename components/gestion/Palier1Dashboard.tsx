@@ -1,6 +1,7 @@
 import { Plus } from "lucide-react";
 import { fmt, todayStr } from "@/lib/gestion/format";
 import { getReceiptSignedUrl } from "@/lib/gestion/receipts";
+import { getServerT } from "@/lib/i18n/server";
 import type { Palier1HistoryEntry } from "@/lib/gestion/queries";
 import { ExpenseQuickForm } from "@/components/gestion/ExpenseQuickForm";
 import { Palier1History, type Palier1HistoryEntryView } from "@/components/gestion/Palier1History";
@@ -46,12 +47,13 @@ export async function Palier1Dashboard({
   businessId: string;
   createQuickSaleAction: (formData: FormData) => Promise<void>;
 }) {
+  const { t } = await getServerT();
   const historyByMonth = await resolveHistory(overview.historyByMonth, businessId);
 
   return (
     <>
       <div className="g-card g-hero-card">
-        <div className="g-hero-card__label">Ce mois-ci vous avez gagné</div>
+        <div className="g-hero-card__label">{t("gestion.palier1.heroLabel")}</div>
         <div
           className="g-hero-card__number"
           style={{ color: overview.netProfitThisMonth >= 0 ? "var(--g-good)" : "var(--g-critical)" }}
@@ -59,33 +61,33 @@ export async function Palier1Dashboard({
           {fmt(overview.netProfitThisMonth)}
         </div>
         <div className="g-hint">
-          CA {fmt(overview.revenueThisMonth)} − dépenses {fmt(overview.expensesThisMonth)}
+          {t("gestion.palier1.heroBreakdown", {
+            revenue: fmt(overview.revenueThisMonth),
+            expenses: fmt(overview.expensesThisMonth),
+          })}
         </div>
       </div>
 
       <div className="g-card">
-        <h2>Nouvelle vente</h2>
+        <h2>{t("gestion.palier1.newSaleTitle")}</h2>
         <form action={createQuickSaleAction} className="g-field-grid">
           <div className="g-field">
-            <label>Date</label>
+            <label>{t("gestion.palier1.dateLabel")}</label>
             <input type="date" name="date" defaultValue={todayStr()} required />
           </div>
           <div className="g-field">
-            <label>Montant (DT)</label>
+            <label>{t("gestion.palier1.amountLabel")}</label>
             <input type="number" name="amount" min="0.01" step="0.01" required />
           </div>
           <button type="submit" className="g-btn">
-            <Plus size={15} /> Enregistrer la vente
+            <Plus size={15} /> {t("gestion.palier1.registerSale")}
           </button>
         </form>
       </div>
 
       <div className="g-card">
-        <h2>Nouvelle dépense</h2>
-        <div className="g-hint">
-          Pro ou perso, avec une photo du reçu si tu veux — et une suggestion si tu as déjà
-          enregistré une dépense similaire.
-        </div>
+        <h2>{t("gestion.palier1.newExpenseTitle")}</h2>
+        <div className="g-hint">{t("gestion.palier1.newExpenseHint")}</div>
         <ExpenseQuickForm />
       </div>
 

@@ -14,10 +14,12 @@ import { useColorScheme } from "@/components/gestion/useColorScheme";
 import { CHART_COLORS } from "@/lib/gestion/chart-colors";
 import { fmt, monthLabelShort } from "@/lib/gestion/format";
 import type { AnalysisMonthRow } from "@/lib/gestion/queries";
+import { useLocale } from "@/components/i18n/LocaleProvider";
 
 export function AnalysisTrendChart({ rows }: { rows: AnalysisMonthRow[] }) {
+  const { t, locale } = useLocale();
   const c = CHART_COLORS[useColorScheme()];
-  const data = rows.map((r) => ({ ...r, label: monthLabelShort(r.month) }));
+  const data = rows.map((r) => ({ ...r, label: monthLabelShort(r.month, locale) }));
   // Long ranges ("depuis le début") get a crowded x-axis otherwise.
   const tickInterval = data.length > 18 ? Math.ceil(data.length / 12) - 1 : 0;
 
@@ -53,7 +55,7 @@ export function AnalysisTrendChart({ rows }: { rows: AnalysisMonthRow[] }) {
         <Line
           type="monotone"
           dataKey="revenue"
-          name="CA (livré)"
+          name={t("gestion.charts.revenueLivree")}
           stroke={c.blue}
           strokeWidth={2}
           dot={{ r: 3, fill: c.blue, strokeWidth: 2, stroke: c.surface }}
@@ -62,7 +64,7 @@ export function AnalysisTrendChart({ rows }: { rows: AnalysisMonthRow[] }) {
         <Line
           type="monotone"
           dataKey="expensesTotal"
-          name="Dépenses"
+          name={t("gestion.nav.expenses")}
           stroke={c.violet}
           strokeWidth={2}
           dot={{ r: 3, fill: c.violet, strokeWidth: 2, stroke: c.surface }}
@@ -71,7 +73,7 @@ export function AnalysisTrendChart({ rows }: { rows: AnalysisMonthRow[] }) {
         <Line
           type="monotone"
           dataKey="netProfit"
-          name="Bénéfice net réel"
+          name={t("gestion.charts.realNetProfit")}
           stroke={c.aqua}
           strokeWidth={2}
           dot={{ r: 3, fill: c.aqua, strokeWidth: 2, stroke: c.surface }}

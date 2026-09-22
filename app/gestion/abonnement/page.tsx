@@ -2,44 +2,52 @@ import { Check } from "lucide-react";
 import { getCurrentUser } from "@/lib/current-user";
 import { getOrCreateSubscription, TIER_PRICING } from "@/lib/subscription";
 import { chooseBillingPlan } from "@/lib/subscription-actions";
+import { getServerT } from "@/lib/i18n/server";
+import type { TFunction } from "@/lib/i18n/translate";
+import type { Locale } from "@/lib/i18n/config";
 
-function formatDate(d: Date) {
-  return d.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+const DATE_LOCALE: Record<Locale, string> = { fr: "fr-FR", ar: "ar-TN", en: "en-US" };
+
+function formatDate(d: Date, locale: Locale) {
+  return d.toLocaleDateString(DATE_LOCALE[locale], { day: "numeric", month: "long", year: "numeric" });
 }
 
 function monthsOffered(monthly: number, annual: number) {
   return Math.round((monthly * 12 - annual) / monthly);
 }
 
-const TIERS = [
-  {
-    tier: "PALIER_1" as const,
-    name: "Palier 1",
-    tagline: "Est-ce que je gagne vraiment de l'argent ?",
-    features: [
-      "Saisie rapide d'une vente",
-      "Dépenses avec bascule pro/perso",
-      "Photo de reçu et suggestion de dépense récurrente",
-      "Le chiffre du mois : ce que vous gagnez vraiment",
-      "Historique sur 3 mois",
-    ],
-  },
-  {
-    tier: "PALIER_2" as const,
-    name: "Palier 2",
-    tagline: "Où va mon argent, qui me doit encore, mon stock tient-il ?",
-    features: [
-      "Tout le Palier 1",
-      "Tableau de bord complet et analyse sur l'année",
-      "Suivi des impayés et des clients",
-      "Gestion de stock avec alertes",
-      "Suivi produits et production",
-      "Commandes",
-    ],
-  },
-];
+function tiers(t: TFunction) {
+  return [
+    {
+      tier: "PALIER_1" as const,
+      name: t("gestion.abonnement.palier1Name"),
+      tagline: t("gestion.abonnement.palier1Tagline"),
+      features: [
+        t("gestion.abonnement.palier1Feature1"),
+        t("gestion.abonnement.palier1Feature2"),
+        t("gestion.abonnement.palier1Feature3"),
+        t("gestion.abonnement.palier1Feature4"),
+        t("gestion.abonnement.palier1Feature5"),
+      ],
+    },
+    {
+      tier: "PALIER_2" as const,
+      name: t("gestion.abonnement.palier2Name"),
+      tagline: t("gestion.abonnement.palier2Tagline"),
+      features: [
+        t("gestion.abonnement.palier2Feature1"),
+        t("gestion.abonnement.palier2Feature2"),
+        t("gestion.abonnement.palier2Feature3"),
+        t("gestion.abonnement.palier2Feature4"),
+        t("gestion.abonnement.palier2Feature5"),
+        t("gestion.abonnement.palier2Feature6"),
+      ],
+    },
+  ];
+}
 
 export default async function AbonnementPage() {
+  const { t, locale } = await getServerT();
   const user = await getCurrentUser();
   const subscription = await getOrCreateSubscription(user.id);
 
@@ -58,13 +66,14 @@ export default async function AbonnementPage() {
       {isTrialing && (
         <div className="g-trial-banner">
           <span>
-            🎁 Essai gratuit — <strong>{daysLeft}</strong> jour{daysLeft !== 1 ? "s" : ""} restant
-            {daysLeft !== 1 ? "s" : ""}
+            {t("gestion.abonnement.trialBanner", {
+              days: daysLeft ?? 0,
+              dayWord: daysLeft === 1 ? t("gestion.abonnement.day") : t("gestion.abonnement.days"),
+            })}
             {subscription.currentPeriodEnd && (
-              <> (jusqu&apos;au {formatDate(subscription.currentPeriodEnd)})</>
+              <> ({t("gestion.abonnement.until", { date: formatDate(subscription.currentPeriodEnd, locale) })})</>
             )}
-            . Accès complet pendant l&apos;essai — choisis un palier quand tu veux, aucune carte
-            n&apos;est requise.
+            . {t("gestion.abonnement.trialBannerSuffix")}
           </span>
         </div>
       )}
@@ -72,19 +81,19 @@ export default async function AbonnementPage() {
       {!isTrialing && subscription.status === "ACTIVE" && subscription.currentPeriodEnd && (
         <div className="g-trial-banner">
           <span>
-            {subscription.tier === "PALIER_1" ? "Palier 1" : "Palier 2"} —{" "}
-            {subscription.billingInterval === "ANNUAL" ? "plan annuel" : "plan mensuel"} actif —
-            renouvellement le {formatDate(subscription.currentPeriodEnd)}.
+            {subscription.tier === "PALIER_1" ? t("gestion.abonnement.palier1Name") : t("gestion.abonnement.palier2Name")} —{" "}
+            {subscription.billingInterval === "ANNUAL" ? t("gestion.abonnement.annualPlan") : t("gestion.abonnement.monthlyPlan")}{" "}
+            {t("gestion.abonnement.activeRenewal", { date: formatDate(subscription.currentPeriodEnd, locale) })}
           </span>
         </div>
       )}
 
       <div className="g-card">
-        <h2>Choisis ton palier</h2>
-        <div className="g-hint">Change de palier ou de cadence de paiement à tout moment.</div>
+        <h2>{t("gestion.abonnement.chooseTierTitle")}</h2>
+        <div className="g-hint">{t("gestion.abonnement.chooseTierHint")}</div>
 
         <div className="g-plan-grid">
-          {TIERS.map(({ tier, name, tagline, features }) => {
+          {tiers(t).map(({ tier, name, tagline, features }) => {
             const { monthly, annual } = TIER_PRICING[tier];
             const offered = monthsOffered(monthly, annual);
             const isCurrent =
@@ -110,16 +119,17 @@ export default async function AbonnementPage() {
                 </ul>
 
                 <div className="g-plan-price">
-                  {monthly} DT <span>/ mois</span>
+                  {monthly} DT <span>{t("gestion.abonnement.perMonth")}</span>
                 </div>
                 <div className="g-plan-note">
-                  ou {annual} DT/an ({offered} mois offerts)
+                  {t("gestion.abonnement.orAnnual", { amount: annual, months: offered })}
                 </div>
 
                 {isCurrent ? (
                   <span className="g-plan-current">
-                    <Check size={15} /> Plan actuel (
-                    {subscription.billingInterval === "ANNUAL" ? "annuel" : "mensuel"})
+                    <Check size={15} /> {t("gestion.abonnement.currentPlan", {
+                      interval: subscription.billingInterval === "ANNUAL" ? t("gestion.abonnement.annual") : t("gestion.abonnement.monthly"),
+                    })}
                   </span>
                 ) : (
                   <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
@@ -131,7 +141,7 @@ export default async function AbonnementPage() {
                         className={tier === "PALIER_2" ? "g-btn" : "g-btn secondary"}
                         style={{ width: "100%" }}
                       >
-                        Mensuel
+                        {t("gestion.abonnement.monthly")}
                       </button>
                     </form>
                     <form action={chooseBillingPlan} style={{ flex: 1 }}>
@@ -142,7 +152,7 @@ export default async function AbonnementPage() {
                         className={tier === "PALIER_2" ? "g-btn" : "g-btn secondary"}
                         style={{ width: "100%" }}
                       >
-                        Annuel
+                        {t("gestion.abonnement.annual")}
                       </button>
                     </form>
                   </div>
