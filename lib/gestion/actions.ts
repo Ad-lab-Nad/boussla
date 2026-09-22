@@ -492,6 +492,21 @@ function spreadMonthsOf(formData: FormData): number | null {
   return months;
 }
 
+/**
+ * The receipt photo is an optional convenience — a storage misconfiguration
+ * (e.g. SUPABASE_SERVICE_ROLE_KEY not set yet) must never lose the expense
+ * itself, which is the actually important data. Logs server-side so the
+ * failure is still visible, and the expense saves without the receipt.
+ */
+async function tryUploadReceipt(businessId: string, file: File): Promise<string | null> {
+  try {
+    return await uploadReceipt(businessId, file);
+  } catch (error) {
+    console.error("Receipt upload failed, saving the expense without it:", error);
+    return null;
+  }
+}
+
 export async function createExpense(formData: FormData) {
   const business = await getCurrentBusiness();
   const description = str(formData, "description");
@@ -509,7 +524,7 @@ export async function createExpense(formData: FormData) {
   const receiptFile = formData.get("receipt");
   const receiptPath =
     receiptFile instanceof File && receiptFile.size > 0
-      ? await uploadReceipt(business.id, receiptFile)
+      ? await tryUploadReceipt(business.id, receiptFile)
       : null;
   await prisma.expense.create({
     data: {
@@ -541,13 +556,17 @@ export async function updateExpense(formData: FormData) {
   const spreadMonths = spreadMonthsOf(formData);
   const isPersonal = formData.get("isPersonal") === "on";
   const receiptFile = formData.get("receipt");
-  // Only replaces the stored receipt when a new file is actually attached —
-  // omitting the field entirely (rather than setting it to null) leaves an
-  // existing receiptPath untouched.
-  const receiptPath =
+  // Only replaces the stored receipt when a new file is actually attached
+  // AND the upload succeeds — omitting the field entirely (rather than
+  // setting it to null) leaves an existing receiptPath untouched, which is
+  // also the right fallback if the upload itself fails (tryUploadReceipt's
+  // null on failure is converted back to undefined here so a failed
+  // re-upload can never wipe an existing receipt).
+  const uploadedReceiptPath =
     receiptFile instanceof File && receiptFile.size > 0
-      ? await uploadReceipt(business.id, receiptFile)
+      ? await tryUploadReceipt(business.id, receiptFile)
       : undefined;
+  const receiptPath = uploadedReceiptPath === null ? undefined : uploadedReceiptPath;
   await prisma.expense.updateMany({
     where: { id, businessId: business.id },
     data: {
