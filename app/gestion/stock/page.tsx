@@ -1,5 +1,5 @@
 import { Plus } from "lucide-react";
-import { getCurrentUser } from "@/lib/current-user";
+import { getCurrentBusiness } from "@/lib/current-business";
 import { getStockItems, getStockPurchases, getStockUsages } from "@/lib/gestion/queries";
 import {
   createStockItem,
@@ -19,11 +19,11 @@ import { EditStockPurchaseButton } from "@/components/gestion/EditStockPurchaseB
 import { EditStockUsageButton } from "@/components/gestion/EditStockUsageButton";
 
 export default async function StockPage() {
-  const user = await getCurrentUser();
+  const business = await getCurrentBusiness();
   const [stockItems, purchases, usages] = await Promise.all([
-    getStockItems(user.id),
-    getStockPurchases(user.id),
-    getStockUsages(user.id),
+    getStockItems(business.id),
+    getStockPurchases(business.id),
+    getStockUsages(business.id),
   ]);
 
   return (

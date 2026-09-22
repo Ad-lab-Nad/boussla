@@ -1,5 +1,6 @@
 import { Plus } from "lucide-react";
 import { getCurrentUser } from "@/lib/current-user";
+import { getCurrentBusiness } from "@/lib/current-business";
 import { getProducts } from "@/lib/gestion/queries";
 import { createProduct, deleteProduct, updateProduct } from "@/lib/gestion/actions";
 import { SELL_UNIT_LABELS, SELL_UNIT_OPTIONS, fmtPrice } from "@/lib/gestion/product-units";
@@ -9,7 +10,8 @@ import { EditProductButton } from "@/components/gestion/EditProductButton";
 
 export default async function ProduitsPage() {
   const user = await getCurrentUser();
-  const products = await getProducts(user.id);
+  const business = await getCurrentBusiness();
+  const products = await getProducts(business.id);
   const isServices = user.activityType === "SERVICES";
   const deleteConfirmMessage = isServices
     ? "Supprimer cette prestation ?"

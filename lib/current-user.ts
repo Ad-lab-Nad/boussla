@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { createClient } from "@/lib/supabase/server";
@@ -7,8 +8,12 @@ import { createClient } from "@/lib/supabase/server";
  * Redirects to /login if there's no session — middleware already guards
  * /gestion/*, this is the defense-in-depth check for Server Actions invoked
  * directly.
+ *
+ * Wrapped in React's cache() so a page that needs both this (email,
+ * activityType) and getCurrentBusiness() (which also calls this internally)
+ * only checks the session once per request instead of twice.
  */
-export async function getCurrentUser() {
+export const getCurrentUser = cache(async function getCurrentUser() {
   // Local dev-only escape hatch: set DEV_BYPASS_AUTH_EMAIL in your own .env
   // (never committed, never active outside `next dev`) to skip Supabase
   // Auth entirely and work as that user. Remove it to test the real flow.
@@ -35,4 +40,4 @@ export async function getCurrentUser() {
     update: { authUserId: claims.sub },
     create: { email, authUserId: claims.sub },
   });
-}
+});

@@ -1,5 +1,5 @@
 import { Plus } from "lucide-react";
-import { getCurrentUser } from "@/lib/current-user";
+import { getCurrentBusiness } from "@/lib/current-business";
 import { getClients, getReceivables } from "@/lib/gestion/queries";
 import {
   createClient,
@@ -17,10 +17,10 @@ import { EditClientButton } from "@/components/gestion/EditClientButton";
 import { EditReceivableButton } from "@/components/gestion/EditReceivableButton";
 
 export default async function ClientsPage() {
-  const user = await getCurrentUser();
+  const business = await getCurrentBusiness();
   const [clients, receivables] = await Promise.all([
-    getClients(user.id),
-    getReceivables(user.id),
+    getClients(business.id),
+    getReceivables(business.id),
   ]);
   const now = new Date();
 

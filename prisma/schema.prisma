@@ -38,22 +38,66 @@ model User {
   subscription Subscription?
   audits       Audit[]
 
-  products     Product[]
-  stockItems   StockItem[]
-  orders       Order[]
-  expenses     Expense[]
-  monthlyGoals MonthlyGoal[]
-  clients      Client[]
+  // Business-data (Product/Order/Expense/etc.) hangs off Business, not
+  // directly off User — see BusinessMembership. Subscription/Audit stay
+  // User-scoped: billing and the ad-audit tool are per-account, not
+  // per-business, per the PIBA spec's own design (section 2).
+  businessMemberships BusinessMembership[]
 
   @@map("users")
 }
 
-// A revenue target the user sets for a given month, checked against
+enum MembershipRole {
+  OWNER
+  MEMBER
+}
+
+// The entity all Gestion business data hangs off (business_id on every
+// table), separate from User even though Phase 1 is one user per business —
+// this is what lets Palier 3's multi-user invite (a second account joining
+// an existing business) arrive later with zero schema migration, just a new
+// screen. See piba-spec-technique.md section 2.
+model Business {
+  id   String @id @default(cuid())
+  name String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  memberships BusinessMembership[]
+
+  products     Product[]
+  stockItems   StockItem[]
+  orders       Order[]
+  expenses     Expense[]
+  clients      Client[]
+  monthlyGoals MonthlyGoal[]
+
+  @@map("businesses")
+}
+
+model BusinessMembership {
+  id         String   @id @default(cuid())
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  role MembershipRole @default(OWNER)
+
+  createdAt DateTime @default(now())
+
+  @@unique([businessId, userId])
+  @@index([userId])
+  @@map("business_memberships")
+}
+
+// A revenue target set for a given month, checked against
 // getDashboardData's "CA (livré)" figure — see the Objectif du mois card.
 model MonthlyGoal {
-  id     String @id @default(cuid())
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id         String   @id @default(cuid())
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
 
   month         String // "YYYY-MM"
   targetRevenue Float
@@ -61,7 +105,7 @@ model MonthlyGoal {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([userId, month])
+  @@unique([businessId, month])
   @@map("monthly_goals")
 }
 
@@ -347,9 +391,9 @@ enum SellUnit {
 }
 
 model Product {
-  id     String @id @default(cuid())
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id         String   @id @default(cuid())
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
 
   name      String
   sellPrice Float
@@ -369,9 +413,9 @@ model Product {
 }
 
 model StockItem {
-  id     String @id @default(cuid())
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id         String   @id @default(cuid())
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
 
   name           String
   unit           String @default("unité")
@@ -429,9 +473,9 @@ model ProductionBatch {
 }
 
 model Order {
-  id     String @id @default(cuid())
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id         String   @id @default(cuid())
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
 
   date          DateTime
   clientName    String?
@@ -458,9 +502,9 @@ model Order {
 // (free text on the order itself), since credit can be extended informally,
 // not only through a recorded commande.
 model Client {
-  id     String @id @default(cuid())
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id         String   @id @default(cuid())
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
 
   name  String
   phone String?
@@ -471,7 +515,7 @@ model Client {
 
   receivables Receivable[]
 
-  @@index([userId])
+  @@index([businessId])
   @@map("clients")
 }
 
@@ -564,9 +608,9 @@ model Feedback {
 }
 
 model Expense {
-  id     String @id @default(cuid())
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id         String   @id @default(cuid())
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
 
   date        DateTime
   description String

@@ -1,4 +1,5 @@
 import { getCurrentUser } from "@/lib/current-user";
+import { getCurrentBusiness } from "@/lib/current-business";
 import { getOrders, getProducts } from "@/lib/gestion/queries";
 import { orderAmount } from "@/lib/gestion/calculations";
 import {
@@ -58,7 +59,8 @@ export default async function CommandesPage({
 }) {
   const { method } = await searchParams;
   const user = await getCurrentUser();
-  const [allOrders, products] = await Promise.all([getOrders(user.id), getProducts(user.id)]);
+  const business = await getCurrentBusiness();
+  const [allOrders, products] = await Promise.all([getOrders(business.id), getProducts(business.id)]);
   const isServices = user.activityType === "SERVICES";
 
   const methodFilter =

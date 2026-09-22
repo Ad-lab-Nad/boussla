@@ -1,5 +1,5 @@
 import { Plus } from "lucide-react";
-import { getCurrentUser } from "@/lib/current-user";
+import { getCurrentBusiness } from "@/lib/current-business";
 import { getFinishedStock, getProductionBatches, getProducts } from "@/lib/gestion/queries";
 import { createProductionBatch, deleteProductionBatch, updateProductionBatch } from "@/lib/gestion/actions";
 import { todayStr } from "@/lib/gestion/format";
@@ -8,11 +8,11 @@ import { ConfirmSubmitButton } from "@/components/gestion/ConfirmSubmitButton";
 import { EditProductionBatchButton } from "@/components/gestion/EditProductionBatchButton";
 
 export default async function ProduitsFinisPage() {
-  const user = await getCurrentUser();
+  const business = await getCurrentBusiness();
   const [products, batches, finishedStock] = await Promise.all([
-    getProducts(user.id),
-    getProductionBatches(user.id),
-    getFinishedStock(user.id),
+    getProducts(business.id),
+    getProductionBatches(business.id),
+    getFinishedStock(business.id),
   ]);
 
   return (

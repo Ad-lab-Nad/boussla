@@ -1,4 +1,5 @@
 import { getCurrentUser } from "@/lib/current-user";
+import { getCurrentBusiness } from "@/lib/current-business";
 import {
   getAnalysisData,
   getAvailableMonthKeys,
@@ -29,16 +30,17 @@ export default async function AnalysePage({
     : "6";
 
   const user = await getCurrentUser();
+  const business = await getCurrentBusiness();
   const isServices = user.activityType === "SERVICES";
 
-  const monthOptions = await getAvailableMonthKeys(user.id);
+  const monthOptions = await getAvailableMonthKeys(business.id);
   const currentMonth = monthKeyFromDateStr(todayStr());
   const selectedMonth =
     rawMonth && monthOptions.includes(rawMonth) ? rawMonth : currentMonth;
 
   const [{ monthlyTotals, categoryByMonth, chartCategories }, productMovement] = await Promise.all([
-    getAnalysisData(user.id, period),
-    isServices ? Promise.resolve([]) : getProductMovement(user.id, selectedMonth),
+    getAnalysisData(business.id, period),
+    isServices ? Promise.resolve([]) : getProductMovement(business.id, selectedMonth),
   ]);
 
   return (

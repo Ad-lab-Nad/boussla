@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
-import { getCurrentUser } from "@/lib/current-user";
+import { getCurrentBusiness } from "@/lib/current-business";
 import { parseDateInput, todayStr } from "@/lib/gestion/format";
 import { EXPENSE_CATEGORY_OPTIONS } from "@/lib/gestion/expense-categories";
 import { SELL_UNIT_OPTIONS } from "@/lib/gestion/product-units";
@@ -36,12 +36,12 @@ function sellUnitOf(formData: FormData): SellUnit {
 }
 
 export async function createProduct(formData: FormData) {
-  const user = await getCurrentUser();
+  const business = await getCurrentBusiness();
   const name = str(formData, "name");
   if (!name) throw new Error("Indiquez un nom de produit.");
   await prisma.product.create({
     data: {
-      userId: user.id,
+      businessId: business.id,
       name,
       sellPrice: num(formData, "sellPrice"),
       unitCost: num(formData, "unitCost"),
@@ -52,9 +52,9 @@ export async function createProduct(formData: FormData) {
 }
 
 export async function deleteProduct(formData: FormData) {
-  const user = await getCurrentUser();
+  const business = await getCurrentBusiness();
   const id = str(formData, "id");
-  await prisma.product.deleteMany({ where: { id, userId: user.id } });
+  await prisma.product.deleteMany({ where: { id, businessId: business.id } });
   revalidateGestion("/gestion/produits");
 }
 
@@ -63,12 +63,12 @@ export async function deleteProduct(formData: FormData) {
 // time, so editing a product here never rewrites past orders. Future orders
 // simply read the product's new values when they snapshot them.
 export async function updateProduct(formData: FormData) {
-  const user = await getCurrentUser();
+  const business = await getCurrentBusiness();
   const id = str(formData, "id");
   const name = str(formData, "name");
   if (!name) throw new Error("Indiquez un nom de produit.");
   await prisma.product.updateMany({
-    where: { id, userId: user.id },
+    where: { id, businessId: business.id },
     data: {
       name,
       sellPrice: num(formData, "sellPrice"),
@@ -89,7 +89,7 @@ export async function updateProduct(formData: FormData) {
 export async function bulkCreateProducts(
   rows: { name: string; sellPrice: number; unitCost: number }[]
 ): Promise<{ count: number }> {
-  const user = await getCurrentUser();
+  const business = await getCurrentBusiness();
 
   const valid = rows.filter(
     (r) =>
@@ -104,7 +104,7 @@ export async function bulkCreateProducts(
 
   const result = await prisma.product.createMany({
     data: valid.map((r) => ({
-      userId: user.id,
+      businessId: business.id,
       name: r.name.trim(),
       sellPrice: r.sellPrice,
       unitCost: r.unitCost,
@@ -119,7 +119,7 @@ export async function bulkCreateProducts(
 type OrderLineInput = { productId: string; quantity: number };
 
 export async function createOrder(formData: FormData) {
-  const user = await getCurrentUser();
+  const business = await getCurrentBusiness();
   const date = dateOf(formData, "date");
   const clientName = str(formData, "clientName") || null;
   const status = str(formData, "status") || "IN_PROGRESS";
@@ -143,13 +143,13 @@ export async function createOrder(formData: FormData) {
   }
 
   const products = await prisma.product.findMany({
-    where: { userId: user.id, id: { in: validLines.map((l) => l.productId) } },
+    where: { businessId: business.id, id: { in: validLines.map((l) => l.productId) } },
   });
   const byId = new Map(products.map((p) => [p.id, p]));
 
   await prisma.order.create({
     data: {
-      userId: user.id,
+      businessId: business.id,
       date,
       clientName,
       status: status as "IN_PROGRESS" | "DELIVERED" | "RETURNED",
@@ -176,21 +176,21 @@ export async function createOrder(formData: FormData) {
 }
 
 export async function updateOrderStatus(formData: FormData) {
-  const user = await getCurrentUser();
+  const business = await getCurrentBusiness();
   const id = str(formData, "id");
   const status = str(formData, "status");
   await prisma.order.updateMany({
-    where: { id, userId: user.id },
+    where: { id, businessId: business.id },
     data: { status: status as "IN_PROGRESS" | "DELIVERED" | "RETURNED" },
   });
   revalidateGestion("/gestion/commandes");
 }
 
 export async function updateOrderPaymentStatus(formData: FormData) {
-  const user = await getCurrentUser();
+  const business = await getCurrentBusiness();
   const id = str(formData, "id");
   const paymentStatus = str(formData, "paymentStatus") as "PAID" | "PENDING" | "UNPAID";
-  const order = await prisma.order.findFirst({ where: { id, userId: user.id } });
+  const order = await prisma.order.findFirst({ where: { id, businessId: business.id } });
   if (!order) return;
   await prisma.order.update({
     where: { id },
@@ -203,9 +203,9 @@ export async function updateOrderPaymentStatus(formData: FormData) {
 }
 
 export async function deleteOrder(formData: FormData) {
-  const user = await getCurrentUser();
+  const business = await getCurrentBusiness();
   const id = str(formData, "id");
-  await prisma.order.deleteMany({ where: { id, userId: user.id } });
+  await prisma.order.deleteMany({ where: { id, businessId: business.id } });
   revalidateGestion("/gestion/commandes");
 }
 
@@ -215,9 +215,9 @@ export async function deleteOrder(formData: FormData) {
 // unitCostSnapshot here is intentional and matches what createOrder does.
 // Other orders' lines are untouched.
 export async function updateOrder(formData: FormData) {
-  const user = await getCurrentUser();
+  const business = await getCurrentBusiness();
   const id = str(formData, "id");
-  const order = await prisma.order.findFirst({ where: { id, userId: user.id } });
+  const order = await prisma.order.findFirst({ where: { id, businessId: business.id } });
   if (!order) throw new Error("Commande introuvable.");
 
   const date = dateOf(formData, "date");
@@ -243,7 +243,7 @@ export async function updateOrder(formData: FormData) {
   }
 
   const products = await prisma.product.findMany({
-    where: { userId: user.id, id: { in: validLines.map((l) => l.productId) } },
+    where: { businessId: business.id, id: { in: validLines.map((l) => l.productId) } },
   });
   const byId = new Map(products.map((p) => [p.id, p]));
 
@@ -281,12 +281,12 @@ export async function updateOrder(formData: FormData) {
 // ---------- STOCK (matières premières) ----------
 
 export async function createStockItem(formData: FormData) {
-  const user = await getCurrentUser();
+  const business = await getCurrentBusiness();
   const name = str(formData, "name");
   if (!name) throw new Error("Indiquez un nom.");
   await prisma.stockItem.create({
     data: {
-      userId: user.id,
+      businessId: business.id,
       name,
       unit: str(formData, "unit") || "unité",
       alertThreshold: num(formData, "alertThreshold"),
@@ -296,9 +296,9 @@ export async function createStockItem(formData: FormData) {
 }
 
 export async function deleteStockItem(formData: FormData) {
-  const user = await getCurrentUser();
+  const business = await getCurrentBusiness();
   const id = str(formData, "id");
-  await prisma.stockItem.deleteMany({ where: { id, userId: user.id } });
+  await prisma.stockItem.deleteMany({ where: { id, businessId: business.id } });
   revalidateGestion("/gestion/stock");
 }
 
@@ -307,12 +307,12 @@ export async function deleteStockItem(formData: FormData) {
 // each time they're read, never cached — so this needs no snapshot
 // protection the way OrderLine does.
 export async function updateStockItem(formData: FormData) {
-  const user = await getCurrentUser();
+  const business = await getCurrentBusiness();
   const id = str(formData, "id");
   const name = str(formData, "name");
   if (!name) throw new Error("Indiquez un nom.");
   await prisma.stockItem.updateMany({
-    where: { id, userId: user.id },
+    where: { id, businessId: business.id },
     data: {
       name,
       unit: str(formData, "unit") || "unité",
@@ -323,10 +323,10 @@ export async function updateStockItem(formData: FormData) {
 }
 
 export async function createStockPurchase(formData: FormData) {
-  const user = await getCurrentUser();
+  const business = await getCurrentBusiness();
   const stockItemId = str(formData, "stockItemId");
   const quantity = num(formData, "quantity");
-  const item = await prisma.stockItem.findFirst({ where: { id: stockItemId, userId: user.id } });
+  const item = await prisma.stockItem.findFirst({ where: { id: stockItemId, businessId: business.id } });
   if (!item || quantity <= 0) {
     throw new Error("Choisissez une matière et une quantité valide.");
   }
@@ -346,12 +346,12 @@ export async function createStockPurchase(formData: FormData) {
 // changes what future reads see; no retroactive recalculation to guard
 // against, unlike OrderLine's frozen snapshots.
 export async function updateStockPurchase(formData: FormData) {
-  const user = await getCurrentUser();
+  const business = await getCurrentBusiness();
   const id = str(formData, "id");
   const quantity = num(formData, "quantity");
   if (quantity <= 0) throw new Error("Quantité invalide.");
   await prisma.stockPurchase.updateMany({
-    where: { id, stockItem: { userId: user.id } },
+    where: { id, stockItem: { businessId: business.id } },
     data: {
       date: dateOf(formData, "date"),
       quantity,
@@ -362,17 +362,17 @@ export async function updateStockPurchase(formData: FormData) {
 }
 
 export async function deleteStockPurchase(formData: FormData) {
-  const user = await getCurrentUser();
+  const business = await getCurrentBusiness();
   const id = str(formData, "id");
-  await prisma.stockPurchase.deleteMany({ where: { id, stockItem: { userId: user.id } } });
+  await prisma.stockPurchase.deleteMany({ where: { id, stockItem: { businessId: business.id } } });
   revalidateGestion("/gestion/stock");
 }
 
 export async function createStockUsage(formData: FormData) {
-  const user = await getCurrentUser();
+  const business = await getCurrentBusiness();
   const stockItemId = str(formData, "stockItemId");
   const quantity = num(formData, "quantity");
-  const item = await prisma.stockItem.findFirst({ where: { id: stockItemId, userId: user.id } });
+  const item = await prisma.stockItem.findFirst({ where: { id: stockItemId, businessId: business.id } });
   if (!item || quantity <= 0) {
     throw new Error("Choisissez une matière et une quantité valide.");
   }
@@ -387,12 +387,12 @@ export async function createStockUsage(formData: FormData) {
 }
 
 export async function updateStockUsage(formData: FormData) {
-  const user = await getCurrentUser();
+  const business = await getCurrentBusiness();
   const id = str(formData, "id");
   const quantity = num(formData, "quantity");
   if (quantity <= 0) throw new Error("Quantité invalide.");
   await prisma.stockUsage.updateMany({
-    where: { id, stockItem: { userId: user.id } },
+    where: { id, stockItem: { businessId: business.id } },
     data: {
       date: dateOf(formData, "date"),
       quantity,
@@ -402,19 +402,19 @@ export async function updateStockUsage(formData: FormData) {
 }
 
 export async function deleteStockUsage(formData: FormData) {
-  const user = await getCurrentUser();
+  const business = await getCurrentBusiness();
   const id = str(formData, "id");
-  await prisma.stockUsage.deleteMany({ where: { id, stockItem: { userId: user.id } } });
+  await prisma.stockUsage.deleteMany({ where: { id, stockItem: { businessId: business.id } } });
   revalidateGestion("/gestion/stock");
 }
 
 // ---------- STOCK PRODUITS FINIS ----------
 
 export async function createProductionBatch(formData: FormData) {
-  const user = await getCurrentUser();
+  const business = await getCurrentBusiness();
   const productId = str(formData, "productId");
   const quantity = num(formData, "quantity");
-  const product = await prisma.product.findFirst({ where: { id: productId, userId: user.id } });
+  const product = await prisma.product.findFirst({ where: { id: productId, businessId: business.id } });
   if (!product || quantity <= 0) {
     throw new Error("Choisissez un produit et une quantité valide.");
   }
@@ -429,23 +429,23 @@ export async function createProductionBatch(formData: FormData) {
 }
 
 export async function deleteProductionBatch(formData: FormData) {
-  const user = await getCurrentUser();
+  const business = await getCurrentBusiness();
   const id = str(formData, "id");
-  await prisma.productionBatch.deleteMany({ where: { id, product: { userId: user.id } } });
+  await prisma.productionBatch.deleteMany({ where: { id, product: { businessId: business.id } } });
   revalidateGestion("/gestion/produits-finis");
 }
 
 export async function updateProductionBatch(formData: FormData) {
-  const user = await getCurrentUser();
+  const business = await getCurrentBusiness();
   const id = str(formData, "id");
   const productId = str(formData, "productId");
   const quantity = num(formData, "quantity");
-  const product = await prisma.product.findFirst({ where: { id: productId, userId: user.id } });
+  const product = await prisma.product.findFirst({ where: { id: productId, businessId: business.id } });
   if (!product || quantity <= 0) {
     throw new Error("Choisissez un produit et une quantité valide.");
   }
   await prisma.productionBatch.updateMany({
-    where: { id, product: { userId: user.id } },
+    where: { id, product: { businessId: business.id } },
     data: {
       productId: product.id,
       date: dateOf(formData, "date"),
@@ -471,7 +471,7 @@ function spreadMonthsOf(formData: FormData): number | null {
 }
 
 export async function createExpense(formData: FormData) {
-  const user = await getCurrentUser();
+  const business = await getCurrentBusiness();
   const description = str(formData, "description");
   const amount = num(formData, "amount");
   const categoryRaw = str(formData, "category");
@@ -485,7 +485,7 @@ export async function createExpense(formData: FormData) {
   const spreadMonths = spreadMonthsOf(formData);
   await prisma.expense.create({
     data: {
-      userId: user.id,
+      businessId: business.id,
       date: dateOf(formData, "date"),
       description,
       amount,
@@ -497,7 +497,7 @@ export async function createExpense(formData: FormData) {
 }
 
 export async function updateExpense(formData: FormData) {
-  const user = await getCurrentUser();
+  const business = await getCurrentBusiness();
   const id = str(formData, "id");
   const description = str(formData, "description");
   const amount = num(formData, "amount");
@@ -510,7 +510,7 @@ export async function updateExpense(formData: FormData) {
   }
   const spreadMonths = spreadMonthsOf(formData);
   await prisma.expense.updateMany({
-    where: { id, userId: user.id },
+    where: { id, businessId: business.id },
     data: {
       date: dateOf(formData, "date"),
       description,
@@ -523,16 +523,16 @@ export async function updateExpense(formData: FormData) {
 }
 
 export async function deleteExpense(formData: FormData) {
-  const user = await getCurrentUser();
+  const business = await getCurrentBusiness();
   const id = str(formData, "id");
-  await prisma.expense.deleteMany({ where: { id, userId: user.id } });
+  await prisma.expense.deleteMany({ where: { id, businessId: business.id } });
   revalidateGestion("/gestion/depenses");
 }
 
 // ---------- OBJECTIF MENSUEL ----------
 
 export async function setMonthlyGoal(formData: FormData) {
-  const user = await getCurrentUser();
+  const business = await getCurrentBusiness();
   const month = str(formData, "month");
   const targetRevenue = num(formData, "targetRevenue");
   if (!/^\d{4}-\d{2}$/.test(month)) throw new Error("Mois invalide.");
@@ -540,9 +540,9 @@ export async function setMonthlyGoal(formData: FormData) {
     throw new Error("Indique un objectif de chiffre d'affaires valide.");
   }
   await prisma.monthlyGoal.upsert({
-    where: { userId_month: { userId: user.id, month } },
+    where: { businessId_month: { businessId: business.id, month } },
     update: { targetRevenue },
-    create: { userId: user.id, month, targetRevenue },
+    create: { businessId: business.id, month, targetRevenue },
   });
   revalidateGestion("/gestion");
 }
@@ -550,12 +550,12 @@ export async function setMonthlyGoal(formData: FormData) {
 // ---------- CLIENTS & CREANCES ----------
 
 export async function createClient(formData: FormData) {
-  const user = await getCurrentUser();
+  const business = await getCurrentBusiness();
   const name = str(formData, "name");
   if (!name) throw new Error("Indique un nom de client.");
   await prisma.client.create({
     data: {
-      userId: user.id,
+      businessId: business.id,
       name,
       phone: str(formData, "phone") || null,
       email: str(formData, "email") || null,
@@ -565,12 +565,12 @@ export async function createClient(formData: FormData) {
 }
 
 export async function updateClient(formData: FormData) {
-  const user = await getCurrentUser();
+  const business = await getCurrentBusiness();
   const id = str(formData, "id");
   const name = str(formData, "name");
   if (!name) throw new Error("Indique un nom de client.");
   await prisma.client.updateMany({
-    where: { id, userId: user.id },
+    where: { id, businessId: business.id },
     data: {
       name,
       phone: str(formData, "phone") || null,
@@ -581,19 +581,19 @@ export async function updateClient(formData: FormData) {
 }
 
 export async function deleteClient(formData: FormData) {
-  const user = await getCurrentUser();
+  const business = await getCurrentBusiness();
   const id = str(formData, "id");
-  await prisma.client.deleteMany({ where: { id, userId: user.id } });
+  await prisma.client.deleteMany({ where: { id, businessId: business.id } });
   revalidateGestion("/gestion/clients");
 }
 
 const RECEIVABLE_STATUSES = ["PENDING", "PARTIAL", "PAID"];
 
 export async function createReceivable(formData: FormData) {
-  const user = await getCurrentUser();
+  const business = await getCurrentBusiness();
   const clientId = str(formData, "clientId");
   const amount = num(formData, "amount");
-  const client = await prisma.client.findFirst({ where: { id: clientId, userId: user.id } });
+  const client = await prisma.client.findFirst({ where: { id: clientId, businessId: business.id } });
   if (!client || amount <= 0) {
     throw new Error("Choisis un client et un montant valide.");
   }
@@ -609,7 +609,7 @@ export async function createReceivable(formData: FormData) {
 }
 
 export async function updateReceivable(formData: FormData) {
-  const user = await getCurrentUser();
+  const business = await getCurrentBusiness();
   const id = str(formData, "id");
   const amount = num(formData, "amount");
   const amountPaid = num(formData, "amountPaid");
@@ -617,7 +617,7 @@ export async function updateReceivable(formData: FormData) {
   const status = RECEIVABLE_STATUSES.includes(statusRaw) ? statusRaw : "PENDING";
   if (amount <= 0) throw new Error("Indique un montant valide.");
   await prisma.receivable.updateMany({
-    where: { id, client: { userId: user.id } },
+    where: { id, client: { businessId: business.id } },
     data: {
       amount,
       amountPaid,
@@ -631,9 +631,9 @@ export async function updateReceivable(formData: FormData) {
 
 /** Quick shortcut from the table row — marks fully paid without opening the edit modal. */
 export async function markReceivablePaid(formData: FormData) {
-  const user = await getCurrentUser();
+  const business = await getCurrentBusiness();
   const id = str(formData, "id");
-  const receivable = await prisma.receivable.findFirst({ where: { id, client: { userId: user.id } } });
+  const receivable = await prisma.receivable.findFirst({ where: { id, client: { businessId: business.id } } });
   if (!receivable) return;
   await prisma.receivable.update({
     where: { id },
@@ -643,8 +643,8 @@ export async function markReceivablePaid(formData: FormData) {
 }
 
 export async function deleteReceivable(formData: FormData) {
-  const user = await getCurrentUser();
+  const business = await getCurrentBusiness();
   const id = str(formData, "id");
-  await prisma.receivable.deleteMany({ where: { id, client: { userId: user.id } } });
+  await prisma.receivable.deleteMany({ where: { id, client: { businessId: business.id } } });
   revalidateGestion("/gestion/clients");
 }

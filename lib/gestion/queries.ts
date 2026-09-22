@@ -17,95 +17,95 @@ import {
 } from "@/lib/gestion/format";
 import { EXPENSE_CATEGORY_OPTIONS } from "@/lib/gestion/expense-categories";
 
-export async function getProducts(userId: string) {
+export async function getProducts(businessId: string) {
   return prisma.product.findMany({
-    where: { userId },
+    where: { businessId },
     orderBy: { name: "asc" },
   });
 }
 
 /** Simple mean of sellPrice across the catalog — null with an empty catalog. */
-export async function getAverageSellPrice(userId: string): Promise<number | null> {
-  const products = await getProducts(userId);
+export async function getAverageSellPrice(businessId: string): Promise<number | null> {
+  const products = await getProducts(businessId);
   if (products.length === 0) return null;
   return products.reduce((sum, p) => sum + p.sellPrice, 0) / products.length;
 }
 
-export async function getMonthlyGoal(userId: string, month: string) {
-  return prisma.monthlyGoal.findUnique({ where: { userId_month: { userId, month } } });
+export async function getMonthlyGoal(businessId: string, month: string) {
+  return prisma.monthlyGoal.findUnique({ where: { businessId_month: { businessId, month } } });
 }
 
-export async function getStockItems(userId: string) {
+export async function getStockItems(businessId: string) {
   const items = await prisma.stockItem.findMany({
-    where: { userId },
+    where: { businessId },
     orderBy: { name: "asc" },
     include: { purchases: true, usages: true },
   });
   return items.map((item) => ({ item, totals: stockTotals(item.purchases, item.usages) }));
 }
 
-export async function getStockPurchases(userId: string) {
+export async function getStockPurchases(businessId: string) {
   return prisma.stockPurchase.findMany({
-    where: { stockItem: { userId } },
+    where: { stockItem: { businessId } },
     orderBy: { date: "desc" },
     include: { stockItem: true },
   });
 }
 
-export async function getStockUsages(userId: string) {
+export async function getStockUsages(businessId: string) {
   return prisma.stockUsage.findMany({
-    where: { stockItem: { userId } },
+    where: { stockItem: { businessId } },
     orderBy: { date: "desc" },
     include: { stockItem: true },
   });
 }
 
-export async function getExpenses(userId: string) {
+export async function getExpenses(businessId: string) {
   return prisma.expense.findMany({
-    where: { userId },
+    where: { businessId },
     orderBy: { date: "desc" },
   });
 }
 
-export async function getClients(userId: string) {
+export async function getClients(businessId: string) {
   return prisma.client.findMany({
-    where: { userId },
+    where: { businessId },
     include: { receivables: true },
     orderBy: { name: "asc" },
   });
 }
 
-export async function getReceivables(userId: string) {
+export async function getReceivables(businessId: string) {
   return prisma.receivable.findMany({
-    where: { client: { userId } },
+    where: { client: { businessId } },
     include: { client: true },
     orderBy: { dueDate: "asc" },
   });
 }
 
-export async function getOrders(userId: string) {
+export async function getOrders(businessId: string) {
   return prisma.order.findMany({
-    where: { userId },
+    where: { businessId },
     orderBy: { date: "desc" },
     include: { lines: true },
   });
 }
 
-export async function getProductionBatches(userId: string) {
+export async function getProductionBatches(businessId: string) {
   return prisma.productionBatch.findMany({
-    where: { product: { userId } },
+    where: { product: { businessId } },
     orderBy: { date: "desc" },
     include: { product: true },
   });
 }
 
 /** Total produced / sold (delivered) / available, per product. */
-export async function getFinishedStock(userId: string) {
+export async function getFinishedStock(businessId: string) {
   const [products, batches, orders] = await Promise.all([
-    getProducts(userId),
-    prisma.productionBatch.findMany({ where: { product: { userId } } }),
+    getProducts(businessId),
+    prisma.productionBatch.findMany({ where: { product: { businessId } } }),
     prisma.order.findMany({
-      where: { userId, status: "DELIVERED" },
+      where: { businessId, status: "DELIVERED" },
       include: { lines: true },
     }),
   ]);
@@ -132,12 +132,12 @@ export async function getFinishedStock(userId: string) {
  * (cumulative produced minus cumulative sold up to and including it) — a
  * historical snapshot, not "as of now" like getFinishedStock.
  */
-export async function getProductMovement(userId: string, month: string) {
+export async function getProductMovement(businessId: string, month: string) {
   const [products, batches, orders] = await Promise.all([
-    getProducts(userId),
-    prisma.productionBatch.findMany({ where: { product: { userId } } }),
+    getProducts(businessId),
+    prisma.productionBatch.findMany({ where: { product: { businessId } } }),
     prisma.order.findMany({
-      where: { userId, status: "DELIVERED" },
+      where: { businessId, status: "DELIVERED" },
       include: { lines: true },
     }),
   ]);
@@ -176,10 +176,10 @@ export async function getProductMovement(userId: string, month: string) {
   });
 }
 
-export async function getAvailableMonthKeys(userId: string) {
+export async function getAvailableMonthKeys(businessId: string) {
   const [orders, expenses] = await Promise.all([
-    prisma.order.findMany({ where: { userId }, select: { date: true } }),
-    prisma.expense.findMany({ where: { userId }, select: { date: true, spreadMonths: true } }),
+    prisma.order.findMany({ where: { businessId }, select: { date: true } }),
+    prisma.expense.findMany({ where: { businessId }, select: { date: true, spreadMonths: true } }),
   ]);
   const existing = orders.map((r) => monthKeyFromDate(r.date));
   // A spread expense's later months need to be selectable too, even ones
@@ -247,11 +247,11 @@ function totalsForMonth(
 
 const TREND_MONTHS = 6;
 
-export async function getDashboardData(userId: string, month: string) {
+export async function getDashboardData(businessId: string, month: string) {
   const [orders, expenses, stockItems] = await Promise.all([
-    getOrders(userId),
-    getExpenses(userId),
-    getStockItems(userId),
+    getOrders(businessId),
+    getExpenses(businessId),
+    getStockItems(businessId),
   ]);
 
   const totals = totalsForMonth(month, orders, expenses, stockItems);
@@ -298,11 +298,11 @@ function monthRange(startKey: string, endKey: string): string[] {
   return keys;
 }
 
-export async function getAnalysisData(userId: string, period: AnalysisPeriod) {
+export async function getAnalysisData(businessId: string, period: AnalysisPeriod) {
   const [orders, expenses, stockItems] = await Promise.all([
-    getOrders(userId),
-    getExpenses(userId),
-    getStockItems(userId),
+    getOrders(businessId),
+    getExpenses(businessId),
+    getStockItems(businessId),
   ]);
 
   const currentMonth = monthKeyFromDateStr(todayStr());

@@ -8,7 +8,7 @@ import {
   TrendingUp,
   Wallet,
 } from "lucide-react";
-import { getCurrentUser } from "@/lib/current-user";
+import { getCurrentBusiness } from "@/lib/current-business";
 import {
   getAverageSellPrice,
   getAvailableMonthKeys,
@@ -40,17 +40,17 @@ export default async function DashboardPage({
 }) {
   const { month: requestedMonth } = await searchParams;
 
-  const user = await getCurrentUser();
-  const monthOptions = await getAvailableMonthKeys(user.id);
+  const business = await getCurrentBusiness();
+  const monthOptions = await getAvailableMonthKeys(business.id);
   const currentMonth = monthKeyFromDateStr(todayStr());
   const month =
     requestedMonth && monthOptions.includes(requestedMonth) ? requestedMonth : currentMonth;
 
   const [{ totals, previousTotals, trend, stockAlerts }, monthlyGoal, avgSellPrice] =
     await Promise.all([
-      getDashboardData(user.id, month),
-      getMonthlyGoal(user.id, month),
-      getAverageSellPrice(user.id),
+      getDashboardData(business.id, month),
+      getMonthlyGoal(business.id, month),
+      getAverageSellPrice(business.id),
     ]);
 
   const isCurrentMonth = month === currentMonth;

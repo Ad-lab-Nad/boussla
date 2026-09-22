@@ -1,5 +1,5 @@
 import { Plus } from "lucide-react";
-import { getCurrentUser } from "@/lib/current-user";
+import { getCurrentBusiness } from "@/lib/current-business";
 import { getExpenses } from "@/lib/gestion/queries";
 import { createExpense, deleteExpense, updateExpense } from "@/lib/gestion/actions";
 import { fmt, todayStr } from "@/lib/gestion/format";
@@ -9,8 +9,8 @@ import { EditExpenseButton } from "@/components/gestion/EditExpenseButton";
 import { SpreadExpenseFields } from "@/components/gestion/SpreadExpenseFields";
 
 export default async function DepensesPage() {
-  const user = await getCurrentUser();
-  const expenses = await getExpenses(user.id);
+  const business = await getCurrentBusiness();
+  const expenses = await getExpenses(business.id);
 
   return (
     <>
