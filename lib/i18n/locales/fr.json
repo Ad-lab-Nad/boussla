@@ -156,7 +156,14 @@
       "descriptionColumn": "Description",
       "amountColumn": "Montant",
       "viewReceipt": "Voir le reçu",
-      "emptyMonth": "Rien pour ce mois."
+      "emptyMonth": "Rien pour ce mois.",
+      "upsell": {
+        "historyTitle": "Historique sur l'année",
+        "historyHint": "Vois l'évolution de ton chiffre d'affaires et de ton bénéfice net, mois après mois.",
+        "receivablesTitle": "Qui vous doit de l'argent",
+        "receivablesHint": "Suis tes clients en retard de paiement, en un coup d'œil.",
+        "unlockCta": "Débloquer avec Analyse et suivi — {price} DT/mois"
+      }
     },
     "abonnement": {
       "palier1Name": "Palier 1",

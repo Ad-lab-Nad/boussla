@@ -270,14 +270,17 @@ export type Palier1HistoryEntry = {
 };
 
 /**
- * Deliberately lighter than getDashboardData — no 6-month trend, no stock
- * alerts, no top-products breakdown. Palier 1 only needs the current
- * month's number and up to 3 months of history behind it.
+ * Deliberately lighter than getDashboardData — no stock alerts, no
+ * top-products breakdown. Palier 1 needs the current month's number, up to
+ * 3 months of history behind it, and a 6-month revenue/profit trend (for
+ * the blurred Palier-2 upsell preview — real data, not a mockup).
  */
 export async function getPalier1Overview(businessId: string) {
   const currentMonth = monthKeyFromDateStr(todayStr());
   const monthKeys = [0, -1, -2, -3].map((i) => shiftMonthKey(currentMonth, i));
-  const rangeStart = parseDateInput(`${monthKeys[monthKeys.length - 1]}-01`);
+  const trendMonthKeys = Array.from({ length: 6 }, (_, i) => shiftMonthKey(currentMonth, i - 5));
+  // Widest of the two windows this function serves (history vs. trend).
+  const rangeStart = parseDateInput(`${trendMonthKeys[0]}-01`);
 
   // Orders never affect a month outside their own date, so this query can
   // safely be date-bounded. Expenses stay unbounded: a spreadMonths expense
@@ -329,6 +332,10 @@ export async function getPalier1Overview(businessId: string) {
   }
 
   const totalsThisMonth = totalsForMonth(currentMonth, orders, expenses, []);
+  const trend = trendMonthKeys.map((month) => {
+    const totals = totalsForMonth(month, orders, expenses, []);
+    return { month, revenue: totals.revenue, netProfit: totals.netProfit };
+  });
 
   return {
     currentMonth,
@@ -337,6 +344,7 @@ export async function getPalier1Overview(businessId: string) {
     revenueThisMonth: totalsThisMonth.revenue,
     expensesThisMonth: totalsThisMonth.expensesTotal,
     historyByMonth,
+    trend,
   };
 }
 

@@ -156,7 +156,14 @@
       "descriptionColumn": "الوصف",
       "amountColumn": "المبلغ",
       "viewReceipt": "عرض الوصل",
-      "emptyMonth": "لا شيء لهذا الشهر."
+      "emptyMonth": "لا شيء لهذا الشهر.",
+      "upsell": {
+        "historyTitle": "السجل السنوي",
+        "historyHint": "تابع تطور رقم أعمالك وربحك الصافي، شهرًا بشهر.",
+        "receivablesTitle": "من لا يزال مدينًا لك",
+        "receivablesHint": "تابع العملاء المتأخرين في الدفع، بنظرة واحدة.",
+        "unlockCta": "فتح الباقة مع التحليل والمتابعة — {price} د.ت/شهريًا"
+      }
     },
     "abonnement": {
       "palier1Name": "الباقة 1",

@@ -53,7 +53,7 @@ export default async function DashboardPage({
 
   if (!canAccessPalier2(subscription)) {
     const overview = await getPalier1Overview(business.id);
-    return <Palier1Dashboard overview={overview} />;
+    return <Palier1Dashboard businessId={business.id} overview={overview} />;
   }
 
   const monthOptions = await getAvailableMonthKeys(business.id);
