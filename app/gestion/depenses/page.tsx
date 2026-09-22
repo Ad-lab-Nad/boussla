@@ -82,6 +82,33 @@ export default async function DepensesPage() {
         </div>
         {expenses.length === 0 && <div className="g-empty">{t("gestion.depenses.emptyState")}</div>}
       </div>
+
+      <div className="g-card">
+        <h2>{t("gestion.depenses.receiptsGalleryTitle")}</h2>
+        <div className="g-hint">{t("gestion.depenses.receiptsGalleryHint")}</div>
+        <div className="g-receipt-grid">
+          {expenses.map((d, i) =>
+            receiptUrls[i] ? (
+              <a
+                key={d.id}
+                href={receiptUrls[i]!}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="g-receipt-thumb"
+                title={t("gestion.palier1.viewReceipt")}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element -- a signed, time-limited Supabase Storage URL, not an optimizable static asset */}
+                <img src={receiptUrls[i]!} alt={d.description} />
+                <div className="g-receipt-thumb__caption">
+                  <span>{d.date.toISOString().slice(0, 10)}</span>
+                  <span>{fmt(d.amount)}</span>
+                </div>
+              </a>
+            ) : null
+          )}
+        </div>
+        {receiptUrls.every((url) => !url) && <div className="g-empty">{t("gestion.depenses.noReceipts")}</div>}
+      </div>
     </>
   );
 }
