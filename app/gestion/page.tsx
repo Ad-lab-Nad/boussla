@@ -20,7 +20,7 @@ import {
   getMonthlyGoal,
   getPalier1Overview,
 } from "@/lib/gestion/queries";
-import { setMonthlyGoal, createQuickSale } from "@/lib/gestion/actions";
+import { setMonthlyGoal } from "@/lib/gestion/actions";
 import { Palier1Dashboard } from "@/components/gestion/Palier1Dashboard";
 import { computeGoalProgress, estimateUnitsPerDay } from "@/lib/gestion/calculations";
 import {
@@ -53,13 +53,7 @@ export default async function DashboardPage({
 
   if (!canAccessPalier2(subscription)) {
     const overview = await getPalier1Overview(business.id);
-    return (
-      <Palier1Dashboard
-        overview={overview}
-        businessId={business.id}
-        createQuickSaleAction={createQuickSale}
-      />
-    );
+    return <Palier1Dashboard overview={overview} />;
   }
 
   const monthOptions = await getAvailableMonthKeys(business.id);

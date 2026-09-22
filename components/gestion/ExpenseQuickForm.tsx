@@ -6,6 +6,7 @@ import { expenseCategoryLabels, expenseCategoryOptions } from "@/lib/gestion/exp
 import { fmt, todayStr } from "@/lib/gestion/format";
 import { createExpense, suggestRecurringExpense } from "@/lib/gestion/actions";
 import { useLocale } from "@/components/i18n/LocaleProvider";
+import { SpreadExpenseFields } from "@/components/gestion/SpreadExpenseFields";
 
 type Suggestion = { category: string; amount: number; isPersonal: boolean } | null;
 
@@ -43,7 +44,10 @@ export function ExpenseQuickForm() {
 
   return (
     <form action={createExpense} className="g-field-grid" onSubmit={() => setSuggestion(null)}>
-      <input type="hidden" name="date" value={todayStr()} />
+      <div className="g-field">
+        <label>{t("gestion.editCommon.dateLabel")}</label>
+        <input type="date" name="date" defaultValue={todayStr()} required />
+      </div>
       <div className="g-field">
         <label>{t("gestion.editCommon.descriptionLabel")}</label>
         <input
@@ -95,6 +99,7 @@ export function ExpenseQuickForm() {
           onChange={(e) => setAmount(e.target.value)}
         />
       </div>
+      <SpreadExpenseFields />
       <div className="g-field">
         <label style={{ display: "flex", alignItems: "center", gap: 6 }}>
           <input

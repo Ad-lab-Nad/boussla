@@ -28,10 +28,10 @@ import type { Locale } from "@/lib/i18n/config";
 type ActivityType = "PRODUCTS" | "SERVICES";
 
 // Hidden from the nav when the account is on Palier 1 — everything else
-// (Tableau de bord, Dépenses, Abonnement) stays available to both tiers.
+// (Tableau de bord, Commandes, Dépenses, Abonnement) stays available to
+// both tiers, each rendering a tier-appropriate view of its own route.
 const PALIER_2_ONLY_HREFS = new Set([
   "/gestion/analyse",
-  "/gestion/commandes",
   "/gestion/clients",
   "/gestion/stock",
   "/gestion/produits-finis",

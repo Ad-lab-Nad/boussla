@@ -1,23 +1,43 @@
+import { Plus } from "lucide-react";
 import { getCurrentUser } from "@/lib/current-user";
 import { getCurrentBusiness } from "@/lib/current-business";
-import { requirePalier2Page } from "@/lib/subscription-access";
-import { getOrders, getProducts } from "@/lib/gestion/queries";
+import { getOrCreateSubscription } from "@/lib/subscription";
+import { canAccessPalier2 } from "@/lib/subscription-access";
+import { getOrders, getPalier1Overview, getProducts, type Palier1HistoryEntry } from "@/lib/gestion/queries";
 import { orderAmount } from "@/lib/gestion/calculations";
 import {
   createOrder,
+  createQuickSale,
   deleteOrder,
   updateOrder,
   updateOrderPaymentStatus,
   updateOrderStatus,
 } from "@/lib/gestion/actions";
-import { fmt } from "@/lib/gestion/format";
+import { fmt, todayStr } from "@/lib/gestion/format";
 import { fmtQty } from "@/lib/gestion/product-units";
 import { getServerT } from "@/lib/i18n/server";
 import type { TFunction } from "@/lib/i18n/translate";
 import { ConfirmSubmitButton } from "@/components/gestion/ConfirmSubmitButton";
 import { AutoSubmitSelect } from "@/components/gestion/AutoSubmitSelect";
 import { EditOrderButton } from "@/components/gestion/EditOrderButton";
+import { Palier1History, type Palier1HistoryEntryView } from "@/components/gestion/Palier1History";
 import { OrderForm } from "./OrderForm";
+
+/** Quick sales never carry a receipt, so this mapping is synchronous —
+ * unlike Palier1Dashboard's history resolution, which also handles
+ * expenses' receiptPath via a signed-URL lookup. */
+function toSalesHistory(
+  historyByMonth: Record<string, Palier1HistoryEntry[]>
+): Record<string, Palier1HistoryEntryView[]> {
+  return Object.fromEntries(
+    Object.entries(historyByMonth).map(([month, entries]) => [
+      month,
+      entries
+        .filter((e) => e.type === "sale")
+        .map((e) => ({ type: e.type, id: e.id, dateIso: e.date.toISOString(), label: e.label, amount: e.amount })),
+    ])
+  );
+}
 
 function statusOptions(t: TFunction) {
   return [
@@ -68,11 +88,37 @@ export default async function CommandesPage({
 }: {
   searchParams: Promise<{ method?: string }>;
 }) {
-  await requirePalier2Page();
   const { t } = await getServerT();
-  const { method } = await searchParams;
   const user = await getCurrentUser();
   const business = await getCurrentBusiness();
+  const subscription = await getOrCreateSubscription(user.id);
+
+  if (!canAccessPalier2(subscription)) {
+    const overview = await getPalier1Overview(business.id);
+    return (
+      <>
+        <div className="g-card">
+          <h2>{t("gestion.palier1.newSaleTitle")}</h2>
+          <form action={createQuickSale} className="g-field-grid">
+            <div className="g-field">
+              <label>{t("gestion.palier1.dateLabel")}</label>
+              <input type="date" name="date" defaultValue={todayStr()} required />
+            </div>
+            <div className="g-field">
+              <label>{t("gestion.palier1.amountLabel")}</label>
+              <input type="number" name="amount" min="0.01" step="0.01" required />
+            </div>
+            <button type="submit" className="g-btn">
+              <Plus size={15} /> {t("gestion.palier1.registerSale")}
+            </button>
+          </form>
+        </div>
+        <Palier1History monthKeys={overview.monthKeys} historyByMonth={toSalesHistory(overview.historyByMonth)} />
+      </>
+    );
+  }
+
+  const { method } = await searchParams;
   const [allOrders, products] = await Promise.all([getOrders(business.id), getProducts(business.id)]);
   const isServices = user.activityType === "SERVICES";
   const methodLabels = paymentMethodLabels(t);
