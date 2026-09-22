@@ -20,8 +20,21 @@ import {
 } from "lucide-react";
 import { signOut } from "@/lib/auth-actions";
 import { ADMIN_EMAIL } from "@/lib/admin-email";
+import { LocaleProvider } from "@/components/i18n/LocaleProvider";
+import { LanguageSwitcher } from "@/components/i18n/LanguageSwitcher";
 
 type ActivityType = "PRODUCTS" | "SERVICES";
+
+// Hidden from the nav when the account is on Palier 1 — everything else
+// (Tableau de bord, Dépenses, Abonnement) stays available to both tiers.
+const PALIER_2_ONLY_HREFS = new Set([
+  "/gestion/analyse",
+  "/gestion/commandes",
+  "/gestion/clients",
+  "/gestion/stock",
+  "/gestion/produits-finis",
+  "/gestion/produits",
+]);
 
 // Kept separate from the visible/filtered list below so a directly-typed
 // URL to a hidden page (e.g. /gestion/stock under Services) still gets the
@@ -56,10 +69,12 @@ export function GestionChrome({
   children,
   userEmail,
   activityType,
+  hasPalier2,
 }: {
   children: React.ReactNode;
   userEmail: string;
   activityType: ActivityType;
+  hasPalier2: boolean;
 }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
@@ -67,12 +82,14 @@ export function GestionChrome({
   const isServices = activityType === "SERVICES";
   const nav = fullNav.filter((n) => {
     if (n.href === "/gestion/abonnement") return false;
+    if (!hasPalier2 && PALIER_2_ONLY_HREFS.has(n.href)) return false;
     if (isServices) return n.href !== "/gestion/stock" && n.href !== "/gestion/produits-finis";
     return true;
   });
   const current = fullNav.find((n) => n.href === pathname) ?? fullNav[0];
 
   return (
+    <LocaleProvider>
     <div className="g-shell">
       <div className={`g-overlay ${open ? "open" : ""}`} onClick={() => setOpen(false)} />
 
@@ -107,6 +124,7 @@ export function GestionChrome({
           <div className="g-user-email" title={userEmail}>
             {userEmail}
           </div>
+          <LanguageSwitcher />
           <Link
             href="/gestion/abonnement"
             className={`g-nav-item ${pathname === "/gestion/abonnement" ? "active" : ""}`}
@@ -144,5 +162,6 @@ export function GestionChrome({
         <div className="g-page-body">{children}</div>
       </div>
     </div>
+    </LocaleProvider>
   );
 }

@@ -3,9 +3,12 @@
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { getCurrentBusiness } from "@/lib/current-business";
+import { assertPalier2Access } from "@/lib/subscription-access";
 import { parseDateInput, todayStr } from "@/lib/gestion/format";
 import { EXPENSE_CATEGORY_OPTIONS } from "@/lib/gestion/expense-categories";
 import { SELL_UNIT_OPTIONS } from "@/lib/gestion/product-units";
+import { findRecurringExpenseSuggestion } from "@/lib/gestion/queries";
+import { uploadReceipt } from "@/lib/gestion/receipts";
 import type { ExpenseCategory, SellUnit } from "@prisma/client";
 
 function revalidateGestion(path?: string) {
@@ -36,6 +39,7 @@ function sellUnitOf(formData: FormData): SellUnit {
 }
 
 export async function createProduct(formData: FormData) {
+  await assertPalier2Access();
   const business = await getCurrentBusiness();
   const name = str(formData, "name");
   if (!name) throw new Error("Indiquez un nom de produit.");
@@ -52,6 +56,7 @@ export async function createProduct(formData: FormData) {
 }
 
 export async function deleteProduct(formData: FormData) {
+  await assertPalier2Access();
   const business = await getCurrentBusiness();
   const id = str(formData, "id");
   await prisma.product.deleteMany({ where: { id, businessId: business.id } });
@@ -63,6 +68,7 @@ export async function deleteProduct(formData: FormData) {
 // time, so editing a product here never rewrites past orders. Future orders
 // simply read the product's new values when they snapshot them.
 export async function updateProduct(formData: FormData) {
+  await assertPalier2Access();
   const business = await getCurrentBusiness();
   const id = str(formData, "id");
   const name = str(formData, "name");
@@ -89,6 +95,7 @@ export async function updateProduct(formData: FormData) {
 export async function bulkCreateProducts(
   rows: { name: string; sellPrice: number; unitCost: number }[]
 ): Promise<{ count: number }> {
+  await assertPalier2Access();
   const business = await getCurrentBusiness();
 
   const valid = rows.filter(
@@ -119,6 +126,7 @@ export async function bulkCreateProducts(
 type OrderLineInput = { productId: string; quantity: number };
 
 export async function createOrder(formData: FormData) {
+  await assertPalier2Access();
   const business = await getCurrentBusiness();
   const date = dateOf(formData, "date");
   const clientName = str(formData, "clientName") || null;
@@ -176,6 +184,7 @@ export async function createOrder(formData: FormData) {
 }
 
 export async function updateOrderStatus(formData: FormData) {
+  await assertPalier2Access();
   const business = await getCurrentBusiness();
   const id = str(formData, "id");
   const status = str(formData, "status");
@@ -187,6 +196,7 @@ export async function updateOrderStatus(formData: FormData) {
 }
 
 export async function updateOrderPaymentStatus(formData: FormData) {
+  await assertPalier2Access();
   const business = await getCurrentBusiness();
   const id = str(formData, "id");
   const paymentStatus = str(formData, "paymentStatus") as "PAID" | "PENDING" | "UNPAID";
@@ -203,6 +213,7 @@ export async function updateOrderPaymentStatus(formData: FormData) {
 }
 
 export async function deleteOrder(formData: FormData) {
+  await assertPalier2Access();
   const business = await getCurrentBusiness();
   const id = str(formData, "id");
   await prisma.order.deleteMany({ where: { id, businessId: business.id } });
@@ -215,6 +226,7 @@ export async function deleteOrder(formData: FormData) {
 // unitCostSnapshot here is intentional and matches what createOrder does.
 // Other orders' lines are untouched.
 export async function updateOrder(formData: FormData) {
+  await assertPalier2Access();
   const business = await getCurrentBusiness();
   const id = str(formData, "id");
   const order = await prisma.order.findFirst({ where: { id, businessId: business.id } });
@@ -281,6 +293,7 @@ export async function updateOrder(formData: FormData) {
 // ---------- STOCK (matières premières) ----------
 
 export async function createStockItem(formData: FormData) {
+  await assertPalier2Access();
   const business = await getCurrentBusiness();
   const name = str(formData, "name");
   if (!name) throw new Error("Indiquez un nom.");
@@ -296,6 +309,7 @@ export async function createStockItem(formData: FormData) {
 }
 
 export async function deleteStockItem(formData: FormData) {
+  await assertPalier2Access();
   const business = await getCurrentBusiness();
   const id = str(formData, "id");
   await prisma.stockItem.deleteMany({ where: { id, businessId: business.id } });
@@ -307,6 +321,7 @@ export async function deleteStockItem(formData: FormData) {
 // each time they're read, never cached — so this needs no snapshot
 // protection the way OrderLine does.
 export async function updateStockItem(formData: FormData) {
+  await assertPalier2Access();
   const business = await getCurrentBusiness();
   const id = str(formData, "id");
   const name = str(formData, "name");
@@ -323,6 +338,7 @@ export async function updateStockItem(formData: FormData) {
 }
 
 export async function createStockPurchase(formData: FormData) {
+  await assertPalier2Access();
   const business = await getCurrentBusiness();
   const stockItemId = str(formData, "stockItemId");
   const quantity = num(formData, "quantity");
@@ -346,6 +362,7 @@ export async function createStockPurchase(formData: FormData) {
 // changes what future reads see; no retroactive recalculation to guard
 // against, unlike OrderLine's frozen snapshots.
 export async function updateStockPurchase(formData: FormData) {
+  await assertPalier2Access();
   const business = await getCurrentBusiness();
   const id = str(formData, "id");
   const quantity = num(formData, "quantity");
@@ -362,6 +379,7 @@ export async function updateStockPurchase(formData: FormData) {
 }
 
 export async function deleteStockPurchase(formData: FormData) {
+  await assertPalier2Access();
   const business = await getCurrentBusiness();
   const id = str(formData, "id");
   await prisma.stockPurchase.deleteMany({ where: { id, stockItem: { businessId: business.id } } });
@@ -369,6 +387,7 @@ export async function deleteStockPurchase(formData: FormData) {
 }
 
 export async function createStockUsage(formData: FormData) {
+  await assertPalier2Access();
   const business = await getCurrentBusiness();
   const stockItemId = str(formData, "stockItemId");
   const quantity = num(formData, "quantity");
@@ -387,6 +406,7 @@ export async function createStockUsage(formData: FormData) {
 }
 
 export async function updateStockUsage(formData: FormData) {
+  await assertPalier2Access();
   const business = await getCurrentBusiness();
   const id = str(formData, "id");
   const quantity = num(formData, "quantity");
@@ -402,6 +422,7 @@ export async function updateStockUsage(formData: FormData) {
 }
 
 export async function deleteStockUsage(formData: FormData) {
+  await assertPalier2Access();
   const business = await getCurrentBusiness();
   const id = str(formData, "id");
   await prisma.stockUsage.deleteMany({ where: { id, stockItem: { businessId: business.id } } });
@@ -411,6 +432,7 @@ export async function deleteStockUsage(formData: FormData) {
 // ---------- STOCK PRODUITS FINIS ----------
 
 export async function createProductionBatch(formData: FormData) {
+  await assertPalier2Access();
   const business = await getCurrentBusiness();
   const productId = str(formData, "productId");
   const quantity = num(formData, "quantity");
@@ -429,6 +451,7 @@ export async function createProductionBatch(formData: FormData) {
 }
 
 export async function deleteProductionBatch(formData: FormData) {
+  await assertPalier2Access();
   const business = await getCurrentBusiness();
   const id = str(formData, "id");
   await prisma.productionBatch.deleteMany({ where: { id, product: { businessId: business.id } } });
@@ -436,6 +459,7 @@ export async function deleteProductionBatch(formData: FormData) {
 }
 
 export async function updateProductionBatch(formData: FormData) {
+  await assertPalier2Access();
   const business = await getCurrentBusiness();
   const id = str(formData, "id");
   const productId = str(formData, "productId");
@@ -483,6 +507,12 @@ export async function createExpense(formData: FormData) {
     throw new Error("Choisissez une catégorie.");
   }
   const spreadMonths = spreadMonthsOf(formData);
+  const isPersonal = formData.get("isPersonal") === "on";
+  const receiptFile = formData.get("receipt");
+  const receiptPath =
+    receiptFile instanceof File && receiptFile.size > 0
+      ? await uploadReceipt(business.id, receiptFile)
+      : null;
   await prisma.expense.create({
     data: {
       businessId: business.id,
@@ -491,6 +521,8 @@ export async function createExpense(formData: FormData) {
       amount,
       category: category as ExpenseCategory,
       spreadMonths,
+      isPersonal,
+      receiptPath,
     },
   });
   revalidateGestion("/gestion/depenses");
@@ -509,6 +541,15 @@ export async function updateExpense(formData: FormData) {
     throw new Error("Choisissez une catégorie.");
   }
   const spreadMonths = spreadMonthsOf(formData);
+  const isPersonal = formData.get("isPersonal") === "on";
+  const receiptFile = formData.get("receipt");
+  // Only replaces the stored receipt when a new file is actually attached —
+  // omitting the field entirely (rather than setting it to null) leaves an
+  // existing receiptPath untouched.
+  const receiptPath =
+    receiptFile instanceof File && receiptFile.size > 0
+      ? await uploadReceipt(business.id, receiptFile)
+      : undefined;
   await prisma.expense.updateMany({
     where: { id, businessId: business.id },
     data: {
@@ -517,6 +558,8 @@ export async function updateExpense(formData: FormData) {
       amount,
       category: categoryRaw as ExpenseCategory,
       spreadMonths,
+      isPersonal,
+      ...(receiptPath !== undefined ? { receiptPath } : {}),
     },
   });
   revalidateGestion("/gestion/depenses");
@@ -550,6 +593,7 @@ export async function setMonthlyGoal(formData: FormData) {
 // ---------- CLIENTS & CREANCES ----------
 
 export async function createClient(formData: FormData) {
+  await assertPalier2Access();
   const business = await getCurrentBusiness();
   const name = str(formData, "name");
   if (!name) throw new Error("Indique un nom de client.");
@@ -565,6 +609,7 @@ export async function createClient(formData: FormData) {
 }
 
 export async function updateClient(formData: FormData) {
+  await assertPalier2Access();
   const business = await getCurrentBusiness();
   const id = str(formData, "id");
   const name = str(formData, "name");
@@ -581,6 +626,7 @@ export async function updateClient(formData: FormData) {
 }
 
 export async function deleteClient(formData: FormData) {
+  await assertPalier2Access();
   const business = await getCurrentBusiness();
   const id = str(formData, "id");
   await prisma.client.deleteMany({ where: { id, businessId: business.id } });
@@ -590,6 +636,7 @@ export async function deleteClient(formData: FormData) {
 const RECEIVABLE_STATUSES = ["PENDING", "PARTIAL", "PAID"];
 
 export async function createReceivable(formData: FormData) {
+  await assertPalier2Access();
   const business = await getCurrentBusiness();
   const clientId = str(formData, "clientId");
   const amount = num(formData, "amount");
@@ -609,6 +656,7 @@ export async function createReceivable(formData: FormData) {
 }
 
 export async function updateReceivable(formData: FormData) {
+  await assertPalier2Access();
   const business = await getCurrentBusiness();
   const id = str(formData, "id");
   const amount = num(formData, "amount");
@@ -631,6 +679,7 @@ export async function updateReceivable(formData: FormData) {
 
 /** Quick shortcut from the table row — marks fully paid without opening the edit modal. */
 export async function markReceivablePaid(formData: FormData) {
+  await assertPalier2Access();
   const business = await getCurrentBusiness();
   const id = str(formData, "id");
   const receivable = await prisma.receivable.findFirst({ where: { id, client: { businessId: business.id } } });
@@ -643,8 +692,57 @@ export async function markReceivablePaid(formData: FormData) {
 }
 
 export async function deleteReceivable(formData: FormData) {
+  await assertPalier2Access();
   const business = await getCurrentBusiness();
   const id = str(formData, "id");
   await prisma.receivable.deleteMany({ where: { id, client: { businessId: business.id } } });
   revalidateGestion("/gestion/clients");
+}
+
+// ---------- VENTE RAPIDE (Palier 1) ----------
+
+/**
+ * A quick sale is stored as a one-line Order rather than a separate table —
+ * OrderLine.productId is already nullable with an established "(produit
+ * supprimé)" fallback convention, so a synthetic line fits cleanly and every
+ * revenue computation (computeDashboardTotals, totalsForMonth) already
+ * handles it correctly with unitCostSnapshot: 0.
+ */
+export async function createQuickSale(formData: FormData) {
+  const business = await getCurrentBusiness();
+  const amount = num(formData, "amount");
+  if (amount <= 0) throw new Error("Indique un montant de vente valide.");
+  await prisma.order.create({
+    data: {
+      businessId: business.id,
+      date: dateOf(formData, "date"),
+      status: "DELIVERED",
+      paymentStatus: "PAID",
+      paymentDate: new Date(),
+      paymentMethod: "CASH",
+      lines: {
+        create: [
+          {
+            productId: null,
+            productNameSnapshot: "Vente rapide",
+            quantity: 1,
+            sellPriceSnapshot: amount,
+            unitCostSnapshot: 0,
+            sellUnitSnapshot: "PIECE",
+          },
+        ],
+      },
+    },
+  });
+  revalidateGestion();
+}
+
+/**
+ * Looks up the most recent expense with the same description, so the
+ * Palier 1 form can propose its category/amount/pro-perso — the user always
+ * confirms or edits, never auto-applied/auto-saved.
+ */
+export async function suggestRecurringExpense(description: string) {
+  const business = await getCurrentBusiness();
+  return findRecurringExpenseSuggestion(business.id, description);
 }

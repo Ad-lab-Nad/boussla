@@ -1,5 +1,6 @@
 import { getCurrentUser } from "@/lib/current-user";
 import { getCurrentBusiness } from "@/lib/current-business";
+import { requirePalier2Page } from "@/lib/subscription-access";
 import {
   getAnalysisData,
   getAvailableMonthKeys,
@@ -24,6 +25,7 @@ export default async function AnalysePage({
 }: {
   searchParams: Promise<{ period?: string; month?: string }>;
 }) {
+  await requirePalier2Page();
   const { period: rawPeriod, month: rawMonth } = await searchParams;
   const period: AnalysisPeriod = ["3", "6", "12", "all"].includes(rawPeriod ?? "")
     ? (rawPeriod as AnalysisPeriod)

@@ -1118,3 +1118,20 @@ select.g-status-select {
 .g-import-summary strong {
   color: var(--g-ink);
 }
+
+.g-hero-card {
+  text-align: center;
+  padding: 32px 22px;
+}
+
+.g-hero-card__label {
+  font-size: 0.85rem;
+  color: var(--g-muted);
+  margin-bottom: 8px;
+}
+
+.g-hero-card__number {
+  font-size: 2.4rem;
+  font-weight: 800;
+  font-family: var(--font-gestion-mono);
+}

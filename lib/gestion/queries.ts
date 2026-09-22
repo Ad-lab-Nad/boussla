@@ -12,6 +12,7 @@ import {
   buildMonthOptions,
   monthKeyFromDate,
   monthKeyFromDateStr,
+  parseDateInput,
   shiftMonthKey,
   todayStr,
 } from "@/lib/gestion/format";
@@ -65,6 +66,19 @@ export async function getExpenses(businessId: string) {
     where: { businessId },
     orderBy: { date: "desc" },
   });
+}
+
+/** Most recent expense with the same description — surfaced as a suggestion
+ * the Palier 1 form proposes, never auto-applied. */
+export async function findRecurringExpenseSuggestion(businessId: string, description: string) {
+  const trimmed = description.trim();
+  if (!trimmed) return null;
+  const match = await prisma.expense.findFirst({
+    where: { businessId, description: { equals: trimmed, mode: "insensitive" } },
+    orderBy: { date: "desc" },
+  });
+  if (!match) return null;
+  return { category: match.category, amount: match.amount, isPersonal: match.isPersonal };
 }
 
 export async function getClients(businessId: string) {
@@ -204,7 +218,7 @@ function toOrderLike(o: Awaited<ReturnType<typeof getOrders>>[number]): OrderLik
   };
 }
 
-function totalsForMonth(
+export function totalsForMonth(
   month: string,
   orders: Awaited<ReturnType<typeof getOrders>>,
   expenses: Awaited<ReturnType<typeof getExpenses>>,
@@ -243,6 +257,87 @@ function totalsForMonth(
     expensesCashInMonth,
     stockPurchasesCostInMonth,
   });
+}
+
+export type Palier1HistoryEntry = {
+  type: "sale" | "expense";
+  id: string;
+  date: Date;
+  label: string;
+  amount: number;
+  isPersonal?: boolean;
+  receiptPath?: string | null;
+};
+
+/**
+ * Deliberately lighter than getDashboardData — no 6-month trend, no stock
+ * alerts, no top-products breakdown. Palier 1 only needs the current
+ * month's number and up to 3 months of history behind it.
+ */
+export async function getPalier1Overview(businessId: string) {
+  const currentMonth = monthKeyFromDateStr(todayStr());
+  const monthKeys = [0, -1, -2, -3].map((i) => shiftMonthKey(currentMonth, i));
+  const rangeStart = parseDateInput(`${monthKeys[monthKeys.length - 1]}-01`);
+
+  // Orders never affect a month outside their own date, so this query can
+  // safely be date-bounded. Expenses stay unbounded: a spreadMonths expense
+  // dated before the window can still accrue into it (see
+  // expenseAccrualForMonth), so bounding this one risks silently wrong totals.
+  const [orders, expenses] = await Promise.all([
+    prisma.order.findMany({
+      where: { businessId, date: { gte: rangeStart } },
+      orderBy: { date: "desc" },
+      include: { lines: true },
+    }),
+    getExpenses(businessId),
+  ]);
+
+  const historyByMonth: Record<string, Palier1HistoryEntry[]> = Object.fromEntries(
+    monthKeys.map((key) => [key, []])
+  );
+
+  for (const order of orders) {
+    const key = monthKeyFromDate(order.date);
+    const bucket = historyByMonth[key];
+    if (!bucket) continue;
+    for (const line of order.lines) {
+      bucket.push({
+        type: "sale",
+        id: line.id,
+        date: order.date,
+        label: line.productNameSnapshot,
+        amount: line.sellPriceSnapshot * line.quantity,
+      });
+    }
+  }
+  for (const expense of expenses) {
+    const key = monthKeyFromDate(expense.date);
+    const bucket = historyByMonth[key];
+    if (!bucket) continue;
+    bucket.push({
+      type: "expense",
+      id: expense.id,
+      date: expense.date,
+      label: expense.description,
+      amount: expense.amount,
+      isPersonal: expense.isPersonal,
+      receiptPath: expense.receiptPath,
+    });
+  }
+  for (const key of monthKeys) {
+    historyByMonth[key].sort((a, b) => b.date.getTime() - a.date.getTime());
+  }
+
+  const totalsThisMonth = totalsForMonth(currentMonth, orders, expenses, []);
+
+  return {
+    currentMonth,
+    monthKeys,
+    netProfitThisMonth: totalsThisMonth.netProfit,
+    revenueThisMonth: totalsThisMonth.revenue,
+    expensesThisMonth: totalsThisMonth.expensesTotal,
+    historyByMonth,
+  };
 }
 
 const TREND_MONTHS = 6;

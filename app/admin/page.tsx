@@ -61,9 +61,13 @@ export default async function AdminPage() {
                         style={{ display: "flex", gap: 6, alignItems: "center" }}
                       >
                         <input type="hidden" name="userId" value={u.id} />
+                        <select name="tier" defaultValue="PALIER_2" className="g-status-select">
+                          <option value="PALIER_1">Palier 1 (19 DT)</option>
+                          <option value="PALIER_2">Palier 2 (39 DT)</option>
+                        </select>
                         <select name="billingInterval" defaultValue="MONTHLY" className="g-status-select">
-                          <option value="MONTHLY">Mensuel (39 DT)</option>
-                          <option value="ANNUAL">Annuel (390 DT)</option>
+                          <option value="MONTHLY">Mensuel</option>
+                          <option value="ANNUAL">Annuel</option>
                         </select>
                         <button type="submit" className="g-btn small">
                           Marquer payé

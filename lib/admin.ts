@@ -25,6 +25,7 @@ type SubscriptionSummary = {
   status: "ACTIVE" | "PAST_DUE" | "CANCELED" | "TRIALING";
   currentPeriodEnd: Date | null;
   billingInterval: "MONTHLY" | "ANNUAL" | null;
+  tier: "PALIER_1" | "PALIER_2";
 } | null;
 
 export function describeSubscription(sub: SubscriptionSummary, now: Date) {
@@ -39,9 +40,10 @@ export function describeSubscription(sub: SubscriptionSummary, now: Date) {
   }
   if (sub.status === "ACTIVE") {
     const interval = sub.billingInterval === "ANNUAL" ? "annuel" : "mensuel";
+    const tier = sub.tier === "PALIER_1" ? "Palier 1" : "Palier 2";
     return expired
-      ? { label: `Payant expiré (${interval})`, badge: "status-error" as const }
-      : { label: `Payant actif (${interval})`, badge: "status-valid" as const };
+      ? { label: `Payant expiré (${tier}, ${interval})`, badge: "status-error" as const }
+      : { label: `Payant actif (${tier}, ${interval})`, badge: "status-valid" as const };
   }
   if (sub.status === "PAST_DUE") return { label: "Paiement en retard", badge: "status-error" as const };
   return { label: "Annulé", badge: "status-warning" as const };

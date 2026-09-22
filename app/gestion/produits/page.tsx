@@ -1,6 +1,7 @@
 import { Plus } from "lucide-react";
 import { getCurrentUser } from "@/lib/current-user";
 import { getCurrentBusiness } from "@/lib/current-business";
+import { requirePalier2Page } from "@/lib/subscription-access";
 import { getProducts } from "@/lib/gestion/queries";
 import { createProduct, deleteProduct, updateProduct } from "@/lib/gestion/actions";
 import { SELL_UNIT_LABELS, SELL_UNIT_OPTIONS, fmtPrice } from "@/lib/gestion/product-units";
@@ -9,6 +10,7 @@ import { ImportProductsButton } from "@/components/gestion/ImportProductsButton"
 import { EditProductButton } from "@/components/gestion/EditProductButton";
 
 export default async function ProduitsPage() {
+  await requirePalier2Page();
   const user = await getCurrentUser();
   const business = await getCurrentBusiness();
   const products = await getProducts(business.id);

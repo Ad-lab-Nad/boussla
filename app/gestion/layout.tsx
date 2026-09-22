@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import { GestionChrome } from "@/components/gestion/GestionChrome";
 import { getCurrentUser } from "@/lib/current-user";
+import { getOrCreateSubscription } from "@/lib/subscription";
+import { canAccessPalier2 } from "@/lib/subscription-access";
 import "./gestion.css";
 
 // Every Gestion page reads live, mutable data (orders, stock, expenses...) —
@@ -27,10 +29,12 @@ export const metadata: Metadata = {
 
 export default async function GestionLayout({ children }: { children: React.ReactNode }) {
   const user = await getCurrentUser();
+  const subscription = await getOrCreateSubscription(user.id);
+  const hasPalier2 = canAccessPalier2(subscription);
 
   return (
     <div className={`gestion ${inter.variable} ${jetbrainsMono.variable}`}>
-      <GestionChrome userEmail={user.email} activityType={user.activityType}>
+      <GestionChrome userEmail={user.email} activityType={user.activityType} hasPalier2={hasPalier2}>
         {children}
       </GestionChrome>
     </div>

@@ -109,11 +109,9 @@ model MonthlyGoal {
   @@map("monthly_goals")
 }
 
-enum PlanTier {
-  FREE_TRIAL
-  STARTER
-  PRO
-  AGENCY
+enum SubscriptionTier {
+  PALIER_1
+  PALIER_2
 }
 
 enum BillingInterval {
@@ -133,14 +131,16 @@ model Subscription {
   userId String @unique
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  plan   PlanTier           @default(FREE_TRIAL)
+  // PIBA's two Phase-1 tiers (Palier 3 is Phase 2, not modeled yet).
+  // TRIALING status grants full (Palier 2-level) access regardless of tier —
+  // see lib/subscription-access.ts — so this only matters once ACTIVE.
+  tier   SubscriptionTier   @default(PALIER_2)
   status SubscriptionStatus @default(TRIALING)
 
-  // Boussla is a single-price product with two billing cadences rather than
-  // tiers — billingInterval (not `plan`, which predates Boussla and doesn't
-  // map to it) is what currentPeriodEnd is actually computed from.
-  // priceAmount snapshots what that cadence cost in DT at selection time, so
-  // a later price change never rewrites what a past period actually charged.
+  // billingInterval is the billing cadence, orthogonal to tier.
+  // priceAmount snapshots what that tier+cadence cost in DT at selection
+  // time, so a later price change never rewrites what a past period
+  // actually charged.
   billingInterval BillingInterval?
   priceAmount     Float?
 
@@ -624,6 +624,16 @@ model Expense {
   // the full amount in the purchase month regardless: that's when the money
   // actually left the account. Null/1 means "not spread" (today's behavior).
   spreadMonths Int?
+
+  // Palier 1's pro/perso toggle — beaucoup de commerçantes solos mélangent
+  // l'argent du commerce et l'argent personnel ; sans cette distinction le
+  // calcul de rentabilité est faussé.
+  isPersonal Boolean @default(false)
+
+  // Storage PATH (never a signed URL, which expires), e.g.
+  // "${businessId}/${uuid}.jpg" in the private "receipts" bucket — resolved
+  // to a fresh signed URL at render time via lib/gestion/receipts.ts.
+  receiptPath String?
 
   createdAt DateTime @default(now())
 

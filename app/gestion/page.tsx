@@ -8,14 +8,19 @@ import {
   TrendingUp,
   Wallet,
 } from "lucide-react";
+import { getCurrentUser } from "@/lib/current-user";
 import { getCurrentBusiness } from "@/lib/current-business";
+import { getOrCreateSubscription } from "@/lib/subscription";
+import { canAccessPalier2 } from "@/lib/subscription-access";
 import {
   getAverageSellPrice,
   getAvailableMonthKeys,
   getDashboardData,
   getMonthlyGoal,
+  getPalier1Overview,
 } from "@/lib/gestion/queries";
-import { setMonthlyGoal } from "@/lib/gestion/actions";
+import { setMonthlyGoal, createQuickSale } from "@/lib/gestion/actions";
+import { Palier1Dashboard } from "@/components/gestion/Palier1Dashboard";
 import { computeGoalProgress, estimateUnitsPerDay } from "@/lib/gestion/calculations";
 import {
   fmt,
@@ -40,7 +45,21 @@ export default async function DashboardPage({
 }) {
   const { month: requestedMonth } = await searchParams;
 
+  const user = await getCurrentUser();
   const business = await getCurrentBusiness();
+  const subscription = await getOrCreateSubscription(user.id);
+
+  if (!canAccessPalier2(subscription)) {
+    const overview = await getPalier1Overview(business.id);
+    return (
+      <Palier1Dashboard
+        overview={overview}
+        businessId={business.id}
+        createQuickSaleAction={createQuickSale}
+      />
+    );
+  }
+
   const monthOptions = await getAvailableMonthKeys(business.id);
   const currentMonth = monthKeyFromDateStr(todayStr());
   const month =

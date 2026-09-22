@@ -1,5 +1,6 @@
 import { getCurrentUser } from "@/lib/current-user";
 import { getCurrentBusiness } from "@/lib/current-business";
+import { requirePalier2Page } from "@/lib/subscription-access";
 import { getOrders, getProducts } from "@/lib/gestion/queries";
 import { orderAmount } from "@/lib/gestion/calculations";
 import {
@@ -57,6 +58,7 @@ export default async function CommandesPage({
 }: {
   searchParams: Promise<{ method?: string }>;
 }) {
+  await requirePalier2Page();
   const { method } = await searchParams;
   const user = await getCurrentUser();
   const business = await getCurrentBusiness();

@@ -1,5 +1,6 @@
 import { Plus } from "lucide-react";
 import { getCurrentBusiness } from "@/lib/current-business";
+import { requirePalier2Page } from "@/lib/subscription-access";
 import { getFinishedStock, getProductionBatches, getProducts } from "@/lib/gestion/queries";
 import { createProductionBatch, deleteProductionBatch, updateProductionBatch } from "@/lib/gestion/actions";
 import { todayStr } from "@/lib/gestion/format";
@@ -8,6 +9,7 @@ import { ConfirmSubmitButton } from "@/components/gestion/ConfirmSubmitButton";
 import { EditProductionBatchButton } from "@/components/gestion/EditProductionBatchButton";
 
 export default async function ProduitsFinisPage() {
+  await requirePalier2Page();
   const business = await getCurrentBusiness();
   const [products, batches, finishedStock] = await Promise.all([
     getProducts(business.id),

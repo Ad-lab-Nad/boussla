@@ -1,5 +1,6 @@
 import { Plus } from "lucide-react";
 import { getCurrentBusiness } from "@/lib/current-business";
+import { requirePalier2Page } from "@/lib/subscription-access";
 import { getStockItems, getStockPurchases, getStockUsages } from "@/lib/gestion/queries";
 import {
   createStockItem,
@@ -19,6 +20,7 @@ import { EditStockPurchaseButton } from "@/components/gestion/EditStockPurchaseB
 import { EditStockUsageButton } from "@/components/gestion/EditStockUsageButton";
 
 export default async function StockPage() {
+  await requirePalier2Page();
   const business = await getCurrentBusiness();
   const [stockItems, purchases, usages] = await Promise.all([
     getStockItems(business.id),
