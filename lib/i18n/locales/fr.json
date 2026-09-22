@@ -1,0 +1,22 @@
+{
+  "common": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "add": "Ajouter",
+    "loading": "Chargement...",
+    "back": "Retour",
+    "next": "Suivant",
+    "confirm": "Confirmer",
+    "close": "Fermer"
+  },
+  "settings": {
+    "language": {
+      "label": "Langue",
+      "fr": "Français",
+      "ar": "العربية",
+      "en": "English"
+    }
+  }
+}
