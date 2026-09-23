@@ -270,7 +270,12 @@
       "registerOrder": "Enregistrer la commande",
       "saveSaleError": "Impossible d'enregistrer cette vente. Réessaie.",
       "saveOrderError": "Impossible d'enregistrer cette commande. Réessaie.",
-      "editSnapshotHint": "Les prix et coûts des lignes sont repris depuis le catalogue au moment de l'enregistrement — les autres commandes ne sont pas affectées."
+      "editSnapshotHint": "Les prix et coûts des lignes sont repris depuis le catalogue au moment de l'enregistrement — les autres commandes ne sont pas affectées.",
+      "unpaidDeliveredTitle": "Livrées non payées",
+      "unpaidDeliveredHint": "En attente d'encaissement — utile pour relancer une société de livraison COD qui n'a pas encore viré l'argent.",
+      "daysSinceColumn": "Jours depuis livraison",
+      "markPaidButton": "Marquer payée",
+      "unpaidDeliveredEmpty": "Rien en attente d'encaissement."
     },
     "depenses": {
       "newExpenseTitle": "Nouvelle dépense (hors stock)",

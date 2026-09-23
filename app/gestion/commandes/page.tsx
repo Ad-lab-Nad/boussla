@@ -128,6 +128,11 @@ export default async function CommandesPage({
   const orders =
     methodFilter === "ALL" ? allOrders : allOrders.filter((o) => o.paymentMethod === methodFilter);
 
+  const now = new Date().getTime();
+  const unpaidDelivered = allOrders
+    .filter((o) => o.status === "DELIVERED" && o.paymentStatus !== "PAID")
+    .sort((a, b) => a.date.getTime() - b.date.getTime());
+
   return (
     <>
       <div className="g-card">
@@ -136,6 +141,53 @@ export default async function CommandesPage({
           {isServices ? t("gestion.commandes.newSaleHint") : t("gestion.commandes.newOrderHint")}
         </div>
         <OrderForm products={products} createOrderAction={createOrder} isServices={isServices} />
+      </div>
+
+      <div className="g-card">
+        <h2>{t("gestion.commandes.unpaidDeliveredTitle")}</h2>
+        <div className="g-hint">{t("gestion.commandes.unpaidDeliveredHint")}</div>
+        <div className="g-table-wrap">
+          <table className="g-table">
+            <thead>
+              <tr>
+                <th>{t("gestion.editCommon.dateLabel")}</th>
+                <th>{t("gestion.commandes.clientColumn")}</th>
+                <th className="right">{t("gestion.editCommon.amountLabel")}</th>
+                <th className="right">{t("gestion.commandes.daysSinceColumn")}</th>
+                <th>{t("gestion.commandes.paymentColumn")}</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {unpaidDelivered.map((order) => {
+                const daysSince = Math.floor((now - order.date.getTime()) / 86_400_000);
+                return (
+                  <tr key={order.id}>
+                    <td className="num">{order.date.toISOString().slice(0, 10)}</td>
+                    <td>{order.clientName || "—"}</td>
+                    <td className="right num">{fmt(orderAmount(order))}</td>
+                    <td className="right num">{daysSince}</td>
+                    <td>
+                      <span className={`g-badge ${PAYMENT_BADGE_CLASS[order.paymentStatus]}`}>
+                        {order.paymentStatus === "PENDING" ? t("gestion.commandes.paymentPending") : t("gestion.commandes.paymentUnpaid")}
+                      </span>
+                    </td>
+                    <td>
+                      <form action={updateOrderPaymentStatus}>
+                        <input type="hidden" name="id" value={order.id} />
+                        <input type="hidden" name="paymentStatus" value="PAID" />
+                        <button type="submit" className="g-btn secondary small">
+                          {t("gestion.commandes.markPaidButton")}
+                        </button>
+                      </form>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        {unpaidDelivered.length === 0 && <div className="g-empty">{t("gestion.commandes.unpaidDeliveredEmpty")}</div>}
       </div>
 
       <div className="g-card">

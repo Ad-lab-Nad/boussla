@@ -134,18 +134,27 @@ export function computeDashboardTotals(params: {
   let revenue = 0;
   let cost = 0;
   let unpaidAmount = 0;
+  // Delivered-and-paid only — feeds netProfit. A COD order sitting delivered
+  // while the courier hasn't remitted the money yet is real "CA (livré)"
+  // (revenue/cost above still count it) but isn't realized profit until
+  // it's actually paid, so it must not inflate netProfit.
+  let paidRevenue = 0;
+  let paidCost = 0;
   const byProduct = new Map<string, TopProductRow>();
 
   for (const order of delivered) {
     const amount = orderAmount(order);
-    if (order.paymentStatus === "PENDING" || order.paymentStatus === "UNPAID") {
-      unpaidAmount += amount;
-    }
+    const isPaid = order.paymentStatus === "PAID";
+    if (!isPaid) unpaidAmount += amount;
     for (const line of order.lines) {
       const lineAmount = line.sellPriceSnapshot * line.quantity;
       const lineCost = line.unitCostSnapshot * line.quantity;
       revenue += lineAmount;
       cost += lineCost;
+      if (isPaid) {
+        paidRevenue += lineAmount;
+        paidCost += lineCost;
+      }
       const key = line.productId ?? line.productNameSnapshot;
       const row = byProduct.get(key) ?? {
         key,
@@ -160,11 +169,13 @@ export function computeDashboardTotals(params: {
     }
   }
 
+  // Same principle for cash-on-hand: an unpaid COD delivery isn't cash yet
+  // either, regardless of what orderCashDate says about its payment method.
   const cashRevenue = cashOrdersInMonth
-    .filter((o) => o.status === "DELIVERED")
+    .filter((o) => o.status === "DELIVERED" && o.paymentStatus === "PAID")
     .reduce((sum, o) => sum + orderAmount(o), 0);
 
-  const netProfit = revenue - cost - expensesAccrualInMonth;
+  const netProfit = paidRevenue - paidCost - expensesAccrualInMonth;
   const cashFlow = cashRevenue - stockPurchasesCostInMonth - expensesCashInMonth;
 
   return {

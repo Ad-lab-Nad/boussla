@@ -270,7 +270,12 @@
       "registerOrder": "Record the order",
       "saveSaleError": "Couldn't save this sale. Try again.",
       "saveOrderError": "Couldn't save this order. Try again.",
-      "editSnapshotHint": "Line prices and costs are pulled from the catalog at save time — other orders aren't affected."
+      "editSnapshotHint": "Line prices and costs are pulled from the catalog at save time — other orders aren't affected.",
+      "unpaidDeliveredTitle": "Delivered, unpaid",
+      "unpaidDeliveredHint": "Waiting to be collected — useful for following up with a COD delivery company that hasn't remitted the money yet.",
+      "daysSinceColumn": "Days since delivery",
+      "markPaidButton": "Mark paid",
+      "unpaidDeliveredEmpty": "Nothing waiting to be collected."
     },
     "depenses": {
       "newExpenseTitle": "New expense (non-stock)",
