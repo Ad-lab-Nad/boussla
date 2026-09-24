@@ -3,7 +3,7 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 import { GestionChrome } from "@/components/gestion/GestionChrome";
 import { getCurrentUser } from "@/lib/current-user";
 import { getOrCreateSubscription } from "@/lib/subscription";
-import { canAccessPalier2 } from "@/lib/subscription-access";
+import { canAccessPalier2, hasActiveAccess } from "@/lib/subscription-access";
 import { getServerLocale } from "@/lib/i18n/server";
 import "./gestion.css";
 
@@ -32,6 +32,7 @@ export default async function GestionLayout({ children }: { children: React.Reac
   const user = await getCurrentUser();
   const subscription = await getOrCreateSubscription(user.id);
   const hasPalier2 = canAccessPalier2(subscription);
+  const accessExpired = !hasActiveAccess(subscription);
   const initialLocale = await getServerLocale();
 
   return (
@@ -40,6 +41,7 @@ export default async function GestionLayout({ children }: { children: React.Reac
         userEmail={user.email}
         activityType={user.activityType}
         hasPalier2={hasPalier2}
+        accessExpired={accessExpired}
         initialLocale={initialLocale}
       >
         {children}

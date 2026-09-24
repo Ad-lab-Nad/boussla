@@ -72,17 +72,24 @@ export function GestionChrome({
   userEmail,
   activityType,
   hasPalier2,
+  accessExpired,
   initialLocale,
 }: {
   children: React.ReactNode;
   userEmail: string;
   activityType: ActivityType;
   hasPalier2: boolean;
+  accessExpired: boolean;
   initialLocale?: Locale;
 }) {
   return (
     <LocaleProvider mirrorLayout initialLocale={initialLocale}>
-      <GestionChromeInner userEmail={userEmail} activityType={activityType} hasPalier2={hasPalier2}>
+      <GestionChromeInner
+        userEmail={userEmail}
+        activityType={activityType}
+        hasPalier2={hasPalier2}
+        accessExpired={accessExpired}
+      >
         {children}
       </GestionChromeInner>
     </LocaleProvider>
@@ -94,11 +101,13 @@ function GestionChromeInner({
   userEmail,
   activityType,
   hasPalier2,
+  accessExpired,
 }: {
   children: React.ReactNode;
   userEmail: string;
   activityType: ActivityType;
   hasPalier2: boolean;
+  accessExpired: boolean;
 }) {
   const { t } = useLocale();
   const pathname = usePathname();
@@ -107,6 +116,8 @@ function GestionChromeInner({
   const isServices = activityType === "SERVICES";
   const nav = fullNav.filter((n) => {
     if (n.href === "/gestion/abonnement") return false;
+    // Expired trial/subscription: only Abonnement (sidebar footer) stays reachable.
+    if (accessExpired) return false;
     if (!hasPalier2 && PALIER_2_ONLY_HREFS.has(n.href)) return false;
     if (isServices) return n.href !== "/gestion/stock" && n.href !== "/gestion/produits-finis";
     return true;
@@ -183,7 +194,21 @@ function GestionChromeInner({
           </button>
           <h1>{current.label}</h1>
         </div>
-        <div className="g-page-body">{children}</div>
+        <div className="g-page-body">
+          {accessExpired && pathname !== "/gestion/abonnement" ? (
+            <div className="g-card" style={{ maxWidth: 560 }}>
+              <h2>{t("gestion.accessExpired.title")}</h2>
+              <p style={{ fontSize: "0.9rem", color: "var(--g-ink-2)", margin: "0 0 16px" }}>
+                {t("gestion.accessExpired.body")}
+              </p>
+              <Link href="/gestion/abonnement" className="g-btn">
+                <CreditCard size={15} /> {t("gestion.accessExpired.cta")}
+              </Link>
+            </div>
+          ) : (
+            children
+          )}
+        </div>
       </div>
     </div>
   );
