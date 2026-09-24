@@ -128,6 +128,11 @@ export default async function AdminPage({
                 const { label, badge } = describeSubscription(u.subscription, now);
                 const totalPaid = paidByEmail.get(u.email);
                 const canConfirmPast = totalPaid === undefined && u.subscription?.status === "ACTIVE";
+                // Plan the user picked on /gestion/abonnement, awaiting payment.
+                const pendingChoice =
+                  u.subscription && u.subscription.status !== "ACTIVE" && u.subscription.billingInterval
+                    ? u.subscription
+                    : null;
                 return (
                   <tr key={u.id}>
                     <td>{u.email}</td>
@@ -141,6 +146,13 @@ export default async function AdminPage({
                     </td>
                     <td>
                       <span className={`g-badge ${badge}`}>{label}</span>
+                      {pendingChoice && (
+                        <div className="g-hint" style={{ margin: "4px 0 0" }}>
+                          A choisi {pendingChoice.tier === "PALIER_1" ? "Palier 1" : "Palier 2"} (
+                          {pendingChoice.billingInterval === "ANNUAL" ? "annuel" : "mensuel"},{" "}
+                          {fmt(pendingChoice.priceAmount)}) — en attente de paiement
+                        </div>
+                      )}
                     </td>
                     <td>
                       <div style={{ display: "flex", gap: 6, alignItems: "center", flexWrap: "wrap" }}>
@@ -149,11 +161,19 @@ export default async function AdminPage({
                           style={{ display: "flex", gap: 6, alignItems: "center" }}
                         >
                           <input type="hidden" name="userId" value={u.id} />
-                          <select name="tier" defaultValue="PALIER_2" className="g-status-select">
+                          <select
+                            name="tier"
+                            defaultValue={u.subscription?.tier ?? "PALIER_2"}
+                            className="g-status-select"
+                          >
                             <option value="PALIER_1">Palier 1 (19 DT)</option>
                             <option value="PALIER_2">Palier 2 (39 DT)</option>
                           </select>
-                          <select name="billingInterval" defaultValue="MONTHLY" className="g-status-select">
+                          <select
+                            name="billingInterval"
+                            defaultValue={u.subscription?.billingInterval ?? "MONTHLY"}
+                            className="g-status-select"
+                          >
                             <option value="MONTHLY">Mensuel</option>
                             <option value="ANNUAL">Annuel</option>
                           </select>

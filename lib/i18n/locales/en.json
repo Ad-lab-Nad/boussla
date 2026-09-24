@@ -190,12 +190,17 @@
       "monthlyPlan": "monthly plan",
       "activeRenewal": "active — renews on {date}.",
       "chooseTierTitle": "Choose your tier",
-      "chooseTierHint": "Switch tier or billing cadence at any time.",
+      "chooseTierHint": "Pick your tier: paid access turns on as soon as your payment is received.",
       "perMonth": "/ month",
       "orAnnual": "or {amount} DT/year ({months} months free)",
       "currentPlan": "Current plan ({interval})",
       "monthly": "Monthly",
-      "annual": "Annual"
+      "annual": "Annual",
+      "pendingChoice": "Choice saved: {tier} — {interval} ({price} DT). Paid access turns on as soon as your payment is received.",
+      "chosenPlan": "Your choice ({interval})",
+      "changeAtRenewal": "To switch to this tier, mention it at your next payment: the new price applies from then on.",
+      "trialEnded": "Your free trial has ended. Pick a tier: access comes back as soon as your payment is received.",
+      "paidEnded": "Your subscription expired on {date}. Renew it to get your access back."
     },
     "clients": {
       "newClientTitle": "New client",
@@ -408,6 +413,11 @@
       "errorUnitCostInvalid": "Missing or invalid unit cost",
       "errorUnitCostNegative": "Negative unit cost",
       "warningNegativeMargin": "Negative margin — cost higher than sell price"
+    },
+    "accessExpired": {
+      "title": "Your access has ended",
+      "body": "Your free trial or subscription has run out. Your data is safe: pick a tier, and access comes back as soon as your payment is received.",
+      "cta": "Choose a tier"
     }
   }
 }

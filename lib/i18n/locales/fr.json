@@ -190,12 +190,17 @@
       "monthlyPlan": "plan mensuel",
       "activeRenewal": "actif — renouvellement le {date}.",
       "chooseTierTitle": "Choisis ton palier",
-      "chooseTierHint": "Change de palier ou de cadence de paiement à tout moment.",
+      "chooseTierHint": "Choisis ton palier : ton accès payant est activé dès que ton paiement est reçu.",
       "perMonth": "/ mois",
       "orAnnual": "ou {amount} DT/an ({months} mois offerts)",
       "currentPlan": "Plan actuel ({interval})",
       "monthly": "Mensuel",
-      "annual": "Annuel"
+      "annual": "Annuel",
+      "pendingChoice": "Choix enregistré : {tier} — {interval} ({price} DT). Ton accès payant sera activé dès réception de ton paiement.",
+      "chosenPlan": "Ton choix ({interval})",
+      "changeAtRenewal": "Pour passer à ce palier, indique-le lors de ton prochain paiement : le nouveau tarif s'appliquera à partir de là.",
+      "trialEnded": "Ton essai gratuit est terminé. Choisis un palier : ton accès revient dès réception de ton paiement.",
+      "paidEnded": "Ton abonnement a expiré le {date}. Renouvelle-le pour retrouver ton accès."
     },
     "clients": {
       "newClientTitle": "Nouveau client",
@@ -408,6 +413,11 @@
       "errorUnitCostInvalid": "Coût unitaire manquant ou invalide",
       "errorUnitCostNegative": "Coût unitaire négatif",
       "warningNegativeMargin": "Marge négative — coût supérieur au prix de vente"
+    },
+    "accessExpired": {
+      "title": "Ton accès est terminé",
+      "body": "Ton essai gratuit ou ton abonnement est arrivé à échéance. Tes données sont bien conservées : choisis un palier, et ton accès revient dès réception de ton paiement.",
+      "cta": "Choisir un palier"
     }
   }
 }
