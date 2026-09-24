@@ -13,7 +13,7 @@ export const dynamic = "force-dynamic";
 const inter = Inter({
   variable: "--font-gestion-sans",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 const jetbrainsMono = JetBrains_Mono({
@@ -31,7 +31,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   await requireAdmin();
 
   return (
-    <div className={`gestion ${inter.variable} ${jetbrainsMono.variable}`}>
+    <div className={`gestion g-doodle ${inter.variable} ${jetbrainsMono.variable}`}>
       <div className="g-topbar">
         <h1>Back office</h1>
         <div style={{ display: "flex", gap: 10, marginLeft: "auto", alignItems: "center" }}>

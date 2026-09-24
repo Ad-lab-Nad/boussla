@@ -32,8 +32,12 @@
   --g-critical: #d03b3b;
   --g-success-text: #006300;
 
-  --g-radius: 14px;
-  --g-shadow: 0 1px 2px rgba(11, 11, 11, 0.04), 0 8px 24px -12px rgba(11, 11, 11, 0.12);
+  --g-radius: 18px;
+  --g-shadow: 0 1px 2px rgba(11, 11, 11, 0.03), 0 10px 28px -14px rgba(11, 11, 11, 0.14);
+
+  /* Figures: heavy Inter with tabular digits — bold, strict, and columns of
+     amounts still line up. */
+  --g-font-num: var(--font-gestion-sans), system-ui, -apple-system, sans-serif;
 
   background: var(--g-page);
   color: var(--g-ink);
@@ -216,7 +220,9 @@
   border-bottom: 1px solid var(--g-border);
   position: sticky;
   top: 0;
-  background: var(--g-page);
+  background: color-mix(in srgb, var(--g-page) 82%, transparent);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
   z-index: 5;
 }
 
@@ -436,8 +442,9 @@
 }
 
 .num {
-  font-family: var(--font-gestion-mono), ui-monospace, monospace;
+  font-family: var(--g-font-num);
   font-variant-numeric: tabular-nums;
+  font-weight: 600;
 }
 
 .right {
@@ -541,9 +548,9 @@ select.g-status-select {
 }
 
 .g-goal-stat__value {
-  font-size: 1.6rem;
-  font-weight: 700;
-  letter-spacing: -0.01em;
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.035em;
 }
 
 .g-goal-stat__target {
@@ -679,11 +686,12 @@ select.g-status-select {
 }
 
 .g-kpi__value {
-  font-family: var(--font-gestion-mono), ui-monospace, monospace;
+  font-family: var(--g-font-num);
   font-variant-numeric: tabular-nums;
-  font-size: 1.35rem;
-  font-weight: 700;
-  letter-spacing: -0.01em;
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.1;
 }
 
 .g-kpi__delta {
@@ -745,8 +753,10 @@ select.g-status-select {
 }
 
 .g-stat-chip__value {
-  font-family: var(--font-gestion-mono), ui-monospace, monospace;
-  font-weight: 700;
+  font-family: var(--g-font-num);
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+  letter-spacing: -0.02em;
   font-size: 1.05rem;
   line-height: 1.1;
 }
@@ -897,9 +907,11 @@ select.g-status-select {
 }
 
 .g-plan-price {
-  font-family: var(--font-gestion-mono), ui-monospace, monospace;
+  font-family: var(--g-font-num);
+  font-variant-numeric: tabular-nums;
   font-size: 1.8rem;
-  font-weight: 700;
+  font-weight: 800;
+  letter-spacing: -0.03em;
   margin: 2px 0;
 }
 
@@ -1133,7 +1145,9 @@ select.g-status-select {
 .g-hero-card__number {
   font-size: 2.4rem;
   font-weight: 800;
-  font-family: var(--font-gestion-mono);
+  font-family: var(--g-font-num);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.04em;
 }
 
 .g-upsell-card {
@@ -1206,4 +1220,36 @@ select.g-status-select {
   padding: 6px 8px;
   font-size: 0.7rem;
   color: var(--g-muted);
+}
+
+/* ================== DOODLE WALLPAPER ================== */
+/* WhatsApp-style wallpaper: small line doodles (bag, coin, box, chart…)
+   tiled behind the content at very low opacity. Drawn as a mask filled with
+   --g-ink, so it follows light/dark mode on its own. Opt-in via .g-doodle
+   on the layout wrapper — only the Gestion app and the back office. */
+.gestion.g-doodle {
+  position: relative;
+  isolation: isolate;
+}
+
+.gestion.g-doodle::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-color: var(--g-ink);
+  opacity: 0.045;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='250' height='250' viewBox='0 0 250 250' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cg transform='translate%2816 14%29 rotate%28-12 12 12%29'%3E%3Cpath d='M6 8h12l-1 12H7z'/%3E%3Cpath d='M9 8V6a3 3 0 0 1 6 0v2'/%3E%3C/g%3E%3Cg transform='translate%28100 28%29 rotate%2810 12 12%29'%3E%3Ccircle cx='12' cy='12' r='8'/%3E%3Ccircle cx='12' cy='12' r='4.5'/%3E%3C/g%3E%3Cg transform='translate%28182 12%29 rotate%28-6 12 12%29'%3E%3Cpath d='M5 20v-7M12 20V7M19 20v-10M3 21h18'/%3E%3C/g%3E%3Cg transform='translate%2856 86%29 rotate%2815 12 12%29'%3E%3Cpath d='M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.5-7 10-7 10z'/%3E%3C/g%3E%3Cg transform='translate%28140 96%29 rotate%28-15 12 12%29'%3E%3Cpath d='M12 3l8 4.5v9L12 21l-8-4.5v-9z'/%3E%3Cpath d='M4 7.5l8 4.5 8-4.5M12 12v9'/%3E%3C/g%3E%3Cg transform='translate%28210 78%29 rotate%288 12 12%29'%3E%3Cpath d='M3 12V4h8l10 10-8 8z'/%3E%3Ccircle cx='7.5' cy='7.5' r='1.5'/%3E%3C/g%3E%3Cg transform='translate%2810 150%29 rotate%285 12 12%29'%3E%3Cpath d='M6 3h12v18l-2-1.5-2 1.5-2-1.5-2 1.5-2-1.5L6 21z'/%3E%3Cpath d='M9 8h6M9 12h6'/%3E%3C/g%3E%3Cg transform='translate%2892 160%29 rotate%28-8 12 12%29'%3E%3Cpath d='M12 3l2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.6l-5.4 2.9 1.2-6-4.5-4.2 6.1-.7z'/%3E%3C/g%3E%3Cg transform='translate%28170 164%29 rotate%2812 12 12%29'%3E%3Cpath d='M2 7h11v9H2zM13 10h4l3 3v3h-7'/%3E%3Ccircle cx='6' cy='17.5' r='1.8'/%3E%3Ccircle cx='16.5' cy='17.5' r='1.8'/%3E%3C/g%3E%3Cg transform='translate%2840 212%29 rotate%28-10 12 12%29'%3E%3Cpath d='M5 19C5 10 11 5 20 4c-1 9-6 15-15 15z'/%3E%3Cpath d='M5 19l8-8'/%3E%3C/g%3E%3Cg transform='translate%28124 214%29 rotate%286 12 12%29'%3E%3Cpath d='M3 17l6-6 4 4 7-8'/%3E%3Cpath d='M15 7h5v5'/%3E%3C/g%3E%3Cg transform='translate%28206 210%29 rotate%28-5 12 12%29'%3E%3Ccircle cx='12' cy='12' r='8'/%3E%3Cpath d='M9 14c1.5 1.5 4.5 1.5 6 0M9.5 9.5h.01M14.5 9.5h.01'/%3E%3C/g%3E%3Ccircle cx='70' cy='50' r='1.3' fill='black' stroke='none'/%3E%3Ccircle cx='160' cy='60' r='1.3' fill='black' stroke='none'/%3E%3Ccircle cx='28' cy='110' r='1.3' fill='black' stroke='none'/%3E%3Ccircle cx='120' cy='130' r='1.3' fill='black' stroke='none'/%3E%3Ccircle cx='236' cy='140' r='1.3' fill='black' stroke='none'/%3E%3Ccircle cx='60' cy='180' r='1.3' fill='black' stroke='none'/%3E%3Ccircle cx='150' cy='242' r='1.3' fill='black' stroke='none'/%3E%3Ccircle cx='236' cy='20' r='1.3' fill='black' stroke='none'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='250' height='250' viewBox='0 0 250 250' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cg transform='translate%2816 14%29 rotate%28-12 12 12%29'%3E%3Cpath d='M6 8h12l-1 12H7z'/%3E%3Cpath d='M9 8V6a3 3 0 0 1 6 0v2'/%3E%3C/g%3E%3Cg transform='translate%28100 28%29 rotate%2810 12 12%29'%3E%3Ccircle cx='12' cy='12' r='8'/%3E%3Ccircle cx='12' cy='12' r='4.5'/%3E%3C/g%3E%3Cg transform='translate%28182 12%29 rotate%28-6 12 12%29'%3E%3Cpath d='M5 20v-7M12 20V7M19 20v-10M3 21h18'/%3E%3C/g%3E%3Cg transform='translate%2856 86%29 rotate%2815 12 12%29'%3E%3Cpath d='M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.5-7 10-7 10z'/%3E%3C/g%3E%3Cg transform='translate%28140 96%29 rotate%28-15 12 12%29'%3E%3Cpath d='M12 3l8 4.5v9L12 21l-8-4.5v-9z'/%3E%3Cpath d='M4 7.5l8 4.5 8-4.5M12 12v9'/%3E%3C/g%3E%3Cg transform='translate%28210 78%29 rotate%288 12 12%29'%3E%3Cpath d='M3 12V4h8l10 10-8 8z'/%3E%3Ccircle cx='7.5' cy='7.5' r='1.5'/%3E%3C/g%3E%3Cg transform='translate%2810 150%29 rotate%285 12 12%29'%3E%3Cpath d='M6 3h12v18l-2-1.5-2 1.5-2-1.5-2 1.5-2-1.5L6 21z'/%3E%3Cpath d='M9 8h6M9 12h6'/%3E%3C/g%3E%3Cg transform='translate%2892 160%29 rotate%28-8 12 12%29'%3E%3Cpath d='M12 3l2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.6l-5.4 2.9 1.2-6-4.5-4.2 6.1-.7z'/%3E%3C/g%3E%3Cg transform='translate%28170 164%29 rotate%2812 12 12%29'%3E%3Cpath d='M2 7h11v9H2zM13 10h4l3 3v3h-7'/%3E%3Ccircle cx='6' cy='17.5' r='1.8'/%3E%3Ccircle cx='16.5' cy='17.5' r='1.8'/%3E%3C/g%3E%3Cg transform='translate%2840 212%29 rotate%28-10 12 12%29'%3E%3Cpath d='M5 19C5 10 11 5 20 4c-1 9-6 15-15 15z'/%3E%3Cpath d='M5 19l8-8'/%3E%3C/g%3E%3Cg transform='translate%28124 214%29 rotate%286 12 12%29'%3E%3Cpath d='M3 17l6-6 4 4 7-8'/%3E%3Cpath d='M15 7h5v5'/%3E%3C/g%3E%3Cg transform='translate%28206 210%29 rotate%28-5 12 12%29'%3E%3Ccircle cx='12' cy='12' r='8'/%3E%3Cpath d='M9 14c1.5 1.5 4.5 1.5 6 0M9.5 9.5h.01M14.5 9.5h.01'/%3E%3C/g%3E%3Ccircle cx='70' cy='50' r='1.3' fill='black' stroke='none'/%3E%3Ccircle cx='160' cy='60' r='1.3' fill='black' stroke='none'/%3E%3Ccircle cx='28' cy='110' r='1.3' fill='black' stroke='none'/%3E%3Ccircle cx='120' cy='130' r='1.3' fill='black' stroke='none'/%3E%3Ccircle cx='236' cy='140' r='1.3' fill='black' stroke='none'/%3E%3Ccircle cx='60' cy='180' r='1.3' fill='black' stroke='none'/%3E%3Ccircle cx='150' cy='242' r='1.3' fill='black' stroke='none'/%3E%3Ccircle cx='236' cy='20' r='1.3' fill='black' stroke='none'/%3E%3C/svg%3E");
+  -webkit-mask-size: 250px 250px;
+  mask-size: 250px 250px;
+  -webkit-mask-repeat: repeat;
+  mask-repeat: repeat;
+}
+
+@media (prefers-color-scheme: dark) {
+  .gestion.g-doodle::before {
+    opacity: 0.06;
+  }
 }

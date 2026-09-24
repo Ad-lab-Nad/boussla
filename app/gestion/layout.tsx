@@ -14,7 +14,7 @@ export const dynamic = "force-dynamic";
 const inter = Inter({
   variable: "--font-gestion-sans",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 const jetbrainsMono = JetBrains_Mono({
@@ -35,7 +35,7 @@ export default async function GestionLayout({ children }: { children: React.Reac
   const initialLocale = await getServerLocale();
 
   return (
-    <div className={`gestion ${inter.variable} ${jetbrainsMono.variable}`}>
+    <div className={`gestion g-doodle ${inter.variable} ${jetbrainsMono.variable}`}>
       <GestionChrome
         userEmail={user.email}
         activityType={user.activityType}
