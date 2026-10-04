@@ -351,10 +351,11 @@ export async function getPalier1Overview(businessId: string) {
 const TREND_MONTHS = 6;
 
 export async function getDashboardData(businessId: string, month: string) {
-  const [orders, expenses, stockItems] = await Promise.all([
+  const [orders, expenses, stockItems, finishedStock] = await Promise.all([
     getOrders(businessId),
     getExpenses(businessId),
     getStockItems(businessId),
+    getFinishedStock(businessId),
   ]);
 
   const totals = totalsForMonth(month, orders, expenses, stockItems);
@@ -375,7 +376,13 @@ export async function getDashboardData(businessId: string, month: string) {
     .filter(({ item, totals: t }) => t.remaining <= (item.alertThreshold || 0))
     .map(({ item, totals: t }) => ({ item, remaining: t.remaining }));
 
-  return { totals, previousTotals, trend, stockAlerts };
+  // Finished goods only alert once the user has set a threshold on them
+  // (Stock produits finis) — many products are made to order.
+  const productAlerts = finishedStock
+    .filter(({ product, available }) => product.alertThreshold !== null && available <= product.alertThreshold)
+    .map(({ product, available }) => ({ product, available }));
+
+  return { totals, previousTotals, trend, stockAlerts, productAlerts };
 }
 
 export type AnalysisPeriod = "3" | "6" | "12" | "all";

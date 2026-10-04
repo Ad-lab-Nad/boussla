@@ -403,6 +403,12 @@ model Product {
   // unit that needed no explicit callout before this field existed.
   sellUnit  SellUnit @default(PIECE)
 
+  // Finished-goods stock alert: flagged (Stock produits finis + dashboard
+  // Alertes stock) once available stock falls to or below this, in sellUnit.
+  // Null = no alert for this product — the default, unlike StockItem's
+  // required alertThreshold, since many products are made to order.
+  alertThreshold Float?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

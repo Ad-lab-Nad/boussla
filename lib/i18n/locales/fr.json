@@ -135,7 +135,8 @@
         "paceUnitsOther": " — environ {units} unités/jour pour y arriver, au prix moyen de ton catalogue.",
         "paceNoData": " — ajoute des produits à ton catalogue pour une estimation par jour.",
         "switchToCurrentMonth": "Passe sur le mois en cours pour voir le rythme quotidien à tenir."
-      }
+      },
+      "productAvailable": "{quantity} disponible(s) — produit fini"
     },
     "palier1": {
       "heroLabel": "Ce mois-ci vous avez gagné",
@@ -370,7 +371,11 @@
       "batchHistoryTitle": "Historique des lots produits",
       "emptyBatches": "Aucun lot enregistré.",
       "saveBatchError": "Impossible d'enregistrer ce lot. Réessaie.",
-      "editBatchTitle": "Modifier le lot"
+      "editBatchTitle": "Modifier le lot",
+      "thresholdColumn": "Seuil d'alerte",
+      "thresholdPlaceholder": "Aucun",
+      "thresholdSave": "Enregistrer le seuil",
+      "thresholdHint": "Le stock disponible passe en rouge, et une alerte apparaît sur le tableau de bord, quand il atteint le seuil. Laisse vide pour ne pas surveiller un produit."
     },
     "analyse": {
       "period3": "3 derniers mois",

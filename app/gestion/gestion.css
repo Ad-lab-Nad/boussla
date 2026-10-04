@@ -415,7 +415,8 @@
 }
 
 .g-table th {
-  text-align: left;
+  /* start/end rather than left/right so headers follow the Arabic RTL layout. */
+  text-align: start;
   font-size: 0.66rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -447,8 +448,11 @@
   font-weight: 600;
 }
 
-.right {
-  text-align: right;
+.right,
+/* .g-table th alone outranks a bare .right — without this, numeric column
+   headers stayed start-aligned while their figures sat at the end. */
+.g-table th.right {
+  text-align: end;
 }
 
 /* ================== BADGES ================== */
@@ -1252,4 +1256,16 @@ select.g-status-select {
   .gestion.g-doodle::before {
     opacity: 0.06;
   }
+}
+
+/* Inline per-row threshold field (Stock produits finis). */
+.g-threshold-input {
+  width: 90px;
+  border: 1.5px solid var(--g-border);
+  background: var(--g-surface-2);
+  border-radius: 8px;
+  padding: 6px 8px;
+  font-size: 0.82rem;
+  color: var(--g-ink);
+  font-family: inherit;
 }

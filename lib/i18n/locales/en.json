@@ -135,7 +135,8 @@
         "paceUnitsOther": " — about {units} units/day to get there, at your catalog's average price.",
         "paceNoData": " — add products to your catalog for a daily estimate.",
         "switchToCurrentMonth": "Switch to the current month to see the daily pace needed."
-      }
+      },
+      "productAvailable": "{quantity} available — finished product"
     },
     "palier1": {
       "heroLabel": "You've earned this month",
@@ -370,7 +371,11 @@
       "batchHistoryTitle": "Production batch history",
       "emptyBatches": "No batches recorded.",
       "saveBatchError": "Couldn't save this batch. Try again.",
-      "editBatchTitle": "Edit batch"
+      "editBatchTitle": "Edit batch",
+      "thresholdColumn": "Alert threshold",
+      "thresholdPlaceholder": "None",
+      "thresholdSave": "Save threshold",
+      "thresholdHint": "Available stock turns red, and an alert shows on the dashboard, once it reaches the threshold. Leave empty to not track a product."
     },
     "analyse": {
       "period3": "Last 3 months",

@@ -135,7 +135,8 @@
         "paceUnitsOther": " — حوالي {units} وحدات/يوم للوصول إلى الهدف، بمتوسط سعر كتالوجك.",
         "paceNoData": " — أضف منتجات إلى كتالوجك للحصول على تقدير يومي.",
         "switchToCurrentMonth": "انتقل إلى الشهر الحالي لمعرفة الوتيرة اليومية المطلوبة."
-      }
+      },
+      "productAvailable": "{quantity} متاح — منتج نهائي"
     },
     "palier1": {
       "heroLabel": "ربحت هذا الشهر",
@@ -370,7 +371,11 @@
       "batchHistoryTitle": "سجل دفعات الإنتاج",
       "emptyBatches": "لا توجد دفعات مسجّلة.",
       "saveBatchError": "تعذّر حفظ هذه الدفعة. حاول مجددًا.",
-      "editBatchTitle": "تعديل الدفعة"
+      "editBatchTitle": "تعديل الدفعة",
+      "thresholdColumn": "حد التنبيه",
+      "thresholdPlaceholder": "بدون",
+      "thresholdSave": "حفظ الحد",
+      "thresholdHint": "يظهر المخزون المتاح باللون الأحمر، ويظهر تنبيه في لوحة التحكم، عند بلوغه الحد. اتركه فارغًا لعدم متابعة المنتج."
     },
     "analyse": {
       "period3": "آخر 3 أشهر",

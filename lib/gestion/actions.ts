@@ -763,3 +763,22 @@ export async function suggestRecurringExpense(description: string) {
   const business = await getCurrentBusiness();
   return findRecurringExpenseSuggestion(business.id, description);
 }
+
+// ---------- SEUIL D'ALERTE PRODUITS FINIS ----------
+
+/** Empty input clears the threshold (null = no alert for this product). */
+export async function setProductAlertThreshold(formData: FormData) {
+  await assertPalier2Access();
+  const business = await getCurrentBusiness();
+  const productId = str(formData, "productId");
+  const raw = str(formData, "alertThreshold");
+  const value = raw === "" ? null : Number(raw);
+  if (value !== null && (!Number.isFinite(value) || value < 0)) {
+    throw new Error("Indique un seuil valide (0 ou plus).");
+  }
+  await prisma.product.updateMany({
+    where: { id: productId, businessId: business.id },
+    data: { alertThreshold: value },
+  });
+  revalidateGestion("/gestion/produits-finis");
+}

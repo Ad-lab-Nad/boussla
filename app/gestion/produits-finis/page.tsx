@@ -1,8 +1,13 @@
-import { Plus } from "lucide-react";
+import { Check, Plus } from "lucide-react";
 import { getCurrentBusiness } from "@/lib/current-business";
 import { requirePalier2Page } from "@/lib/subscription-access";
 import { getFinishedStock, getProductionBatches, getProducts } from "@/lib/gestion/queries";
-import { createProductionBatch, deleteProductionBatch, updateProductionBatch } from "@/lib/gestion/actions";
+import {
+  createProductionBatch,
+  deleteProductionBatch,
+  setProductAlertThreshold,
+  updateProductionBatch,
+} from "@/lib/gestion/actions";
 import { todayStr } from "@/lib/gestion/format";
 import { fmtQty } from "@/lib/gestion/product-units";
 import { getServerT } from "@/lib/i18n/server";
@@ -51,6 +56,7 @@ export default async function ProduitsFinisPage() {
 
       <div className="g-card">
         <h2>{t("gestion.produitsFinis.availableStockTitle")}</h2>
+        <div className="g-hint">{t("gestion.produitsFinis.thresholdHint")}</div>
         <div className="g-table-wrap">
           <table className="g-table">
             <thead>
@@ -59,22 +65,50 @@ export default async function ProduitsFinisPage() {
                 <th className="right">{t("gestion.produitsFinis.totalProducedColumn")}</th>
                 <th className="right">{t("gestion.produitsFinis.soldColumn")}</th>
                 <th className="right">{t("gestion.produitsFinis.availableColumn")}</th>
+                <th>{t("gestion.produitsFinis.thresholdColumn")}</th>
               </tr>
             </thead>
             <tbody>
-              {finishedStock.map(({ product, totalProduced, totalSold, available }) => (
+              {finishedStock.map(({ product, totalProduced, totalSold, available }) => {
+                const belowThreshold =
+                  available <= 0 || (product.alertThreshold !== null && available <= product.alertThreshold);
+                return (
                 <tr key={product.id}>
                   <td>{product.name}</td>
                   <td className="right num">{fmtQty(totalProduced, product.sellUnit)}</td>
                   <td className="right num">{fmtQty(totalSold, product.sellUnit)}</td>
                   <td
                     className="right num"
-                    style={available <= 0 ? { color: "var(--g-critical)", fontWeight: 700 } : undefined}
+                    style={belowThreshold ? { color: "var(--g-critical)", fontWeight: 700 } : undefined}
                   >
                     {fmtQty(available, product.sellUnit)}
                   </td>
+                  <td>
+                    <form action={setProductAlertThreshold} style={{ display: "flex", gap: 4, alignItems: "center" }}>
+                      <input type="hidden" name="productId" value={product.id} />
+                      <input
+                        type="number"
+                        name="alertThreshold"
+                        min="0"
+                        step="any"
+                        defaultValue={product.alertThreshold ?? ""}
+                        placeholder={t("gestion.produitsFinis.thresholdPlaceholder")}
+                        aria-label={t("gestion.produitsFinis.thresholdColumn")}
+                        className="g-threshold-input"
+                      />
+                      <button
+                        type="submit"
+                        className="g-btn secondary small"
+                        title={t("gestion.produitsFinis.thresholdSave")}
+                        aria-label={t("gestion.produitsFinis.thresholdSave")}
+                      >
+                        <Check size={14} />
+                      </button>
+                    </form>
+                  </td>
                 </tr>
-              ))}
+                );
+              })}
             </tbody>
           </table>
         </div>

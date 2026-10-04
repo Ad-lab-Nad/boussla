@@ -61,7 +61,7 @@ export default async function DashboardPage({
   const month =
     requestedMonth && monthOptions.includes(requestedMonth) ? requestedMonth : currentMonth;
 
-  const [{ totals, previousTotals, trend, stockAlerts }, monthlyGoal, avgSellPrice] =
+  const [{ totals, previousTotals, trend, stockAlerts, productAlerts }, monthlyGoal, avgSellPrice] =
     await Promise.all([
       getDashboardData(business.id, month),
       getMonthlyGoal(business.id, month),
@@ -219,7 +219,7 @@ export default async function DashboardPage({
 
       <div className="g-card">
         <h2>{t("gestion.dashboard.stockAlertsTitle")}</h2>
-        {stockAlerts.length === 0 ? (
+        {stockAlerts.length === 0 && productAlerts.length === 0 ? (
           <div className="g-empty">{t("gestion.dashboard.noStockAlerts")}</div>
         ) : (
           stockAlerts.map(({ item, remaining }) => (
@@ -234,6 +234,17 @@ export default async function DashboardPage({
             </div>
           ))
         )}
+        {productAlerts.map(({ product, available }) => (
+          <div className="g-alert-row" key={product.id}>
+            <span className="g-alert-row__icon">
+              <AlertTriangle />
+            </span>
+            <span className="g-alert-row__name">{product.name}</span>
+            <span className="num g-alert-row__value">
+              {t("gestion.dashboard.productAvailable", { quantity: fmtQty(available, product.sellUnit) })}
+            </span>
+          </div>
+        ))}
       </div>
     </>
   );
