@@ -48,6 +48,17 @@ export async function signUp(
 
   if (error) return { error: mapAuthError(error.message) };
 
+  // Signing up with an email that already has an account doesn't error:
+  // Supabase returns a fake user with no identities and sends no email. Say
+  // so instead of a misleading "check your inbox" — and never touch the
+  // existing User row with that fake id.
+  if (data.user && data.user.identities?.length === 0) {
+    return {
+      error:
+        "Un compte existe déjà avec cet email. Connecte-toi, ou utilise « Mot de passe oublié » si tu ne t'en souviens plus.",
+    };
+  }
+
   const authUserId = data.user?.id;
   if (authUserId) {
     // Claim-or-create: a pre-existing single-tenant row with this email
