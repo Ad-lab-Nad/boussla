@@ -31,6 +31,7 @@ export async function signUp(
     .trim()
     .toLowerCase();
   const password = String(formData.get("password") || "");
+  const confirmPassword = String(formData.get("confirmPassword") || "");
   const industry = String(formData.get("industry") || "").trim() || null;
   const marketingConsent = formData.get("marketingConsent") === "on";
   const activityType = formData.get("activityType") === "SERVICES" ? "SERVICES" : "PRODUCTS";
@@ -38,6 +39,7 @@ export async function signUp(
   if (!email || !password) return { error: "Email et mot de passe requis." };
   if (password.length < 8)
     return { error: "Le mot de passe doit contenir au moins 8 caractères." };
+  if (password !== confirmPassword) return { error: "Les mots de passe ne correspondent pas." };
 
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signUp({

@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { updatePassword, type AuthActionState } from "@/lib/auth-actions";
+import { PasswordInput } from "@/components/auth/PasswordInput";
 
 export function ResetPasswordForm() {
   const [state, formAction, pending] = useActionState<AuthActionState, FormData>(
@@ -14,12 +15,11 @@ export function ResetPasswordForm() {
       {state?.error && <div className="g-auth-error">{state.error}</div>}
       <div className="g-field">
         <label>Nouveau mot de passe</label>
-        <input type="password" name="password" required minLength={8} autoComplete="new-password" />
+        <PasswordInput name="password" required minLength={8} autoComplete="new-password" />
       </div>
       <div className="g-field">
         <label>Confirme le mot de passe</label>
-        <input
-          type="password"
+        <PasswordInput
           name="confirmPassword"
           required
           minLength={8}

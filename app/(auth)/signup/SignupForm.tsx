@@ -2,6 +2,7 @@
 
 import { useActionState, useState } from "react";
 import { signUp, type AuthActionState } from "@/lib/auth-actions";
+import { PasswordInput } from "@/components/auth/PasswordInput";
 
 // Launch is Produits-only — the Services/Prestations mode is fully built
 // (Gestion nav, Commandes/Ventes copy, etc.) but not yet validated with real
@@ -21,6 +22,9 @@ const INDUSTRIES = [
 export function SignupForm() {
   const [state, formAction, pending] = useActionState<AuthActionState, FormData>(signUp, null);
   const [industry, setIndustry] = useState("Alimentaire");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const mismatch = confirmPassword.length > 0 && confirmPassword !== password;
 
   return (
     <form action={formAction} className="g-auth-field-stack">
@@ -32,14 +36,32 @@ export function SignupForm() {
         <input type="email" name="email" required autoComplete="email" />
       </div>
       <div className="g-field">
-        <label>Mot de passe</label>
-        <input
-          type="password"
+        <label htmlFor="signup-password">Mot de passe</label>
+        <PasswordInput
+          id="signup-password"
           name="password"
           required
           minLength={8}
           autoComplete="new-password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
         />
+      </div>
+      <div className="g-field">
+        <label htmlFor="signup-confirm-password">Confirme le mot de passe</label>
+        <PasswordInput
+          id="signup-confirm-password"
+          name="confirmPassword"
+          required
+          minLength={8}
+          autoComplete="new-password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          aria-invalid={mismatch}
+        />
+        {mismatch && (
+          <span className="g-password-mismatch">Les mots de passe ne correspondent pas.</span>
+        )}
       </div>
 
       {SERVICES_MODE_ENABLED ? (
@@ -94,7 +116,7 @@ export function SignupForm() {
         J&apos;accepte d&apos;être informé(e) des nouveaux outils Boussla.
       </label>
 
-      <button type="submit" className="g-btn g-auth-submit" disabled={pending}>
+      <button type="submit" className="g-btn g-auth-submit" disabled={pending || mismatch}>
         {pending ? "Création..." : "Créer mon compte"}
       </button>
     </form>

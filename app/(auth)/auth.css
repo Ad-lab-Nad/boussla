@@ -113,3 +113,39 @@
 .g-auth-footer a:hover {
   text-decoration: underline;
 }
+
+/* PasswordInput — the eye toggle sits inside the field's right edge. */
+.g-password-wrap {
+  position: relative;
+}
+
+.g-field .g-password-wrap input {
+  width: 100%;
+  padding-right: 42px;
+}
+
+.g-password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  border-radius: 7px;
+  color: var(--g-muted);
+  cursor: pointer;
+}
+
+.g-password-toggle:hover {
+  color: var(--g-ink);
+}
+
+.g-password-mismatch {
+  font-size: 0.75rem;
+  color: var(--g-critical);
+}

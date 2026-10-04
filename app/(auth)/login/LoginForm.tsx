@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { signIn, type AuthActionState } from "@/lib/auth-actions";
+import { PasswordInput } from "@/components/auth/PasswordInput";
 
 export function LoginForm({ next }: { next: string }) {
   const [state, formAction, pending] = useActionState<AuthActionState, FormData>(signIn, null);
@@ -16,7 +17,7 @@ export function LoginForm({ next }: { next: string }) {
       </div>
       <div className="g-field">
         <label>Mot de passe</label>
-        <input type="password" name="password" required autoComplete="current-password" />
+        <PasswordInput name="password" required autoComplete="current-password" />
       </div>
       <button type="submit" className="g-btn g-auth-submit" disabled={pending}>
         {pending ? "Connexion..." : "Se connecter"}
