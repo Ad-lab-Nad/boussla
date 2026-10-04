@@ -1,6 +1,7 @@
 "use client";
 
-import { createContext, useCallback, useContext, useMemo, useSyncExternalStore, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useSyncExternalStore, type ReactNode } from "react";
+import { useRouter } from "next/navigation";
 import { DEFAULT_LOCALE, LOCALE_COOKIE, dirFor, isLocale, type Locale } from "@/lib/i18n/config";
 import { arabicFont } from "@/lib/i18n/fonts";
 import { createTranslator, type TFunction } from "@/lib/i18n/translate";
@@ -86,6 +87,21 @@ export function LocaleProvider({
   const dir = mirrorLayout ? dirFor(locale) : "ltr";
 
   const t = useMemo(() => createTranslator(locale), [locale]);
+
+  // Server Components (page titles, table headers, hints...) translate from
+  // the cookie at render time (getServerT). Whenever the client's locale
+  // differs from what the server last rendered — the user just switched
+  // language, or a first visit with no cookie picked the phone's language
+  // while the server defaulted to French — persist it and re-render the
+  // server parts, otherwise only client components (nav, charts) switch.
+  // Once the refreshed layout passes the new initialLocale, this settles.
+  const router = useRouter();
+  useEffect(() => {
+    if (initialLocale && locale !== initialLocale) {
+      writeCookieLocale(locale);
+      router.refresh();
+    }
+  }, [initialLocale, locale, router]);
 
   const value = useMemo<LocaleContextValue>(
     () => ({ locale, dir, setLocale: setStoreLocale, t }),
