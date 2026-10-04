@@ -4,6 +4,7 @@ import { requirePalier2Page } from "@/lib/subscription-access";
 import {
   getAnalysisData,
   getAvailableMonthKeys,
+  getOrderCountSeries,
   getProductMovement,
   type AnalysisPeriod,
 } from "@/lib/gestion/queries";
@@ -13,6 +14,7 @@ import { getServerT } from "@/lib/i18n/server";
 import type { TFunction } from "@/lib/i18n/translate";
 import { AutoSubmitSelect } from "@/components/gestion/AutoSubmitSelect";
 import { AnalysisTrendChart } from "@/components/gestion/AnalysisTrendChart";
+import { OrderCountChart } from "@/components/gestion/OrderCountChart";
 import { ExpenseCategoryChart } from "@/components/gestion/ExpenseCategoryChart";
 
 function periodOptions(t: TFunction) {
@@ -45,10 +47,12 @@ export default async function AnalysePage({
   const selectedMonth =
     rawMonth && monthOptions.includes(rawMonth) ? rawMonth : currentMonth;
 
-  const [{ monthlyTotals, categoryByMonth, chartCategories }, productMovement] = await Promise.all([
-    getAnalysisData(business.id, period, t),
-    isServices ? Promise.resolve([]) : getProductMovement(business.id, selectedMonth),
-  ]);
+  const [{ monthlyTotals, categoryByMonth, chartCategories }, productMovement, orderCounts] =
+    await Promise.all([
+      getAnalysisData(business.id, period, t),
+      isServices ? Promise.resolve([]) : getProductMovement(business.id, selectedMonth),
+      getOrderCountSeries(business.id),
+    ]);
 
   return (
     <form method="get">
@@ -61,6 +65,34 @@ export default async function AnalysePage({
         <h2>{t("gestion.analyse.trendTitle")}</h2>
         <div className="g-hint">{t("gestion.analyse.trendHint")}</div>
         <AnalysisTrendChart rows={monthlyTotals} />
+      </div>
+
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 340px), 1fr))",
+          // Cards already carry their own bottom margin.
+          columnGap: 18,
+        }}
+      >
+        <div className="g-chart-card">
+          <h2>{t("gestion.analyse.ordersMonthlyTitle")}</h2>
+          <div className="g-hint">{t("gestion.analyse.ordersMonthlyHint")}</div>
+          {orderCounts.hasOrders ? (
+            <OrderCountChart points={orderCounts.monthly} granularity="month" />
+          ) : (
+            <div className="g-empty">{t("gestion.analyse.ordersEmpty")}</div>
+          )}
+        </div>
+        <div className="g-chart-card">
+          <h2>{t("gestion.analyse.ordersDailyTitle", { month: monthLabel(currentMonth, locale) })}</h2>
+          <div className="g-hint">{t("gestion.analyse.ordersDailyHint")}</div>
+          {orderCounts.hasOrders ? (
+            <OrderCountChart points={orderCounts.daily} granularity="day" />
+          ) : (
+            <div className="g-empty">{t("gestion.analyse.ordersEmpty")}</div>
+          )}
+        </div>
       </div>
 
       <div className="g-chart-card">

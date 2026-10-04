@@ -390,7 +390,13 @@
       "soldQuantityColumn": "الكمية المباعة",
       "producedQuantityColumn": "الكمية المنتَجة",
       "availableEndOfMonthColumn": "المخزون المتاح (نهاية الشهر)",
-      "emptyProducts": "لا توجد منتجات مسجّلة."
+      "emptyProducts": "لا توجد منتجات مسجّلة.",
+      "ordersMonthlyTitle": "الطلبات شهريًا",
+      "ordersMonthlyHint": "عدد الطلبات المسجلة كل شهر، خلال آخر 12 شهرًا.",
+      "ordersDailyTitle": "الطلبات يوميًا — {month}",
+      "ordersDailyHint": "عدد الطلبات المسجلة كل يوم من الشهر الحالي.",
+      "ordersSeries": "الطلبات",
+      "ordersEmpty": "لا توجد طلبات مسجلة بعد."
     },
     "import": {
       "buttonLabel": "استيراد من Excel",

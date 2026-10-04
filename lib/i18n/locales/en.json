@@ -390,7 +390,13 @@
       "soldQuantityColumn": "Quantity sold",
       "producedQuantityColumn": "Quantity produced",
       "availableEndOfMonthColumn": "Available stock (month end)",
-      "emptyProducts": "No products recorded."
+      "emptyProducts": "No products recorded.",
+      "ordersMonthlyTitle": "Orders per month",
+      "ordersMonthlyHint": "Number of orders recorded each month, over the last 12 months.",
+      "ordersDailyTitle": "Orders per day — {month}",
+      "ordersDailyHint": "Number of orders recorded each day of the current month.",
+      "ordersSeries": "Orders",
+      "ordersEmpty": "No orders recorded yet."
     },
     "import": {
       "buttonLabel": "Import from Excel",

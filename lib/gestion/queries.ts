@@ -468,3 +468,49 @@ export async function getAnalysisData(businessId: string, period: AnalysisPeriod
 
   return { monthlyTotals, categoryByMonth, chartCategories };
 }
+
+export type OrderCountPoint = { key: string; count: number };
+
+/**
+ * Order counts (not amounts) for the Analyse page, aggregated on the fly from
+ * Order.date — so a new commande shows up immediately, with no separate sync
+ * step, same as every other curve here. Every recorded order counts,
+ * whatever its status.
+ *  - monthly: the last 12 months ending this month, trimmed to start at the
+ *    first order's month when the history is shorter.
+ *  - daily: this calendar month only, day 1 through today (no future days).
+ */
+export async function getOrderCountSeries(businessId: string) {
+  const orders = await prisma.order.findMany({ where: { businessId }, select: { date: true } });
+
+  const today = todayStr();
+  const currentMonth = monthKeyFromDateStr(today);
+
+  const byMonth = new Map<string, number>();
+  const byDay = new Map<string, number>();
+  let firstMonth: string | null = null;
+  for (const { date } of orders) {
+    const day = date.toISOString().slice(0, 10);
+    const month = day.slice(0, 7);
+    byMonth.set(month, (byMonth.get(month) ?? 0) + 1);
+    if (month === currentMonth) byDay.set(day, (byDay.get(day) ?? 0) + 1);
+    if (!firstMonth || month < firstMonth) firstMonth = month;
+  }
+
+  const windowStart = shiftMonthKey(currentMonth, -11);
+  const startMonth = firstMonth && firstMonth > windowStart ? firstMonth : windowStart;
+  const monthly: OrderCountPoint[] = firstMonth
+    ? monthRange(startMonth <= currentMonth ? startMonth : currentMonth, currentMonth).map((key) => ({
+        key,
+        count: byMonth.get(key) ?? 0,
+      }))
+    : [];
+
+  const daysElapsed = Number(today.slice(8, 10));
+  const daily: OrderCountPoint[] = Array.from({ length: daysElapsed }, (_, i) => {
+    const key = `${currentMonth}-${String(i + 1).padStart(2, "0")}`;
+    return { key, count: byDay.get(key) ?? 0 };
+  });
+
+  return { monthly, daily, hasOrders: orders.length > 0 };
+}
