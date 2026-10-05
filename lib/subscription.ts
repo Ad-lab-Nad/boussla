@@ -14,7 +14,9 @@ export function priceFor(tier: SubscriptionTier, interval: BillingInterval): num
   return interval === "ANNUAL" ? TIER_PRICING[tier].annual : TIER_PRICING[tier].monthly;
 }
 
-export const TRIAL_DAYS = 14;
+// Free trial length for every new account (calendar month, not a fixed
+// number of days — "un mois gratuit" is what the marketing copy promises).
+export const TRIAL_MONTHS = 1;
 
 export function addDays(date: Date, days: number): Date {
   const d = new Date(date);
@@ -53,7 +55,7 @@ export const getOrCreateSubscription = cache(async function getOrCreateSubscript
       tier: "PALIER_2",
       status: "TRIALING",
       currentPeriodStart: now,
-      currentPeriodEnd: addDays(now, TRIAL_DAYS),
+      currentPeriodEnd: addMonths(now, TRIAL_MONTHS),
     },
   });
 });

@@ -20,7 +20,7 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "Flux — sais-tu vraiment combien tu gagnes ce mois-ci ?",
   description:
-    "Flux te dit, chaque mois, combien ton activité gagne réellement : bénéfice réel, impayés, alertes stock, top produits. 14 jours gratuits, sans carte bancaire.",
+    "Flux te dit, chaque mois, combien ton activité gagne réellement : bénéfice réel, impayés, alertes stock, top produits. 1 mois gratuit, sans carte bancaire.",
 };
 
 export default async function Home({
