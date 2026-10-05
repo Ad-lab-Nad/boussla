@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { Eye, Package, Trophy, Wallet } from "lucide-react";
 import { AmbianceIllustration } from "./AmbianceIllustration";
 import { DashboardPreview } from "./DashboardPreview";
@@ -11,7 +10,8 @@ import {
 } from "@/lib/homepage/types";
 import { ArgumentaireSection, HeroSection, OffresSection, TemoignagesSection } from "./HomepageBlocks";
 import "./landing.css";
-import { BrandLogo } from "@/components/BrandLogo";
+import { PublicNav } from "@/components/PublicNav";
+import { SiteFooter } from "@/components/SiteFooter";
 
 const VALUES = [
   {
@@ -58,7 +58,7 @@ function DefaultHeroVisual() {
 
 function ValuesSection() {
   return (
-    <section className="l-values">
+    <section className="l-values" id="fonctionnalites">
       <div className="l-value-grid">
         {VALUES.map((v) => {
           const Icon = v.icon;
@@ -82,14 +82,7 @@ export async function LandingPage() {
 
   return (
     <div className="gestion landing">
-      <nav className="l-nav">
-        <div className="l-brand">
-          <BrandLogo height={34} />
-        </div>
-        <Link href="/login" className="l-nav-login">
-          Déjà un compte ? Se connecter
-        </Link>
-      </nav>
+      <PublicNav />
 
       {blocks.map((block) => {
         switch (block.type) {
@@ -128,7 +121,7 @@ export async function LandingPage() {
         }
       })}
 
-      <footer className="l-footer">Flux — gestion simple pour petites activités</footer>
+      <SiteFooter />
     </div>
   );
 }

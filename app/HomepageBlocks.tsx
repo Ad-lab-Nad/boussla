@@ -20,7 +20,7 @@ export function HeroSection({ content }: { content: HeroContent }) {
         </Link>
         <span className="l-trial-pill">
           <CheckCircle2 />
-          14 jours gratuits, sans carte bancaire requise
+          1 mois gratuit, sans carte bancaire requise
         </span>
       </div>
     </section>
@@ -46,7 +46,7 @@ export function ArgumentaireSection({ content }: { content: ArgumentaireContent 
 
 export function OffresSection({ content }: { content: OffresContent }) {
   return (
-    <section className="l-offers">
+    <section className="l-offers" id="tarifs">
       <div className="g-plan-grid">
         {content.offers.map((offer, i) => (
           <div className={`g-plan-card ${i === 1 ? "g-plan-card--featured" : ""}`} key={i}>
