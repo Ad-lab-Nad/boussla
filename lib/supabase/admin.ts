@@ -1,4 +1,5 @@
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
+import { supabaseServiceRoleKey, supabaseUrl } from "@/lib/supabase/env";
 
 /**
  * Service-role Supabase client — server-only, bypasses storage RLS the same
@@ -9,8 +10,8 @@ import { createClient as createSupabaseClient } from "@supabase/supabase-js";
  */
 export function createAdminClient() {
   return createSupabaseClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    supabaseUrl(),
+    supabaseServiceRoleKey(),
     { auth: { autoRefreshToken: false, persistSession: false } }
   );
 }
