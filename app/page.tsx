@@ -18,9 +18,9 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Boussla — sais-tu vraiment combien tu gagnes ce mois-ci ?",
+  title: "Flux — sais-tu vraiment combien tu gagnes ce mois-ci ?",
   description:
-    "Boussla te dit, chaque mois, combien ton activité gagne réellement : bénéfice réel, impayés, alertes stock, top produits. 14 jours gratuits, sans carte bancaire.",
+    "Flux te dit, chaque mois, combien ton activité gagne réellement : bénéfice réel, impayés, alertes stock, top produits. 14 jours gratuits, sans carte bancaire.",
 };
 
 export default async function Home({

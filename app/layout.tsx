@@ -13,10 +13,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Boussla",
-  description: "Boussla",
+  title: "Flux",
+  description: "Flux",
   appleWebApp: {
-    title: "Boussla",
+    title: "Flux",
     statusBarStyle: "default",
   },
 };

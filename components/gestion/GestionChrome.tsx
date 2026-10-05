@@ -24,6 +24,7 @@ import { LocaleProvider, useLocale } from "@/components/i18n/LocaleProvider";
 import { LanguageSwitcher } from "@/components/i18n/LanguageSwitcher";
 import type { TFunction } from "@/lib/i18n/translate";
 import type { Locale } from "@/lib/i18n/config";
+import { BrandLogo } from "@/components/BrandLogo";
 
 type ActivityType = "PRODUCTS" | "SERVICES";
 
@@ -130,9 +131,8 @@ function GestionChromeInner({
 
       <aside className={`g-sidebar ${open ? "open" : ""}`}>
         <div className="g-brand">
-          <div className="g-brand__mark">B</div>
           <div className="g-brand__text">
-            <span className="g-brand__name">Boussla</span>
+            <BrandLogo height={34} />
             <span className="g-brand__sub">{t("gestion.nav.brandSubtitle")}</span>
           </div>
         </div>

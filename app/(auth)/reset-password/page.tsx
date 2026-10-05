@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { ResetPasswordForm } from "./ResetPasswordForm";
+import { BrandLogo } from "@/components/BrandLogo";
 
 export default async function ResetPasswordPage() {
   const supabase = await createClient();
@@ -10,8 +11,7 @@ export default async function ResetPasswordPage() {
   return (
     <div className="g-auth-card">
       <div className="g-auth-brand">
-        <div className="g-auth-brand__mark">B</div>
-        <span className="g-auth-brand__name">Boussla</span>
+        <BrandLogo height={40} />
       </div>
 
       <div className="g-card">

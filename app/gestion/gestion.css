@@ -115,6 +115,7 @@
 .g-brand__text {
   display: flex;
   flex-direction: column;
+  gap: 4px;
   line-height: 1.15;
 }
 

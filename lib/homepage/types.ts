@@ -6,7 +6,7 @@
 export type HeroContent = {
   title: string;
   subtitle: string;
-  // The bold "Boussla te dit, chaque mois..." line.
+  // The bold "Flux te dit, chaque mois..." line.
   solutionText: string;
   ctaLabel: string;
   // When set, replaces the default illustration+dashboard-preview visual.

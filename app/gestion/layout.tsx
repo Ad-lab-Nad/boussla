@@ -24,7 +24,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Gestion — Boussla",
+  title: "Gestion — Flux",
   description: "Stock, commandes, produits et analyse mensuelle du vrai bénéfice.",
 };
 

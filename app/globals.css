@@ -28,3 +28,22 @@ body {
 [dir="rtl"] {
   font-family: var(--font-arabic), Arial, Helvetica, sans-serif;
 }
+
+/* BrandLogo (components/BrandLogo.tsx): white-"flu" variant in dark mode. */
+.brand-logo {
+  display: inline-flex;
+}
+.brand-logo img {
+  display: block;
+}
+.brand-logo__dark {
+  display: none !important;
+}
+@media (prefers-color-scheme: dark) {
+  .brand-logo__light {
+    display: none !important;
+  }
+  .brand-logo__dark {
+    display: block !important;
+  }
+}

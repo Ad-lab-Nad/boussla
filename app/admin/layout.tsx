@@ -23,8 +23,8 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Back office — Boussla",
-  description: "Administration interne Boussla.",
+  title: "Back office — Flux",
+  description: "Administration interne Flux.",
 };
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {

@@ -113,7 +113,7 @@ export function SignupForm() {
 
       <label className="g-auth-checkbox-row">
         <input type="checkbox" name="marketingConsent" />
-        J&apos;accepte d&apos;être informé(e) des nouveaux outils Boussla.
+        J&apos;accepte d&apos;être informé(e) des nouveaux outils Flux.
       </label>
 
       <button type="submit" className="g-btn g-auth-submit" disabled={pending || mismatch}>

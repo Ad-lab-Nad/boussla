@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Boussla",
-    short_name: "Boussla",
+    name: "Flux",
+    short_name: "Flux",
     description: "Sais-tu vraiment combien tu gagnes ce mois-ci ? Gestion simple pour petites activités.",
     start_url: "/gestion",
     scope: "/",

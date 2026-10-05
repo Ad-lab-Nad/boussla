@@ -11,6 +11,7 @@ import {
 } from "@/lib/homepage/types";
 import { ArgumentaireSection, HeroSection, OffresSection, TemoignagesSection } from "./HomepageBlocks";
 import "./landing.css";
+import { BrandLogo } from "@/components/BrandLogo";
 
 const VALUES = [
   {
@@ -83,8 +84,7 @@ export async function LandingPage() {
     <div className="gestion landing">
       <nav className="l-nav">
         <div className="l-brand">
-          <div className="l-brand__mark">B</div>
-          <span className="l-brand__name">Boussla</span>
+          <BrandLogo height={34} />
         </div>
         <Link href="/login" className="l-nav-login">
           Déjà un compte ? Se connecter
@@ -128,7 +128,7 @@ export async function LandingPage() {
         }
       })}
 
-      <footer className="l-footer">Boussla — gestion simple pour petites activités</footer>
+      <footer className="l-footer">Flux — gestion simple pour petites activités</footer>
     </div>
   );
 }
