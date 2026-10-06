@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { createClient } from "@/lib/supabase/server";
-import { getOrCreateSubscription } from "@/lib/subscription";
+import { getOrCreateSubscription, priceFor } from "@/lib/subscription";
 
 export type AuthActionState = { error?: string; success?: string } | null;
 
@@ -84,9 +84,22 @@ export async function signUp(
         activityType,
       },
     });
-    // Starts the 14-day free trial. A no-op if this account (new or
-    // claimed) already has a subscription.
-    await getOrCreateSubscription(user.id);
+    // Starts the free trial. A no-op if this account (new or claimed)
+    // already has a subscription.
+    const subscription = await getOrCreateSubscription(user.id);
+
+    // Tier picked on the landing page (?plan=palier1|palier2), carried
+    // through the signup form: recorded as the trial's pending choice — the
+    // same thing chooseBillingPlan stores — so the Abonnement page and the
+    // back office show it. The trial itself still grants full access.
+    const plan = formData.get("plan");
+    const tier = plan === "palier1" ? "PALIER_1" : plan === "palier2" ? "PALIER_2" : null;
+    if (tier && subscription.status === "TRIALING") {
+      await prisma.subscription.update({
+        where: { id: subscription.id },
+        data: { tier, billingInterval: "MONTHLY", priceAmount: priceFor(tier, "MONTHLY") },
+      });
+    }
   }
 
   if (data.session) {

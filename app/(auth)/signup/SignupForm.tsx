@@ -3,6 +3,7 @@
 import { useActionState, useState } from "react";
 import { signUp, type AuthActionState } from "@/lib/auth-actions";
 import { PasswordInput } from "@/components/auth/PasswordInput";
+import { TIER_PRICING } from "@/lib/pricing";
 
 // Launch is Produits-only — the Services/Prestations mode is fully built
 // (Gestion nav, Commandes/Ventes copy, etc.) but not yet validated with real
@@ -10,6 +11,15 @@ import { PasswordInput } from "@/components/auth/PasswordInput";
 // this back on once that research happens; every new signup defaults to
 // PRODUCTS below either way.
 const SERVICES_MODE_ENABLED = false;
+
+// Pre-selected from the landing page's pricing cards (?plan=palier1|palier2).
+// The first month is free either way, with full access; the choice is just
+// recorded so the admin knows which tier to bill once the trial ends.
+const PLANS = [
+  { value: "palier1", title: `Palier 1 — ${TIER_PRICING.PALIER_1.monthly} DT/mois`, hint: "1er mois offert" },
+  { value: "palier2", title: `Palier 2 — ${TIER_PRICING.PALIER_2.monthly} DT/mois`, hint: "1er mois offert" },
+  { value: "later", title: "Je choisirai plus tard", hint: "Accès complet pendant l'essai" },
+] as const;
 
 const INDUSTRIES = [
   { value: "Alimentaire", label: "Alimentaire" },
@@ -19,7 +29,7 @@ const INDUSTRIES = [
   { value: "Autre", label: "Autre" },
 ];
 
-export function SignupForm() {
+export function SignupForm({ initialPlan = "later" }: { initialPlan?: "palier1" | "palier2" | "later" }) {
   const [state, formAction, pending] = useActionState<AuthActionState, FormData>(signUp, null);
   const [industry, setIndustry] = useState("Alimentaire");
   const [password, setPassword] = useState("");
@@ -62,6 +72,21 @@ export function SignupForm() {
         {mismatch && (
           <span className="g-password-mismatch">Les mots de passe ne correspondent pas.</span>
         )}
+      </div>
+
+      <div className="g-field">
+        <label>Palier choisi</label>
+        <div className="g-radio-group">
+          {PLANS.map((p) => (
+            <label className="g-radio-option" key={p.value}>
+              <input type="radio" name="plan" value={p.value} defaultChecked={p.value === initialPlan} />
+              <span>
+                <strong>{p.title}</strong>
+                <small>{p.hint}</small>
+              </span>
+            </label>
+          ))}
+        </div>
       </div>
 
       {SERVICES_MODE_ENABLED ? (
