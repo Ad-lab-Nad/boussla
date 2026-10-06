@@ -1,0 +1,212 @@
+/* Landing-page header/footer on the auth pages — tokens and rules copied
+   from landing/index.html (renamed --sc-*, .sc-*) so both stay visually
+   identical. Dark mode mirrors the landing's prefers-color-scheme block. */
+
+.sc-chrome {
+  --sc-paper: #f5f6f9;
+  --sc-ink: #16213c;
+  --sc-muted: #6b7490;
+  --sc-border: #e1e4ec;
+  --sc-primary: #16274e;
+  --sc-accent: #f0a83e;
+  --sc-accent-hover: #f7b955;
+  --sc-cta-ink: #2a1a04;
+  --sc-sans: var(--font-sc-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --sc-mono: var(--font-sc-mono), "SF Mono", Consolas, monospace;
+
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--sc-paper);
+}
+
+@media (prefers-color-scheme: dark) {
+  .sc-chrome {
+    --sc-paper: #0e1424;
+    --sc-ink: #edeff6;
+    --sc-muted: #8891ac;
+    --sc-border: #2a3350;
+    --sc-primary: #7b98d9;
+    --sc-accent: #f5b84d;
+    --sc-accent-hover: #fac96e;
+  }
+  .sc-logo-chip {
+    background: #fff;
+    padding: 5px 9px;
+  }
+}
+
+/* The doodle wallpaper + centered card sit between header and footer. */
+.sc-chrome .g-auth-shell {
+  flex: 1;
+  min-height: 0;
+  padding-block: 40px;
+}
+
+.sc-wrap {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding-inline: 20px;
+}
+
+.sc-nav {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: color-mix(in srgb, var(--sc-paper) 90%, transparent);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--sc-border);
+  font-family: var(--sc-sans);
+}
+
+.sc-nav .sc-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-block: 10px;
+  gap: 12px;
+}
+
+.sc-logo-group {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.sc-logo-chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 8px;
+}
+
+.sc-logo-img {
+  height: 42px;
+  width: auto;
+  display: block;
+}
+
+.sc-nav-tag {
+  font-family: var(--sc-mono);
+  font-size: 11.5px;
+  color: var(--sc-muted);
+  margin-left: 12px;
+  padding-left: 12px;
+  border-left: 1px solid var(--sc-border);
+}
+
+@media (max-width: 700px) {
+  .sc-nav-tag {
+    display: none;
+  }
+}
+
+.sc-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--sc-sans);
+  font-weight: 700;
+  font-size: 14.5px;
+  line-height: 1.2;
+  text-decoration: none;
+  background: var(--sc-accent);
+  color: var(--sc-cta-ink);
+  border-radius: 999px;
+  padding: 11px 18px;
+  transition: transform 0.12s ease, background 0.12s ease;
+  white-space: nowrap;
+}
+
+.sc-btn:hover {
+  background: var(--sc-accent-hover);
+  transform: translateY(-1px);
+}
+
+.sc-btn svg {
+  width: 18px;
+  height: 18px;
+  flex: none;
+}
+
+.sc-btn-ghost {
+  background: transparent;
+  color: var(--sc-ink);
+  border: 1.5px solid var(--sc-border);
+  font-weight: 600;
+}
+
+.sc-btn-ghost:hover {
+  background: color-mix(in srgb, var(--sc-ink) 5%, transparent);
+}
+
+@media (max-width: 420px) {
+  .sc-btn {
+    font-size: 13px;
+    padding: 9px 13px;
+  }
+  .sc-logo-img {
+    height: 36px;
+  }
+}
+
+.sc-footer {
+  padding-block: 28px;
+  border-top: 1px solid var(--sc-border);
+  font-family: var(--sc-sans);
+}
+
+.sc-footer .sc-wrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+}
+
+.sc-footer .sc-logo-img {
+  height: 32px;
+}
+
+.sc-f-note {
+  font-size: 13px;
+  color: var(--sc-muted);
+}
+
+.sc-f-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  font-size: 13px;
+}
+
+.sc-f-links a {
+  color: var(--sc-muted);
+  text-decoration: none;
+}
+
+.sc-f-links a:hover {
+  color: var(--sc-ink);
+  text-decoration: underline;
+}
+
+/* The landing's orange CTA, applied to the auth forms' main button so the
+   whole funnel uses one button style. */
+.sc-chrome .g-auth-submit {
+  background: var(--sc-accent);
+  color: var(--sc-cta-ink);
+  font-weight: 700;
+  border-radius: 14px;
+  box-shadow: 0 10px 24px -12px rgba(240, 168, 62, 0.9);
+}
+
+.sc-chrome .g-auth-submit:hover:not(:disabled) {
+  background: var(--sc-accent-hover);
+}
+
+.sc-chrome .g-auth-submit.secondary {
+  background: transparent;
+  color: var(--g-ink);
+  box-shadow: none;
+}

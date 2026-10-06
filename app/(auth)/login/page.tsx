@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { LoginForm } from "./LoginForm";
 import { FeedbackForm } from "@/components/FeedbackForm";
-import { BrandLogo } from "@/components/BrandLogo";
 
 export default async function LoginPage({
   searchParams,
@@ -12,9 +11,6 @@ export default async function LoginPage({
 
   return (
     <div className="g-auth-card">
-      <div className="g-auth-brand">
-        <BrandLogo height={40} />
-      </div>
 
       <div className="g-card">
         <h2>Connexion</h2>
