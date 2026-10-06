@@ -16,13 +16,15 @@ export const SITE = {
   },
 
   // Publisher details for Mentions légales / Confidentialité. Anything still
-  // in [brackets] is a placeholder to fill in before the pages go live.
+  // in [brackets] is a placeholder to fill in. taxId / registryId can stay
+  // empty ("") until the business is registered — those lines are then
+  // simply not shown.
   legal: {
     publisherName: "[Nom ou raison sociale]",
-    legalForm: "[Forme juridique — ex. personne physique, SUARL]",
+    legalForm: "Personne physique",
     address: "[Adresse postale complète]",
-    taxId: "[Matricule fiscal]",
-    registryId: "[Identifiant RNE]",
+    taxId: "",
+    registryId: "",
     director: "[Nom du/de la responsable de la publication]",
     lastUpdated: "5 octobre 2026",
   },

@@ -19,8 +19,18 @@ export default function MentionsLegalesPage() {
         <br />
         {L.address}
         <br />
-        Matricule fiscal : {L.taxId} — RNE : {L.registryId}
-        <br />
+        {L.taxId && (
+          <>
+            Matricule fiscal : {L.taxId}
+            <br />
+          </>
+        )}
+        {L.registryId && (
+          <>
+            RNE : {L.registryId}
+            <br />
+          </>
+        )}
         Email : <a href={`mailto:${SITE.contactEmail}`}>{SITE.contactEmail}</a>
       </p>
       <p>Responsable de la publication : {L.director}</p>

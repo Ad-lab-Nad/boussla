@@ -109,7 +109,7 @@
       "revenueEvolution": "تطور رقم الأعمال",
       "revenueEvolutionHint": "رقم الأعمال (المسلَّم) والربح الصافي الحقيقي، آخر 6 أشهر.",
       "topProducts": "المنتجات الأكثر مبيعًا",
-      "topProductsHint": "رقم الأعمال المحقَّق هذا الشهر، حسب المنتج.",
+      "topProductsHint": "مرتبة حسب الكمية المسلَّمة هذا الشهر.",
       "noDeliveredOrders": "لا توجد طلبات مسلَّمة هذا الشهر.",
       "productsDetailTitle": "تفاصيل المنتجات المباعة هذا الشهر",
       "productColumn": "المنتج",

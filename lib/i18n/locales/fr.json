@@ -109,7 +109,7 @@
       "revenueEvolution": "Évolution du CA",
       "revenueEvolutionHint": "CA (livré) et bénéfice net réel, 6 derniers mois.",
       "topProducts": "Produits les plus vendus",
-      "topProductsHint": "CA généré ce mois-ci, par produit.",
+      "topProductsHint": "Classés par quantité livrée ce mois-ci.",
       "noDeliveredOrders": "Aucune commande livrée ce mois-ci.",
       "productsDetailTitle": "Détail des produits vendus ce mois",
       "productColumn": "Produit",

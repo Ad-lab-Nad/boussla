@@ -109,7 +109,7 @@
       "revenueEvolution": "Revenue trend",
       "revenueEvolutionHint": "Revenue (delivered) and real net profit, last 6 months.",
       "topProducts": "Top-selling products",
-      "topProductsHint": "Revenue generated this month, by product.",
+      "topProductsHint": "Ranked by quantity delivered this month.",
       "noDeliveredOrders": "No orders delivered this month.",
       "productsDetailTitle": "Products sold this month",
       "productColumn": "Product",
