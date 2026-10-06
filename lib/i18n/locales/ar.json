@@ -147,7 +147,7 @@
       "registerSale": "تسجيل عملية البيع",
       "newExpenseTitle": "مصروف جديد",
       "newExpenseHint": "مهني أو شخصي، مع صورة الوصل إن أردت — واقتراح إذا سبق أن سجّلت مصروفًا مشابهًا.",
-      "personalExpenseCheckbox": "مصروف شخصي",
+      "personalExpenseCheckbox": "مصروف شخصي (لا يُحتسب في ربحك ولا في سيولتك)",
       "receiptPhotoLabel": "صورة الوصل (اختياري)",
       "recurringSuggestion": "تم اكتشاف مصروف متكرر: {category}، {amount} ({kind}) — انقر للتطبيق",
       "personal": "شخصي",

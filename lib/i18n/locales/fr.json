@@ -147,7 +147,7 @@
       "registerSale": "Enregistrer la vente",
       "newExpenseTitle": "Nouvelle dépense",
       "newExpenseHint": "Pro ou perso, avec une photo du reçu si tu veux — et une suggestion si tu as déjà enregistré une dépense similaire.",
-      "personalExpenseCheckbox": "Dépense personnelle",
+      "personalExpenseCheckbox": "Dépense personnelle (pas comptée dans ton bénéfice ni ta trésorerie)",
       "receiptPhotoLabel": "Photo du reçu (optionnel)",
       "recurringSuggestion": "Dépense récurrente détectée : {category}, {amount} ({kind}) — cliquer pour appliquer",
       "personal": "perso",

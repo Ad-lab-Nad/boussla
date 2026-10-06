@@ -233,11 +233,16 @@ export function totalsForMonth(
     (o) => monthKeyFromDate(orderCashDate(o)) === month
   );
 
-  const expensesAccrualInMonth = expenses.reduce(
+  // Personal expenses (the Dépenses form's pro/perso toggle) are listed but
+  // never count against the business: excluding them is the whole point of
+  // the toggle — mixing household spending in distorts profit and cash.
+  const businessExpenses = expenses.filter((e) => !e.isPersonal);
+
+  const expensesAccrualInMonth = businessExpenses.reduce(
     (sum, e) => sum + expenseAccrualForMonth(e, month),
     0
   );
-  const expensesCashInMonth = expenses
+  const expensesCashInMonth = businessExpenses
     .filter((e) => monthKeyFromDate(e.date) === month)
     .reduce((sum, e) => sum + e.amount, 0);
 
@@ -449,7 +454,9 @@ export async function getAnalysisData(businessId: string, period: AnalysisPeriod
   const monthKeySet = new Set(monthKeys);
   const totalsByCategory: Record<string, number> = {};
   for (const opt of categoryOptions) totalsByCategory[opt.value] = 0;
-  for (const e of expenses) {
+  // Same rule as totalsForMonth: personal expenses aren't business spend.
+  const businessExpenses = expenses.filter((e) => !e.isPersonal);
+  for (const e of businessExpenses) {
     if (monthKeySet.has(monthKeyFromDate(e.date))) {
       totalsByCategory[e.category] += e.amount;
     }
@@ -465,7 +472,7 @@ export async function getAnalysisData(businessId: string, period: AnalysisPeriod
   const categoryByMonth: ExpenseCategoryPoint[] = monthKeys.map((month) => {
     const point: ExpenseCategoryPoint = { month };
     for (const opt of chartCategories) point[opt.value] = 0;
-    for (const e of expenses) {
+    for (const e of businessExpenses) {
       if (monthKeyFromDate(e.date) !== month) continue;
       const key = foldedValues.has(e.category) ? "OTHER" : e.category;
       point[key] = (point[key] as number) + e.amount;

@@ -147,7 +147,7 @@
       "registerSale": "Record the sale",
       "newExpenseTitle": "New expense",
       "newExpenseHint": "Business or personal, with a receipt photo if you want — and a suggestion if you've already logged a similar expense.",
-      "personalExpenseCheckbox": "Personal expense",
+      "personalExpenseCheckbox": "Personal expense (not counted in your profit or cash flow)",
       "receiptPhotoLabel": "Receipt photo (optional)",
       "recurringSuggestion": "Recurring expense detected: {category}, {amount} ({kind}) — click to apply",
       "personal": "personal",
