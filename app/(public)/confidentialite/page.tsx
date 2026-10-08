@@ -78,10 +78,17 @@ export default function ConfidentialitePage() {
         données limité à ton compte.
       </p>
 
-      <h2>Cookies</h2>
+      <h2>Cookies et mesure d&apos;audience</h2>
       <p>
         Nous utilisons uniquement des cookies indispensables : rester connectée et mémoriser ta langue. Aucun
         cookie publicitaire.
+      </p>
+      <p>
+        Sur la page d&apos;accueil, nous mesurons la fréquentation de façon anonyme : un identifiant
+        aléatoire est gardé dans ton navigateur pour compter les visiteurs uniques, avec la provenance de la
+        visite (par exemple une publicité ou un réseau social), le type d&apos;appareil, le pays et le temps
+        passé sur la page. Aucun nom, email ni adresse IP n&apos;est enregistré, et ces données ne sont
+        partagées avec personne.
       </p>
 
       <h2>Tes droits</h2>

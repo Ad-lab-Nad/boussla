@@ -674,3 +674,37 @@ model HomepageBlock {
 
   @@map("homepage_blocks")
 }
+
+// ==================== AUDIENCE DU SITE ====================
+// One row per landing-page view, recorded by a tiny script app/route.ts
+// injects into the static landing page (see app/api/visit). Anonymous:
+// visitorId is a random id kept in the visitor's localStorage — no name,
+// email or IP stored. Read by /admin/visites.
+model PageVisit {
+  id        String @id @default(cuid())
+  visitorId String
+  path      String
+
+  // Where the visit came from, bucketed at write time ("Pub Meta",
+  // "Instagram", "Facebook", "Google", "Direct", or the referrer's host).
+  source       String
+  referrerHost String?
+  utmSource    String?
+  utmMedium    String?
+  utmCampaign  String?
+
+  device  String // "mobile" | "tablet" | "desktop"
+  country String? // ISO code from Vercel's x-vercel-ip-country header
+
+  // Visible time on the page, updated by beacons while the visitor stays.
+  durationMs Int     @default(0)
+  // Clicks on a sign-up button (data-cta links to /signup).
+  ctaClicks  Int     @default(0)
+  lastCta    String?
+
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([visitorId])
+  @@map("page_visits")
+}
