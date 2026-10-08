@@ -71,7 +71,7 @@ export function SiteFooter() {
                   key={k}
                   href={SITE.social[k]}
                   // "#" = icon shown before the real page link exists: stay put.
-                  {...(SITE.social[k] === "#" ? {} : { target: "_blank", rel: "noopener noreferrer" })}
+                  {...((SITE.social[k] as string) === "#" ? {} : { target: "_blank", rel: "noopener noreferrer" })}
                   aria-label={SOCIAL_ICONS[k].label}
                   title={SOCIAL_ICONS[k].label}
                 >

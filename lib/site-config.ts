@@ -9,9 +9,9 @@ export const SITE = {
 
   // Leave a link empty ("") to hide its icon in the footer.
   social: {
-    instagram: "#", // TODO: lien réel
-    facebook: "#", // TODO: lien réel
-    linkedin: "#", // TODO: lien réel
+    instagram: "https://www.instagram.com/fluxtunisie",
+    facebook: "https://www.facebook.com/fluxtunisie",
+    linkedin: "", // à ajouter quand la page existe
     tiktok: "",
   },
 
