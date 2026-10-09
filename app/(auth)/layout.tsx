@@ -1,5 +1,7 @@
 import { IBM_Plex_Mono, Inter, JetBrains_Mono, Work_Sans } from "next/font/google";
 import { SiteFooterMini, SiteHeader } from "@/components/SiteChrome";
+import { LocaleProvider } from "@/components/i18n/LocaleProvider";
+import { getServerLocale } from "@/lib/i18n/server";
 import "@/app/gestion/gestion.css";
 import "./auth.css";
 import "./site-chrome.css";
@@ -29,14 +31,20 @@ const plexMono = IBM_Plex_Mono({
   weight: ["500", "600"],
 });
 
-export default function AuthLayout({ children }: { children: React.ReactNode }) {
+// Auth pages follow the visitor's language (FR/AR/EN, locale cookie — set by
+// the Arabic landing page /ar or the in-app switcher): text via t(), and
+// right-to-left layout in Arabic, the same LocaleProvider the app uses.
+export default async function AuthLayout({ children }: { children: React.ReactNode }) {
+  const initialLocale = await getServerLocale();
   return (
-    <div
-      className={`gestion g-doodle sc-chrome ${inter.variable} ${jetbrainsMono.variable} ${workSans.variable} ${plexMono.variable}`}
-    >
-      <SiteHeader />
-      <div className="g-auth-shell">{children}</div>
-      <SiteFooterMini />
-    </div>
+    <LocaleProvider mirrorLayout initialLocale={initialLocale}>
+      <div
+        className={`gestion g-doodle sc-chrome ${inter.variable} ${jetbrainsMono.variable} ${workSans.variable} ${plexMono.variable}`}
+      >
+        <SiteHeader />
+        <div className="g-auth-shell">{children}</div>
+        <SiteFooterMini />
+      </div>
+    </LocaleProvider>
   );
 }

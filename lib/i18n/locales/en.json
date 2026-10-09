@@ -430,5 +430,93 @@
       "body": "Your free trial or subscription has run out. Your data is safe: pick a tier, and access comes back as soon as your payment is received.",
       "cta": "Choose a tier"
     }
+  },
+  "auth": {
+    "fields": {
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm password",
+      "passwordHint": "At least 8 characters",
+      "mismatch": "Passwords don't match.",
+      "showPassword": "Show password",
+      "hidePassword": "Hide password"
+    },
+    "signup": {
+      "title": "Create your account",
+      "hint": "First month free, no card needed. It takes a minute.",
+      "consent": "I'd like to hear about new Flux tools.",
+      "submit": "Create my account",
+      "submitting": "Creating…",
+      "haveAccount": "Already have an account?",
+      "loginLink": "Log in",
+      "planLabel": "Your tier",
+      "planOption": "{plan} — {price} DT/month",
+      "planHint": "First month free",
+      "later": "I'll choose later",
+      "laterHint": "Full access during the trial"
+    },
+    "login": {
+      "title": "Log in",
+      "linkInvalid": "This link is no longer valid or has already been used. Try logging in again, or request a new link.",
+      "submit": "Log in",
+      "submitting": "Logging in…",
+      "forgot": "Forgot your password?",
+      "noAccount": "No account yet?",
+      "signupLink": "Create an account"
+    },
+    "forgot": {
+      "title": "Forgot password",
+      "hint": "We'll email you a link to choose a new password.",
+      "submit": "Send reset link",
+      "submitting": "Sending…",
+      "back": "Back to login"
+    },
+    "reset": {
+      "title": "New password",
+      "newPassword": "New password",
+      "submit": "Update password",
+      "submitting": "Updating…",
+      "invalid": "This reset link is no longer valid or has expired.",
+      "requestNew": "Request a new one"
+    },
+    "feedback": {
+      "open": "A problem or a question? Leave us a message",
+      "title": "Contact us",
+      "message": "Message",
+      "send": "Send",
+      "sending": "Sending…",
+      "close": "Close"
+    },
+    "plans": {
+      "palier1": "Tier 1",
+      "palier2": "Tier 2"
+    },
+    "chrome": {
+      "tagline": "Find your X.",
+      "startTrial": "Start free trial",
+      "haveAccountLogin": "Have an account? Log in",
+      "footerNote": "Find your X. Made for shop owners in Tunisia.",
+      "contact": "Contact",
+      "terms": "Terms",
+      "privacy": "Privacy",
+      "legal": "Legal notice",
+      "home": "fluX — home"
+    },
+    "errors": {
+      "invalidCredentials": "Wrong email or password.",
+      "emailNotConfirmed": "Please confirm your email address first (check your inbox).",
+      "alreadyRegistered": "An account already exists with this email.",
+      "passwordTooShort": "Your password must be at least 8 characters.",
+      "rateLimit": "Too many attempts — try again in a few minutes.",
+      "emailPasswordRequired": "Email and password are required.",
+      "accountExists": "An account already exists with this email. Log in, or use “Forgot your password?” if you don't remember it.",
+      "emailRequired": "Enter your email.",
+      "feedbackRequired": "Enter your email and your message."
+    },
+    "success": {
+      "signupCheckEmail": "Account created! Check your inbox (and spam) to confirm your address, then log in.",
+      "resetSent": "If an account exists for this email, a reset link has just been sent.",
+      "feedbackSent": "Thanks, your message has been sent."
+    }
   }
 }

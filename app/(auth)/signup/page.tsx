@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getServerT } from "@/lib/i18n/server";
 import { SignupForm } from "./SignupForm";
 
 export default async function SignupPage({
@@ -7,20 +8,19 @@ export default async function SignupPage({
   searchParams: Promise<{ plan?: string }>;
 }) {
   const { plan } = await searchParams;
-  const initialPlan = plan === "palier1" || plan === "palier2" ? plan : "later";
+  const initialPlan = plan === "palier1" || plan === "palier2" ? plan : null;
+  const { t } = await getServerT();
+
   return (
     <div className="g-auth-card">
-
       <div className="g-card">
-        <h2>Créer un compte</h2>
-        <div className="g-auth-hint">
-          Chaque compte a ses propres produits, commandes, stock et dépenses.
-        </div>
-        <SignupForm initialPlan={initialPlan} />
+        <h2>{t("auth.signup.title")}</h2>
+        <div className="g-auth-hint">{t("auth.signup.hint")}</div>
+        <SignupForm plan={initialPlan} />
       </div>
 
       <div className="g-auth-footer">
-        Déjà un compte ? <Link href="/login">Se connecter</Link>
+        {t("auth.signup.haveAccount")} <Link href="/login">{t("auth.signup.loginLink")}</Link>
       </div>
     </div>
   );

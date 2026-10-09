@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import type { AuthActionState } from "@/lib/auth-actions";
+import { getServerT } from "@/lib/i18n/server";
 
 export async function submitFeedback(
   _prevState: AuthActionState,
@@ -12,8 +13,9 @@ export async function submitFeedback(
     .toLowerCase();
   const message = String(formData.get("message") || "").trim();
 
-  if (!email || !message) return { error: "Indique ton email et ton message." };
+  const { t } = await getServerT();
+  if (!email || !message) return { error: t("auth.errors.feedbackRequired") };
 
   await prisma.feedback.create({ data: { email, message } });
-  return { success: "Merci, ton message a bien été envoyé." };
+  return { success: t("auth.success.feedbackSent") };
 }

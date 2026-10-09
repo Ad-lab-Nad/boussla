@@ -3,8 +3,10 @@
 import { useActionState } from "react";
 import { signIn, type AuthActionState } from "@/lib/auth-actions";
 import { PasswordInput } from "@/components/auth/PasswordInput";
+import { useLocale } from "@/components/i18n/LocaleProvider";
 
 export function LoginForm({ next }: { next: string }) {
+  const { t } = useLocale();
   const [state, formAction, pending] = useActionState<AuthActionState, FormData>(signIn, null);
 
   return (
@@ -12,15 +14,15 @@ export function LoginForm({ next }: { next: string }) {
       <input type="hidden" name="next" value={next} />
       {state?.error && <div className="g-auth-error">{state.error}</div>}
       <div className="g-field">
-        <label>Email</label>
-        <input type="email" name="email" required autoComplete="email" />
+        <label htmlFor="login-email">{t("auth.fields.email")}</label>
+        <input id="login-email" type="email" name="email" required autoComplete="email" inputMode="email" />
       </div>
       <div className="g-field">
-        <label>Mot de passe</label>
-        <PasswordInput name="password" required autoComplete="current-password" />
+        <label htmlFor="login-password">{t("auth.fields.password")}</label>
+        <PasswordInput id="login-password" name="password" required autoComplete="current-password" />
       </div>
       <button type="submit" className="g-btn g-auth-submit" disabled={pending}>
-        {pending ? "Connexion..." : "Se connecter"}
+        {pending ? t("auth.login.submitting") : t("auth.login.submit")}
       </button>
     </form>
   );

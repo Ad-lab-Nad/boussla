@@ -2,12 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useLocale } from "@/components/i18n/LocaleProvider";
 
 // Header + footer copied from the public landing page (landing/index.html):
 // same logo, tagline, fonts, colors and orange CTA, so going from the
-// homepage to sign-up / login feels like one site. Styles live in
-// app/(auth)/site-chrome.css, scoped under .sc-* so they never touch the
-// app's own .g-* components.
+// homepage to sign-up / login feels like one site. Text follows the
+// visitor's language; the logo leads back to the matching landing (/ or
+// /ar). Styles live in app/(auth)/site-chrome.css, scoped under .sc-* so
+// they never touch the app's own .g-* components.
 
 function GoIcon() {
   return (
@@ -33,25 +35,32 @@ function Logo({ height }: { height: number }) {
   );
 }
 
+function useHomeHref() {
+  const { locale } = useLocale();
+  return locale === "ar" ? "/ar" : "/";
+}
+
 export function SiteHeader() {
   const pathname = usePathname();
+  const { t } = useLocale();
+  const home = useHomeHref();
   const onSignup = pathname === "/signup";
 
   return (
-    <nav className="sc-nav" aria-label="Navigation principale">
+    <nav className="sc-nav" aria-label={t("auth.chrome.home")}>
       <div className="sc-wrap">
-        <Link href="/" className="sc-logo-group" aria-label="fluX — accueil">
+        <Link href={home} className="sc-logo-group" aria-label={t("auth.chrome.home")}>
           <Logo height={42} />
-          <span className="sc-nav-tag">Trouvez votre X.</span>
+          <span className="sc-nav-tag">{t("auth.chrome.tagline")}</span>
         </Link>
         {onSignup ? (
           <Link href="/login" className="sc-btn sc-btn-ghost">
-            Déjà un compte ? Se connecter
+            {t("auth.chrome.haveAccountLogin")}
           </Link>
         ) : (
           <Link href="/signup" className="sc-btn">
             <GoIcon />
-            Commencer l&apos;essai gratuit
+            {t("auth.chrome.startTrial")}
           </Link>
         )}
       </div>
@@ -60,18 +69,20 @@ export function SiteHeader() {
 }
 
 export function SiteFooterMini() {
+  const { t } = useLocale();
+  const home = useHomeHref();
   return (
     <footer className="sc-footer">
       <div className="sc-wrap">
-        <Link href="/" aria-label="fluX — accueil">
+        <Link href={home} aria-label={t("auth.chrome.home")}>
           <Logo height={32} />
         </Link>
-        <span className="sc-f-note">Trouvez votre X. Fait pour les commerçants et commerçantes de Tunisie.</span>
-        <nav className="sc-f-links" aria-label="Liens utiles">
-          <Link href="/contact">Contact</Link>
-          <Link href="/conditions">Conditions</Link>
-          <Link href="/confidentialite">Confidentialité</Link>
-          <Link href="/mentions-legales">Mentions légales</Link>
+        <span className="sc-f-note">{t("auth.chrome.footerNote")}</span>
+        <nav className="sc-f-links" aria-label={t("auth.chrome.legal")}>
+          <Link href="/contact">{t("auth.chrome.contact")}</Link>
+          <Link href="/conditions">{t("auth.chrome.terms")}</Link>
+          <Link href="/confidentialite">{t("auth.chrome.privacy")}</Link>
+          <Link href="/mentions-legales">{t("auth.chrome.legal")}</Link>
         </nav>
       </div>
     </footer>

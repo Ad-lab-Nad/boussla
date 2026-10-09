@@ -3,35 +3,17 @@
 import { useActionState, useState } from "react";
 import { signUp, type AuthActionState } from "@/lib/auth-actions";
 import { PasswordInput } from "@/components/auth/PasswordInput";
+import { useLocale } from "@/components/i18n/LocaleProvider";
 import { TIER_PRICING } from "@/lib/pricing";
 
-// Launch is Produits-only — the Services/Prestations mode is fully built
-// (Gestion nav, Commandes/Ventes copy, etc.) but not yet validated with real
-// users on that segment, so the choice is hidden rather than removed. Flip
-// this back on once that research happens; every new signup defaults to
-// PRODUCTS below either way.
-const SERVICES_MODE_ENABLED = false;
-
-// Pre-selected from the landing page's pricing cards (?plan=palier1|palier2).
-// The first month is free either way, with full access; the choice is just
-// recorded so the admin knows which tier to bill once the trial ends.
-const PLANS = [
-  { value: "palier1", title: `Palier 1 — ${TIER_PRICING.PALIER_1.monthly} DT/mois`, hint: "1er mois offert" },
-  { value: "palier2", title: `Palier 2 — ${TIER_PRICING.PALIER_2.monthly} DT/mois`, hint: "1er mois offert" },
-  { value: "later", title: "Je choisirai plus tard", hint: "Accès complet pendant l'essai" },
-] as const;
-
-const INDUSTRIES = [
-  { value: "Alimentaire", label: "Alimentaire" },
-  { value: "Artisanat", label: "Artisanat" },
-  { value: "Mode", label: "Mode" },
-  { value: "Services", label: "Services" },
-  { value: "Autre", label: "Autre" },
-];
-
-export function SignupForm({ initialPlan = "later" }: { initialPlan?: "palier1" | "palier2" | "later" }) {
+// Kept as short as possible — most visitors arrive from an ad on their
+// phone: email + password (+ confirmation), the tier picker (pre-checked
+// from the landing page's ?plan=palier1|palier2) and an optional consent
+// box. Sector can be set later in the app. Launch is Produits-only (the
+// Services mode is built but hidden), hence the fixed activityType.
+export function SignupForm({ plan }: { plan: "palier1" | "palier2" | null }) {
+  const { t } = useLocale();
   const [state, formAction, pending] = useActionState<AuthActionState, FormData>(signUp, null);
-  const [industry, setIndustry] = useState("Alimentaire");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const mismatch = confirmPassword.length > 0 && confirmPassword !== password;
@@ -41,12 +23,14 @@ export function SignupForm({ initialPlan = "later" }: { initialPlan?: "palier1" 
       {state?.error && <div className="g-auth-error">{state.error}</div>}
       {state?.success && <div className="g-auth-success">{state.success}</div>}
 
+      <input type="hidden" name="activityType" value="PRODUCTS" />
+
       <div className="g-field">
-        <label>Email</label>
-        <input type="email" name="email" required autoComplete="email" />
+        <label htmlFor="signup-email">{t("auth.fields.email")}</label>
+        <input id="signup-email" type="email" name="email" required autoComplete="email" inputMode="email" />
       </div>
       <div className="g-field">
-        <label htmlFor="signup-password">Mot de passe</label>
+        <label htmlFor="signup-password">{t("auth.fields.password")}</label>
         <PasswordInput
           id="signup-password"
           name="password"
@@ -56,9 +40,10 @@ export function SignupForm({ initialPlan = "later" }: { initialPlan?: "palier1" 
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
+        <span className="g-field-hint">{t("auth.fields.passwordHint")}</span>
       </div>
       <div className="g-field">
-        <label htmlFor="signup-confirm-password">Confirme le mot de passe</label>
+        <label htmlFor="signup-confirm-password">{t("auth.fields.confirmPassword")}</label>
         <PasswordInput
           id="signup-confirm-password"
           name="confirmPassword"
@@ -69,80 +54,43 @@ export function SignupForm({ initialPlan = "later" }: { initialPlan?: "palier1" 
           onChange={(e) => setConfirmPassword(e.target.value)}
           aria-invalid={mismatch}
         />
-        {mismatch && (
-          <span className="g-password-mismatch">Les mots de passe ne correspondent pas.</span>
-        )}
+        {mismatch && <span className="g-password-mismatch">{t("auth.fields.mismatch")}</span>}
       </div>
 
       <div className="g-field">
-        <label>Palier choisi</label>
+        <label>{t("auth.signup.planLabel")}</label>
         <div className="g-radio-group">
-          {PLANS.map((p) => (
-            <label className="g-radio-option" key={p.value}>
-              <input type="radio" name="plan" value={p.value} defaultChecked={p.value === initialPlan} />
+          {(["palier1", "palier2"] as const).map((value) => (
+            <label className="g-radio-option" key={value}>
+              <input type="radio" name="plan" value={value} defaultChecked={plan === value} />
               <span>
-                <strong>{p.title}</strong>
-                <small>{p.hint}</small>
+                <strong>
+                  {t("auth.signup.planOption", {
+                    plan: t(`auth.plans.${value}`),
+                    price: TIER_PRICING[value === "palier1" ? "PALIER_1" : "PALIER_2"].monthly,
+                  })}
+                </strong>
+                <small>{t("auth.signup.planHint")}</small>
               </span>
             </label>
           ))}
+          <label className="g-radio-option">
+            <input type="radio" name="plan" value="later" defaultChecked={plan === null} />
+            <span>
+              <strong>{t("auth.signup.later")}</strong>
+              <small>{t("auth.signup.laterHint")}</small>
+            </span>
+          </label>
         </div>
       </div>
-
-      {SERVICES_MODE_ENABLED ? (
-        <div className="g-field">
-          <label>Type d&apos;activité</label>
-          <div className="g-radio-group">
-            <label className="g-radio-option">
-              <input type="radio" name="activityType" value="PRODUCTS" defaultChecked />
-              <span>
-                <strong>Produits physiques</strong>
-                <small>Gère aussi le stock de matières et de produits finis.</small>
-              </span>
-            </label>
-            <label className="g-radio-option">
-              <input type="radio" name="activityType" value="SERVICES" />
-              <span>
-                <strong>Services / Prestations</strong>
-                <small>Pas de stock — commandes, prestations et dépenses uniquement.</small>
-              </span>
-            </label>
-          </div>
-        </div>
-      ) : (
-        <input type="hidden" name="activityType" value="PRODUCTS" />
-      )}
-
-      <div className="g-field">
-        <label>Secteur d&apos;activité</label>
-        <select
-          name="industryChoice"
-          value={industry}
-          onChange={(e) => setIndustry(e.target.value)}
-        >
-          {INDUSTRIES.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
-      </div>
-      {industry === "Autre" ? (
-        <div className="g-field">
-          <label>Précise ton secteur</label>
-          <input type="text" name="industry" placeholder="ex: Cosmétique" />
-        </div>
-      ) : (
-        <input type="hidden" name="industry" value={industry} />
-      )}
 
       <label className="g-auth-checkbox-row">
         <input type="checkbox" name="marketingConsent" />
-        J&apos;accepte d&apos;être informé(e) des nouveaux outils Flux.
+        {t("auth.signup.consent")}
       </label>
 
       <button type="submit" className="g-btn g-auth-submit" disabled={pending || mismatch}>
-        {pending ? "Création..." : "Créer mon compte"}
+        {pending ? t("auth.signup.submitting") : t("auth.signup.submit")}
       </button>
     </form>
   );

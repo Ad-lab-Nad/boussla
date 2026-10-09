@@ -121,13 +121,13 @@
 
 .g-field .g-password-wrap input {
   width: 100%;
-  padding-right: 42px;
+  padding-inline-end: 42px;
 }
 
 .g-password-toggle {
   position: absolute;
   top: 50%;
-  right: 6px;
+  inset-inline-end: 6px;
   transform: translateY(-50%);
   width: 32px;
   height: 32px;
@@ -148,4 +148,27 @@
 .g-password-mismatch {
   font-size: 0.75rem;
   color: var(--g-critical);
+}
+
+/* Hint under a field (e.g. "8 caractères minimum"). */
+.g-field-hint {
+  font-size: 0.74rem;
+  color: var(--g-muted);
+}
+
+/* Arabic: the app's Arabic font (Cairo, via LocaleProvider) everywhere on
+   the auth pages — .gestion would otherwise force Inter, which has no
+   Arabic glyphs. */
+[dir="rtl"] .gestion,
+[dir="rtl"] .gestion input,
+[dir="rtl"] .gestion button,
+[dir="rtl"] .gestion textarea,
+[dir="rtl"] .sc-nav,
+[dir="rtl"] .sc-footer,
+[dir="rtl"] .sc-btn {
+  font-family: var(--font-arabic), system-ui, sans-serif;
+}
+[dir="rtl"] .gestion input[type="email"] {
+  direction: ltr;
+  text-align: right;
 }

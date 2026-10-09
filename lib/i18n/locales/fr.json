@@ -430,5 +430,93 @@
       "body": "Ton essai gratuit ou ton abonnement est arrivé à échéance. Tes données sont bien conservées : choisis un palier, et ton accès revient dès réception de ton paiement.",
       "cta": "Choisir un palier"
     }
+  },
+  "auth": {
+    "fields": {
+      "email": "Email",
+      "password": "Mot de passe",
+      "confirmPassword": "Confirme le mot de passe",
+      "passwordHint": "8 caractères minimum",
+      "mismatch": "Les mots de passe ne correspondent pas.",
+      "showPassword": "Afficher le mot de passe",
+      "hidePassword": "Masquer le mot de passe"
+    },
+    "signup": {
+      "title": "Crée ton compte",
+      "hint": "1er mois gratuit, sans carte bancaire. Ça prend une minute.",
+      "consent": "J'accepte d'être informé(e) des nouveaux outils Flux.",
+      "submit": "Créer mon compte",
+      "submitting": "Création…",
+      "haveAccount": "Déjà un compte ?",
+      "loginLink": "Se connecter",
+      "planLabel": "Palier choisi",
+      "planOption": "{plan} — {price} DT/mois",
+      "planHint": "1er mois offert",
+      "later": "Je choisirai plus tard",
+      "laterHint": "Accès complet pendant l'essai"
+    },
+    "login": {
+      "title": "Connexion",
+      "linkInvalid": "Ce lien n'est plus valide ou a déjà été utilisé. Réessaie de te connecter, ou demande un nouveau lien.",
+      "submit": "Se connecter",
+      "submitting": "Connexion…",
+      "forgot": "Mot de passe oublié ?",
+      "noAccount": "Pas encore de compte ?",
+      "signupLink": "Créer un compte"
+    },
+    "forgot": {
+      "title": "Mot de passe oublié",
+      "hint": "On t'envoie un lien pour choisir un nouveau mot de passe.",
+      "submit": "Envoyer le lien de réinitialisation",
+      "submitting": "Envoi…",
+      "back": "Retour à la connexion"
+    },
+    "reset": {
+      "title": "Nouveau mot de passe",
+      "newPassword": "Nouveau mot de passe",
+      "submit": "Mettre à jour le mot de passe",
+      "submitting": "Mise à jour…",
+      "invalid": "Ce lien de réinitialisation n'est plus valide ou a expiré.",
+      "requestNew": "Demande-en un nouveau"
+    },
+    "feedback": {
+      "open": "Un problème, une question ? Laisse-nous un message",
+      "title": "Nous contacter",
+      "message": "Message",
+      "send": "Envoyer",
+      "sending": "Envoi…",
+      "close": "Fermer"
+    },
+    "plans": {
+      "palier1": "Palier 1",
+      "palier2": "Palier 2"
+    },
+    "chrome": {
+      "tagline": "Trouvez votre X.",
+      "startTrial": "Commencer l'essai gratuit",
+      "haveAccountLogin": "Déjà un compte ? Se connecter",
+      "footerNote": "Trouvez votre X. Fait pour les commerçants et commerçantes de Tunisie.",
+      "contact": "Contact",
+      "terms": "Conditions",
+      "privacy": "Confidentialité",
+      "legal": "Mentions légales",
+      "home": "fluX — accueil"
+    },
+    "errors": {
+      "invalidCredentials": "Email ou mot de passe incorrect.",
+      "emailNotConfirmed": "Confirme d'abord ton adresse email (vérifie ta boîte mail).",
+      "alreadyRegistered": "Un compte existe déjà avec cet email.",
+      "passwordTooShort": "Le mot de passe doit contenir au moins 8 caractères.",
+      "rateLimit": "Trop de tentatives — réessaie dans quelques minutes.",
+      "emailPasswordRequired": "Email et mot de passe requis.",
+      "accountExists": "Un compte existe déjà avec cet email. Connecte-toi, ou utilise « Mot de passe oublié » si tu ne t'en souviens plus.",
+      "emailRequired": "Indique ton email.",
+      "feedbackRequired": "Indique ton email et ton message."
+    },
+    "success": {
+      "signupCheckEmail": "Compte créé ! Vérifie ta boîte mail (et les spams) pour confirmer ton adresse, puis connecte-toi.",
+      "resetSent": "Si un compte existe pour cet email, un lien de réinitialisation vient d'être envoyé.",
+      "feedbackSent": "Merci, ton message a bien été envoyé."
+    }
   }
 }

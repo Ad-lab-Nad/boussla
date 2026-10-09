@@ -4,8 +4,10 @@ import { useActionState, useEffect, useRef, useState } from "react";
 import { MessageCircle, X } from "lucide-react";
 import { submitFeedback } from "@/lib/feedback-actions";
 import type { AuthActionState } from "@/lib/auth-actions";
+import { useLocale } from "@/components/i18n/LocaleProvider";
 
 export function FeedbackForm() {
+  const { t } = useLocale();
   const [open, setOpen] = useState(false);
   const [state, formAction, pending] = useActionState<AuthActionState, FormData>(
     submitFeedback,
@@ -35,7 +37,7 @@ export function FeedbackForm() {
         }}
         onClick={() => setOpen(true)}
       >
-        <MessageCircle size={14} /> Un problème, une question ? Laisse-nous un message
+        <MessageCircle size={14} /> {t("auth.feedback.open")}
       </button>
     );
   }
@@ -43,12 +45,12 @@ export function FeedbackForm() {
   return (
     <div className="g-card" style={{ marginTop: 18 }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <h2 style={{ margin: 0 }}>Nous contacter</h2>
+        <h2 style={{ margin: 0 }}>{t("auth.feedback.title")}</h2>
         <button
           type="button"
           className="g-modal__close"
           onClick={() => setOpen(false)}
-          aria-label="Fermer"
+          aria-label={t("auth.feedback.close")}
         >
           <X size={16} />
         </button>
@@ -57,15 +59,15 @@ export function FeedbackForm() {
         {state?.error && <div className="g-auth-error">{state.error}</div>}
         {state?.success && <div className="g-auth-success">{state.success}</div>}
         <div className="g-field">
-          <label>Email</label>
+          <label>{t("auth.fields.email")}</label>
           <input type="email" name="email" required autoComplete="email" />
         </div>
         <div className="g-field">
-          <label>Message</label>
+          <label>{t("auth.feedback.message")}</label>
           <textarea name="message" required rows={3} />
         </div>
         <button type="submit" className="g-btn secondary g-auth-submit" disabled={pending}>
-          {pending ? "Envoi..." : "Envoyer"}
+          {pending ? t("auth.feedback.sending") : t("auth.feedback.send")}
         </button>
       </form>
     </div>
