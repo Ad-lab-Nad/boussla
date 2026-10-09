@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
   // make sure the file ships with the deployed server function.
   outputFileTracingIncludes: {
     "/": ["./landing/index.html"],
+    "/ar": ["./landing/ar.html"],
   },
 
   // Site layout: public landing at "/", the app under /gestion (dashboard),

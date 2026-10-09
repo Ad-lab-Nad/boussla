@@ -1,7 +1,7 @@
 import type { NextRequest } from "next/server";
 import { serveLanding } from "@/lib/landing";
 
-// Public homepage (French) — see lib/landing.ts.
+// Public homepage in Arabic (Tunisian derja) — see lib/landing.ts.
 export function GET(request: NextRequest) {
-  return serveLanding(request, "index.html");
+  return serveLanding(request, "ar.html", { appLocale: "ar" });
 }
