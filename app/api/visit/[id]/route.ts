@@ -21,7 +21,11 @@ export async function POST(request: NextRequest, ctx: { params: Promise<{ id: st
   if (!visit) return new NextResponse(null, { status: 404 });
 
   const reported = Math.min(Math.max(Math.round(Number(body.d) || 0), 0), MAX_DURATION_MS);
-  const cta = clip(body.cta, 40);
+  // A real click always comes with some visible time on the page (the
+  // beacon adds it up before sending). Zero means the page was never on
+  // screen — link checkers/crawlers that click every button — so the
+  // click is not counted.
+  const cta = reported > 0 ? clip(body.cta, 40) : null;
 
   await prisma.pageVisit.update({
     where: { id },

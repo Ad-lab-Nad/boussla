@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getServerT } from "@/lib/i18n/server";
 import { SignupForm } from "./SignupForm";
+import { TrackSignupArrival } from "@/components/TrackSignupArrival";
 
 export default async function SignupPage({
   searchParams,
@@ -13,6 +14,7 @@ export default async function SignupPage({
 
   return (
     <div className="g-auth-card">
+      <TrackSignupArrival />
       <div className="g-card">
         <h2>{t("auth.signup.title")}</h2>
         <div className="g-auth-hint">{t("auth.signup.hint")}</div>

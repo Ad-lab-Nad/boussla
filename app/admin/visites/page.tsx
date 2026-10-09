@@ -1,4 +1,4 @@
-import { Clock, Eye, MousePointerClick, Percent, UserPlus, Users } from "lucide-react";
+import { Clock, Eye, LogIn, MousePointerClick, Percent, UserPlus, Users } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { KpiCard } from "@/components/gestion/KpiCard";
 import { AutoSubmitSelect } from "@/components/gestion/AutoSubmitSelect";
@@ -33,21 +33,40 @@ function pct(part: number, total: number): string {
   return total === 0 ? "—" : `${((part / total) * 100).toFixed(1).replace(".", ",")} %`;
 }
 
-type Row = { key: string; visitors: Set<string>; visits: number; durationMs: number; cta: number };
+type Row = {
+  key: string;
+  visitors: Set<string>;
+  visits: number;
+  durationMs: number;
+  cta: number;
+  reachedSignup: number;
+};
+
+/** Sign-up clicks that count: a visit with zero visible time was never on
+ * screen (link checkers, crawlers clicking every button), so its clicks
+ * are ignored — including ones recorded before the API started dropping
+ * them. */
+function realClicks(v: { durationMs: number; ctaClicks: number }): number {
+  return v.durationMs > 0 ? v.ctaClicks : 0;
+}
 
 function group<T extends { visitorId: string; durationMs: number; ctaClicks: number }>(
   items: T[],
-  keyOf: (v: T) => string
+  keyOf: (v: T) => string,
+  signupVisitors: Set<string>
 ) {
   const map = new Map<string, Row>();
   for (const v of items) {
     const key = keyOf(v);
-    const row = map.get(key) ?? { key, visitors: new Set(), visits: 0, durationMs: 0, cta: 0 };
+    const row = map.get(key) ?? { key, visitors: new Set(), visits: 0, durationMs: 0, cta: 0, reachedSignup: 0 };
     row.visitors.add(v.visitorId);
     row.visits += 1;
     row.durationMs += v.durationMs;
-    row.cta += v.ctaClicks;
+    row.cta += realClicks(v);
     map.set(key, row);
+  }
+  for (const row of map.values()) {
+    row.reachedSignup = [...row.visitors].filter((id) => signupVisitors.has(id)).length;
   }
   return [...map.values()].sort((a, b) => b.visits - a.visits);
 }
@@ -62,7 +81,7 @@ export default async function VisitesPage({ searchParams }: { searchParams: Prom
   const period = PERIODS.some((o) => o.value === p) ? p! : "7";
   const since = periodStart(Number(period));
 
-  const [visits, signups] = await Promise.all([
+  const [allVisits, signups] = await Promise.all([
     prisma.pageVisit.findMany({
       where: { createdAt: { gte: since } },
       orderBy: { createdAt: "desc" },
@@ -70,17 +89,31 @@ export default async function VisitesPage({ searchParams }: { searchParams: Prom
     prisma.user.findMany({ where: { createdAt: { gte: since } }, select: { createdAt: true } }),
   ]);
 
+  // Landing-page views vs. arrivals on the sign-up form (recorded by the
+  // signup page itself — see components/TrackSignupArrival.tsx).
+  const visits = allVisits.filter((v) => v.path !== "/signup");
+  const signupArrivals = allVisits.filter((v) => v.path === "/signup");
+  const signupVisitors = new Set(signupArrivals.map((v) => v.visitorId));
+
   const uniqueVisitors = new Set(visits.map((v) => v.visitorId)).size;
   const totalDuration = visits.reduce((s, v) => s + v.durationMs, 0);
-  const visitorsWhoClicked = new Set(visits.filter((v) => v.ctaClicks > 0).map((v) => v.visitorId)).size;
+  const visitorsWhoClicked = new Set(visits.filter((v) => realClicks(v) > 0).map((v) => v.visitorId)).size;
 
-  const bySource = group(visits, (v) => v.source);
-  const byDevice = group(visits, (v) => v.device);
+  const bySource = group(visits, (v) => v.source, signupVisitors);
+  const byDevice = group(visits, (v) => v.device, signupVisitors);
   const byCampaign = group(
     visits.filter((v) => v.utmCampaign),
-    (v) => v.utmCampaign!
+    (v) => v.utmCampaign!,
+    signupVisitors
   );
-  const byDay = group(visits, (v) => dayKey(v.createdAt)).sort((a, b) => b.key.localeCompare(a.key));
+  const byDay = group(visits, (v) => dayKey(v.createdAt), signupVisitors).sort((a, b) =>
+    b.key.localeCompare(a.key)
+  );
+  const arrivalsByDay = new Map<string, Set<string>>();
+  for (const a of signupArrivals) {
+    const k = dayKey(a.createdAt);
+    (arrivalsByDay.get(k) ?? arrivalsByDay.set(k, new Set()).get(k)!).add(a.visitorId);
+  }
   const signupsByDay = new Map<string, number>();
   for (const s of signups) signupsByDay.set(dayKey(s.createdAt), (signupsByDay.get(dayKey(s.createdAt)) ?? 0) + 1);
 
@@ -110,6 +143,12 @@ export default async function VisitesPage({ searchParams }: { searchParams: Prom
           value={`${visitorsWhoClicked} (${pct(visitorsWhoClicked, uniqueVisitors)})`}
           icon={MousePointerClick}
           tone="orange"
+        />
+        <KpiCard
+          label="Arrivés sur l'inscription"
+          value={`${signupVisitors.size} (${pct(signupVisitors.size, uniqueVisitors)})`}
+          icon={LogIn}
+          tone="blue"
         />
         <KpiCard label="Inscriptions" value={String(signups.length)} icon={UserPlus} tone="good" />
         <KpiCard
@@ -151,6 +190,7 @@ export default async function VisitesPage({ searchParams }: { searchParams: Prom
                 <th className="right">Visiteurs</th>
                 <th className="right">Visites</th>
                 <th className="right">Clics essai</th>
+                <th className="right">Arrivés inscription</th>
                 <th className="right">Inscriptions</th>
               </tr>
             </thead>
@@ -167,6 +207,7 @@ export default async function VisitesPage({ searchParams }: { searchParams: Prom
                   <td className="right num">{r.visitors.size}</td>
                   <td className="right num">{r.visits}</td>
                   <td className="right num">{r.cta}</td>
+                  <td className="right num">{arrivalsByDay.get(r.key)?.size ?? 0}</td>
                   <td className="right num">{signupsByDay.get(r.key) ?? 0}</td>
                 </tr>
               ))}
@@ -179,7 +220,9 @@ export default async function VisitesPage({ searchParams }: { searchParams: Prom
       <div className="g-hint" style={{ marginTop: 4 }}>
         Mesure anonyme de la page d&apos;accueil (pas de nom, d&apos;email ni d&apos;adresse IP). Les robots
         sont ignorés, et tes propres visites en « Aperçu » ne sont pas comptées. Le temps compté est celui où
-        la page est réellement à l&apos;écran.
+        la page est réellement à l&apos;écran. « Clics essai » ne compte que les clics de visiteurs qui ont
+        vraiment vu la page (les robots vérificateurs de liens cliquent sans l&apos;afficher). « Arrivés
+        inscription » = visiteurs qui ont réellement ouvert la page d&apos;inscription.
       </div>
     </>
   );
@@ -197,6 +240,7 @@ function SourceTable({ rows, empty }: { rows: Row[]; empty: string }) {
               <th className="right">Visites</th>
               <th className="right">Temps moyen</th>
               <th className="right">Clics essai</th>
+              <th className="right">Arrivés inscription</th>
             </tr>
           </thead>
           <tbody>
@@ -207,6 +251,7 @@ function SourceTable({ rows, empty }: { rows: Row[]; empty: string }) {
                 <td className="right num">{r.visits}</td>
                 <td className="right num">{fmtDuration(r.durationMs / r.visits)}</td>
                 <td className="right num">{r.cta}</td>
+                <td className="right num">{r.reachedSignup}</td>
               </tr>
             ))}
           </tbody>
