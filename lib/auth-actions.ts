@@ -102,7 +102,8 @@ export async function signUp(
 
   if (data.session) {
     // Email confirmation is disabled on this project — already signed in.
-    redirect("/gestion");
+    // ?bienvenue=1 lets the dashboard report the sign-up to the Meta Pixel.
+    redirect("/gestion?bienvenue=1");
   }
 
   return { success: t("auth.success.signupCheckEmail") };

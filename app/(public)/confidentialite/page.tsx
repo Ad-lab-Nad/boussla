@@ -80,9 +80,18 @@ export default function ConfidentialitePage() {
 
       <h2>Cookies et mesure d&apos;audience</h2>
       <p>
-        Nous utilisons uniquement des cookies indispensables : rester connectée et mémoriser ta langue. Aucun
-        cookie publicitaire.
+        Dans l&apos;application, nous utilisons uniquement des cookies indispensables : rester connectée et
+        mémoriser ta langue.
       </p>
+      {SITE.metaPixelId && (
+        <p>
+          Sur la page d&apos;accueil et les pages de connexion et d&apos;inscription, nous utilisons le pixel de
+          Meta (Facebook / Instagram) pour mesurer l&apos;efficacité de nos publicités : visite de la page,
+          clic sur l&apos;essai gratuit ou sur WhatsApp, création d&apos;un compte. Meta peut associer ces
+          informations à ton compte Facebook ou Instagram, selon ses propres règles (facebook.com/privacy).
+          Aucune donnée de ton activité (ventes, dépenses, clients) n&apos;est jamais transmise à Meta.
+        </p>
+      )}
       <p>
         Sur la page d&apos;accueil, nous mesurons la fréquentation de façon anonyme : un identifiant
         aléatoire est gardé dans ton navigateur pour compter les visiteurs uniques, avec la provenance de la

@@ -1,6 +1,7 @@
 import { IBM_Plex_Mono, Inter, JetBrains_Mono, Work_Sans } from "next/font/google";
 import { SiteFooterMini, SiteHeader } from "@/components/SiteChrome";
 import { LocaleProvider } from "@/components/i18n/LocaleProvider";
+import { MetaPixel } from "@/components/MetaPixel";
 import { getServerLocale } from "@/lib/i18n/server";
 import "@/app/gestion/gestion.css";
 import "./auth.css";
@@ -41,6 +42,7 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
       <div
         className={`gestion g-doodle sc-chrome ${inter.variable} ${jetbrainsMono.variable} ${workSans.variable} ${plexMono.variable}`}
       >
+        <MetaPixel />
         <SiteHeader />
         <div className="g-auth-shell">{children}</div>
         <SiteFooterMini />

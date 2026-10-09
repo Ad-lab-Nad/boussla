@@ -5,6 +5,7 @@ import { signUp, type AuthActionState } from "@/lib/auth-actions";
 import { PasswordInput } from "@/components/auth/PasswordInput";
 import { useLocale } from "@/components/i18n/LocaleProvider";
 import { TIER_PRICING } from "@/lib/pricing";
+import { MetaPixelEvent } from "@/components/MetaPixel";
 
 // Kept as short as possible — most visitors arrive from an ad on their
 // phone: email + password (+ confirmation), the tier picker (pre-checked
@@ -22,6 +23,8 @@ export function SignupForm({ plan }: { plan: "palier1" | "palier2" | null }) {
     <form action={formAction} className="g-auth-field-stack">
       {state?.error && <div className="g-auth-error">{state.error}</div>}
       {state?.success && <div className="g-auth-success">{state.success}</div>}
+      {/* Account created, pending email confirmation. */}
+      {state?.success && <MetaPixelEvent event="CompleteRegistration" />}
 
       <input type="hidden" name="activityType" value="PRODUCTS" />
 

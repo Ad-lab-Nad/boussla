@@ -7,6 +7,9 @@ export const SITE = {
   url: "https://www.fluxtunisie.com",
   contactEmail: "contact@fluxtunisie.com",
 
+  // Meta Pixel id (public, from Events Manager). Empty = no Pixel anywhere.
+  metaPixelId: "1043162132107280",
+
   // Leave a link empty ("") to hide its icon in the footer.
   social: {
     instagram: "https://www.instagram.com/fluxtunisie",

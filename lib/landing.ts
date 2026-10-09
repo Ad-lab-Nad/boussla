@@ -3,6 +3,7 @@ import path from "node:path";
 import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { LOCALE_COOKIE, type Locale } from "@/lib/i18n/config";
+import { META_PIXEL_ID, landingPixelScript } from "@/lib/meta-pixel";
 
 // The public homepage is a hand-built static page in landing/ (index.html
 // in French, ar.html in Arabic — generated from index.html by
@@ -30,8 +31,10 @@ document.addEventListener("click",function(e){var a=e.target&&e.target.closest&&
 })();</script>`;
 
 function withTracker(html: string): string {
+  // Our own anonymous beacon, plus the Meta Pixel when an id is configured.
+  const injected = TRACKER + (META_PIXEL_ID ? landingPixelScript(META_PIXEL_ID) : "");
   const i = html.lastIndexOf("</body>");
-  return i === -1 ? html + TRACKER : html.slice(0, i) + TRACKER + html.slice(i);
+  return i === -1 ? html + injected : html.slice(0, i) + injected + html.slice(i);
 }
 
 export async function serveLanding(

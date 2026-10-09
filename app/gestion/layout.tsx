@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
+import { Suspense } from "react";
 import { GestionChrome } from "@/components/gestion/GestionChrome";
+import { WelcomePixel } from "@/components/WelcomePixel";
 import { getCurrentUser } from "@/lib/current-user";
 import { getOrCreateSubscription } from "@/lib/subscription";
 import { canAccessPalier2, hasActiveAccess } from "@/lib/subscription-access";
@@ -44,6 +46,9 @@ export default async function GestionLayout({ children }: { children: React.Reac
         accessExpired={accessExpired}
         initialLocale={initialLocale}
       >
+        <Suspense fallback={null}>
+          <WelcomePixel />
+        </Suspense>
         {children}
       </GestionChrome>
     </div>
