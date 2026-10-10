@@ -16,12 +16,10 @@ def wa(text):
 
 # ---------- <head> ----------
 rep('<html lang="fr">', '<html lang="ar" dir="rtl">')
-rep('<title>fluX — Combien avez-vous vraiment gagné ce mois-ci ?</title>',
-    '<title>fluX — قدّاش ربحت بالحق هالشهر؟</title>')
-rep("content=\"fluX calcule le chiffre d'affaires réel de votre commerce en 2 minutes par jour. Pensé pour les commerçants et commerçantes de Tunisie. Essai gratuit : 1er mois offert, démarrez en un clic.\"",
+rep("content=\"fluX calcule le chiffre d'affaires réel de votre commerce en 2 minutes par jour. Pensé pour les commerçants et commerçantes de Tunisie. Essai gratuit : 1er mois offert, inscription en une minute.\"",
     'content="fluX يحسبلك رقم المعاملات والربح الحقيقي متاع تجارتك في دقيقتين في النهار. مصنوع للتجّار والتاجرات في تونس. تجربة مجانية: الشهر الأول بلاش."')
 rep('content="fluX — Trouvez votre X."', 'content="fluX — لقى الـX متاعك."')
-rep('content="Sachez enfin combien votre commerce vous rapporte. Essai gratuit : 1er mois offert, démarrez en un clic."',
+rep('content="Sachez enfin combien votre commerce vous rapporte. Essai gratuit : 1er mois offert, inscription en une minute."',
     'content="اعرف أخيرًا قدّاش تربّحك تجارتك. تجربة مجانية: الشهر الأول بلاش."')
 # Arabic fonts first in each family; Latin fonts stay for numbers/brand.
 rep("family=Fraunces:", "family=Noto+Naskh+Arabic:wght@500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Fraunces:")
@@ -70,15 +68,8 @@ rep(">Essayer le Palier 2 gratuitement</a>", ">جرّب الباقة 2 بلاش<
 
 # ---------- hero ----------
 rep(">Pour les commerçants et commerçantes de Tunisie<", ">للتجّار والتاجرات في تونس<")
-rep('<h1>Combien <span style="white-space:nowrap">avez-vous</span> <em>vraiment</em> gagné ce mois-ci&nbsp;?</h1>',
-    '<h1>قدّاش ربحت <em>بالحق</em> هالشهر؟</h1>')
-rep(">fluX calcule votre vrai bénéfice&nbsp;: chiffre d'affaires livré, coût réel, dépenses, impayés et stock, au même endroit, depuis votre téléphone.<",
-    ">fluX يحسبلك الربح الحقيقي: البيع المسلَّم، التكلفة الحقيقية، المصاريف، الكريدي والسلعة، الكلّ في بلاصة وحدة، ومن تليفونك.<")
-rep('<span><b>Essai gratuit</b> · 1<sup>er</sup> mois offert</span>', '<span><b>تجربة مجانية</b> · الشهر الأول بلاش</span>')
 rep('<span>1<sup>er</sup> mois gratuit</span>', '<span>الشهر الأول مجاني</span>')
-rep('<span>Sans paiement pour démarrer</span>', '<span>بلا خلاص باش تبدا</span>')
 rep('<span>Accompagnement 1 à 1</span>', '<span>مرافقة شخصية</span>')
-rep(">Exemple · données fictives<", ">مثال · أرقام وهمية<")
 
 # ---------- app mockups (the app's own Arabic labels) ----------
 for fr, ar in [
@@ -123,8 +114,6 @@ for fr, ar in [
     (">Produits vendus et alertes stock<", ">السلعة المباعة وتنبيهات المخزون<"),
     (">Aussi disponible en arabe<", ">متوفّر بالعربي، بالفرنسي وبالأنقليزي<"),
     (">Écrans réels de l'application, avec des données d'exemple (fictives).<", ">شاشات حقيقية من التطبيق، بأرقام مثال (وهمية).<"),
-    (">Dans l'app<", ">في التطبيق<"),
-    (">Ce que vous voyez en ouvrant fluX<", ">شنوّة تشوف كي تحلّ fluX<"),
 ]:
     rep(fr, ar)
 
@@ -142,17 +131,6 @@ for fr, ar in [
 # ---------- problem ----------
 for fr, ar in [
     (">Vous vous reconnaissez&nbsp;?<", ">تعرف روحك؟<"),
-    (">Trois questions que tout commerçant se pose, sans réponse claire<", ">ثلاثة أسئلة يسألها كل تاجر، وما يلقالهاش جواب واضح<"),
-    (">« Est-ce que je gagne vraiment de l'argent&nbsp;? »<", ">« نربح فلوس بالحق؟ »<"),
-    (">Les ventes en cash, les dépenses du commerce et celles de la maison finissent dans la même caisse. Difficile de savoir ce qu'il reste à la fin du mois.<",
-     ">البيع بالكاش، مصاريف الحانوت ومصاريف الدار، الكلّ في نفس الكاسة. صعيب تعرف شنوّة يقعدلك في آخر الشهر.<"),
-    (">« Où part mon argent, et qui me doit encore&nbsp;? »<", ">« وين تمشي فلوسي، وشكون مازال يتسالني؟ »<"),
-    (">Sans suivi, les petites dépenses s'additionnent en silence et les clients qui doivent de l'argent finissent par être oubliés.<",
-     ">بلا متابعة، المصاريف الصغار تتلمّ بالشوية بالشوية، والكليان اللي عندهم كريدي يتنساو.<"),
-    (">« Mon stock va-t-il tenir&nbsp;? »<", ">« السلعة باش تكفّي؟ »<"),
-    (">Découvrir qu'un produit est épuisé au moment où un client le demande, plutôt que juste avant.<",
-     ">تكتشف اللي سلعة وفات وقت اللي كليان يطلبها، عوض ما تعرف قبل.<"),
-    ('Avec fluX, vous avez <em>la réponse</em> en un coup d\'œil.', 'مع fluX، عندك <em>الجواب</em> في لمحة.'),
 ]:
     rep(fr, ar)
 
@@ -161,20 +139,9 @@ for fr, ar in [
     (">Ce que vous gagnez<", ">شنوّة تربح<"),
     (">Votre commerce, piloté depuis votre téléphone<", ">تجارتك، تتحكّم فيها من تليفونك<"),
     (">Votre vrai bénéfice net<", ">الربح الصافي الحقيقي متاعك<"),
-    (">Chiffre d'affaires livré, moins le coût réel de vos produits, moins vos dépenses (pub, etc.). Le bénéfice se calcule tout seul.<",
-     ">البيع المسلَّم، ناقص التكلفة الحقيقية متاع السلعة، ناقص المصاريف (إشهار وغيرو). الربح يتحسب وحدو.<"),
-    (">La trésorerie du mois<", ">سيولة الشهر<"),
-    (">Le cash du mois, affiché à côté de votre bénéfice, pour savoir ce que vous avez vraiment en main.<",
-     ">الكاش متاع الشهر، حذا الربح متاعك، باش تعرف شنوّة عندك بالحق في يدك.<"),
-    (">Les impayés, enfin visibles<", ">الكريدي، أخيرًا قدّام عينيك<"),
-    (">Le montant que vos clients vous doivent encore, directement sur votre tableau de bord.<",
-     ">الفلوس اللي مازالت تسالها لحرفائك، مباشرة في لوحة التحكم.<"),
-    (">Vos commandes sous contrôle<", ">الطلبات متاعك تحت السيطرة<"),
-    (">Commandes en cours, livrées, retournées&nbsp;: tout est suivi au même endroit.<",
-     ">الطلبات اللي قاعدة، المسلَّمة، والمرجوعة: الكلّ متتبَّع في بلاصة وحدة.<"),
     (">Les produits qui rapportent<", ">السلعة اللي تربّح<"),
     (">Vos produits les plus vendus en quantité, et le chiffre d'affaires généré par chacun, ce mois-ci.<",
-     ">السلعة اللي تتباع أكثر بالكمية، وقدّاش جابت كل وحدة، هالشهر.<"),
+     ">أكثر المنتجات مبيعًا كل شهر، يخلّيك تفهم حريفك أكثر.<"),
     (">Stock et alertes<", ">المخزون والتنبيهات<"),
     (">Stock des matières et des produits finis, avec une alerte quand un produit passe sous son seuil.<",
      ">مخزون المواد الأولية والسلعة الجاهزة، مع تنبيه كي تنقص سلعة تحت الحدّ متاعها.<"),
@@ -184,13 +151,6 @@ for fr, ar in [
 # ---------- steps ----------
 for fr, ar in [
     (">Comment démarrer<", ">كيفاش تبدا<"),
-    (">Trois étapes, la première tient en un clic<", ">ثلاثة مراحل، الأولى بكليك واحد<"),
-    ("<h3>Cliquez sur «&nbsp;Commencer l'essai gratuit&nbsp;»</h3>", "<h3>اكليكي على «ابدا التجربة المجانية»</h3>"),
-    (">Un seul clic. Aucun formulaire à remplir pour démarrer.<", ">كليك واحد، وتسجيل في دقيقة.<"),
-    (">On vous accompagne<", ">نرافقوك<"),
-    (">Une personne de l'équipe fluX vous aide à démarrer, à votre rythme.<", ">واحد من فريق fluX يعاونك باش تبدا، على راحتك.<"),
-    ("<h3>Votre 1<sup>er</sup> mois est offert</h3>", "<h3>الشهر الأول هدية</h3>"),
-    (">Vous saisissez vos ventes et vos dépenses, et vous voyez votre chiffre du mois.<", ">تكتب البيع والمصاريف، وتشوف رقم الشهر متاعك.<"),
     ('<span>Ou <a href="#demo" style="color:var(--primary-dark);font-weight:600;">demandez d\'abord une démo</a></span>',
      '<span>ولا <a href="#demo" style="color:var(--primary-dark);font-weight:600;">اطلب ديمو قبل</a></span>'),
 ]:
@@ -284,7 +244,6 @@ for fr, ar in [
 # ---------- final ----------
 for fr, ar in [
     ('<span class="eyebrow">Trouvez votre X.</span>', '<span class="eyebrow">لقى الـX متاعك.</span>'),
-    (">Votre premier mois est gratuit. Commencez en un clic.<", ">الشهر الأول بلاش. ابدا بكليك.<"),
     (">Lancez votre essai maintenant, ou demandez une démo si vous préférez d'abord voir l'application.<",
      ">ابدا التجربة توّا، ولا اطلب ديمو إذا تحب تشوف التطبيق قبل.<"),
     ('<span>En dinars</span>', '<span>بالدينار</span>'),
@@ -314,6 +273,51 @@ for fr, ar in [
     ("btn.textContent = 'Copier'", "btn.textContent = 'انسخ'"),
 ]:
     rep(fr, ar)
+
+# ---------- landing v4 (oct. 2026) : textes propres à cette version ----------
+for fr, ar in [
+    ('<title>fluX — Combien vous reste-t-il vraiment ce mois-ci ?</title>', '<title>fluX — قدّاش يقعدلك بالحق هالشهر؟</title>'),
+    ('<h1>Vous vendez tous les jours. Mais combien vous reste-t-il <em>vraiment</em>&nbsp;?</h1>',
+     '<h1>تبيع كل نهار. أما قدّاش يقعدلك <em>بالحق</em>؟</h1>'),
+    (">Ventes, dépenses, crédits clients et stock&nbsp;: fluX fait les calculs à votre place et vous montre votre vrai bénéfice, sur votre téléphone, en dinars.<",
+     ">البيع، المصاريف، الكريدي والسلعة: fluX يعمل الحسابات في بلاصتك ويوريك الربح الحقيقي متاعك، من تليفونك، وبالدينار.<"),
+    ('<span>1<sup>er</sup> mois offert</span>', '<span>الشهر الأول بلاش</span>'),
+    ('<span>Sans carte bancaire</span>', '<span>بلا كارطة بنكية</span>'),
+    ('<span>Inscription en 1 minute</span>', '<span>التسجيل في دقيقة</span>'),
+    ('>← Faites glisser pour voir les autres écrans →<', '>← اسحب باش تشوف الشاشات الأخرى →<'),
+    (">L'argent rentre… et pourtant, à la fin du mois, il en manque.<", ">الفلوس تدخل… أما في آخر الشهر، ديما ناقصة.<"),
+    (">« J'ai bien vendu ce mois-ci. Mais où est l'argent&nbsp;? »<", ">« بعت مليح هالشهر. أما وين الفلوس؟ »<"),
+    (">L'argent du commerce et celui de la maison se mélangent dans la même caisse. Sans calcul, impossible de savoir si le mois a vraiment été bon.<",
+     ">فلوس المشروع وفلوس الدار يتخلّطوا في نفس الكاسة. بلا حساب، ما تنجمش تعرف إذا الشهر كان مليح بالحق.<"),
+    (">« Qui me doit encore de l'argent&nbsp;? »<", ">« شكون مازال يتسالني فلوس؟ »<"),
+    (">Le crédit accordé aux clients s'oublie vite. Quelques dinars par-ci, quelques dinars par-là&nbsp;: c'est votre bénéfice qui s'en va.<",
+     ">الكريدي اللي تعطيه لحرفائك يتنسى بالفيسع. شوية دنانير هوني، شوية دنانير غادي: هذاكا الربح متاعك اللي ماشي.<"),
+    (">« Un client veut acheter… et le produit est épuisé&nbsp;! »<", ">« حريف جا يشري… والسلعة وفات! »<"),
+    (">Chaque rupture que vous n'avez pas vue venir, c'est une vente qui part chez un concurrent. fluX vous prévient avant que le stock ne s'épuise.<",
+     ">كل سلعة توفى بلا ما تحسّ، هي بيعة تمشي لغيرك. fluX ينبّهك قبل ما توفى.<"),
+    ("Avec fluX, vous avez <em>la réponse</em> en un coup d'œil, chaque jour.", "مع fluX، عندك <em>الجواب</em> في لمحة، كل نهار."),
+    (">Vos ventes, moins le coût de vos produits, moins vos dépenses. Le bénéfice et le cash du mois se calculent tout seuls.<",
+     ">البيع متاعك، ناقص تكلفة السلعة، ناقص المصاريف. الربح والكاش متاع الشهر يتحسبوا وحدهم.<"),
+    ("<h3>Les crédits clients, enfin visibles</h3><p>Qui vous doit combien, directement sur votre tableau de bord. Plus rien ne s'oublie.</p>",
+     "<h3>الكريدي، أخيرًا قدّام عينيك</h3><p>شكون مازال ما خلّصكش، مباشرة في لوحة التحكم. حتى شي ما يتنسى.</p>"),
+    (">Démarrer prend une minute<", ">تبدا في دقيقة<"),
+    ("<h3>Créez votre compte</h3><p>Votre e-mail et un mot de passe, c'est tout. Gratuit, sans carte bancaire.</p>",
+     "<h3>اعمل حسابك</h3><p>الإيميل متاعك وكلمة سرّ، وبرّا. بلاش، وبلا كارطة بنكية.</p>"),
+    ("<h3>On vous aide à démarrer</h3><p>Une vraie personne vous accompagne sur WhatsApp pour ajouter vos produits et vos premières ventes.</p>",
+     "<h3>نعاونوك باش تبدا</h3><p>عبد حقيقي يرافقك على واتساب باش تزيد السلعة متاعك وأوّل بيعاتك.</p>"),
+    ("<h3>Vous voyez votre vrai bénéfice</h3><p>Dès vos premières ventes et dépenses, fluX calcule ce que vous gagnez. Le 1<sup>er</sup> mois est offert.</p>",
+     "<h3>تشوف الربح الحقيقي متاعك</h3><p>من أوّل بيعات ومصاريف، fluX يحسبلك قدّاش تربح. والشهر الأول بلاش.</p>"),
+    (">Qui est derrière fluX&nbsp;?<", ">شكون ورا fluX؟<"),
+    (">Une personne, pas un robot<", ">عبد حقيقي، موش روبو<"),
+    ('alt="Nada, fondatrice de fluX"', 'alt="ندى، مؤسِّسة fluX"'),
+    ("« TEXTE À ÉCRIRE : qui vous êtes, pourquoi vous avez créé fluX, et que c'est vous qui répondez sur WhatsApp. »",
+     "« نص باش يتكتب: شكونك، علاش عملت fluX، وإنّك إنتِ اللي تجاوب على واتساب. »"),
+    ("<b>Nada, fondatrice de fluX</b>", "<b>ندى، مؤسِّسة fluX</b>"),
+    (">Votre premier mois est gratuit. Commencez en une minute.<", ">الشهر الأول بلاش. ابدا في دقيقة.<"),
+    ("</style>", "  html[dir=\"rtl\"] .founder{ text-align:right; }\n  @media (max-width:560px){ html[dir=\"rtl\"] .founder{ text-align:center; } }\n</style>"),
+]:
+    if fr not in s: sys.exit(f"MANQUANT: {fr[:90]}")
+    s = s.replace(fr, ar, 1 if fr == "</style>" else -1)
 
 open(DST, "w", encoding="utf-8").write(s)
 print("OK", DST, len(s))

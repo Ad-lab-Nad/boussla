@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>fluX — قدّاش ربحت بالحق هالشهر؟</title>
+<title>fluX — قدّاش يقعدلك بالحق هالشهر؟</title>
 <meta name="description" content="fluX يحسبلك رقم المعاملات والربح الحقيقي متاع تجارتك في دقيقتين في النهار. مصنوع للتجّار والتاجرات في تونس. تجربة مجانية: الشهر الأول بلاش.">
 <meta property="og:title" content="fluX — لقى الـX متاعك.">
 <meta property="og:description" content="اعرف أخيرًا قدّاش تربّحك تجارتك. تجربة مجانية: الشهر الأول بلاش.">
@@ -348,6 +348,22 @@
   .showcase-scroll{ align-items:flex-start; }
   .sr{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
 
+  /* Proposition v4 : écrans de l'app tout en haut */
+  .hero-grid{ grid-template-columns:1fr; gap:0; text-align:center; }
+  .hero .lede{ margin-inline:auto; max-width:52ch; }
+  .hero .cta-row{ align-items:center; }
+  .hero .cta-micro{ justify-content:center; }
+  .hero .eyebrow{ justify-content:center; }
+  .hero-screens{ margin-top:22px; margin-bottom:8px; }
+  .hero .h1-tight{}
+  .hero-screens .showcase-scroll{ justify-content:safe center; }
+  .hero-screens .illus-note{ text-align:center; }
+  .swipe-hint{ display:none; text-align:center; font-size:13px; color:var(--muted); margin-top:4px; }
+  @media (max-width:860px){ .swipe-hint{ display:block; } }
+  .founder{ display:flex; gap:22px; align-items:center; max-width:720px; margin:28px auto 0; text-align:left; }
+  .founder img{ width:96px; height:96px; border-radius:50%; object-fit:cover; flex:none; }
+  @media (max-width:560px){ .founder{ flex-direction:column; text-align:center; } }
+
   /* ---------- RTL (version arabe) ---------- */
   html[dir="rtl"] body{ letter-spacing:0; }
   html[dir="rtl"] .eyebrow, html[dir="rtl"] .mock-tag, html[dir="rtl"] .plan-badge{ letter-spacing:0; text-transform:none; }
@@ -367,6 +383,8 @@
   html[dir="rtl"] .num, html[dir="rtl"] input[type="tel"]{ direction:ltr; unicode-bidi:isolate; }
   .lang-switch{ font-size:13px; font-weight:600; color:var(--muted); text-decoration:none; padding:8px 6px; }
   .lang-switch:hover{ color:var(--ink); }
+  html[dir="rtl"] .founder{ text-align:right; }
+  @media (max-width:560px){ html[dir="rtl"] .founder{ text-align:center; } }
 </style>
 </head>
 <body>
@@ -403,103 +421,11 @@
     <div class="wrap hero-grid">
       <div>
         <span class="eyebrow">للتجّار والتاجرات في تونس</span>
-        <h1>قدّاش ربحت <em>بالحق</em> هالشهر؟</h1>
-        <p class="lede">fluX يحسبلك الربح الحقيقي: البيع المسلَّم، التكلفة الحقيقية، المصاريف، الكريدي والسلعة، الكلّ في بلاصة وحدة، ومن تليفونك.</p>
-        <p class="offer-chip"><span><b>تجربة مجانية</b> · الشهر الأول بلاش</span></p>
-        <div class="cta-row">
-          <div class="cta-pair">
-            <a class="btn btn-lg btn-pulse" id="hero-cta" href="/signup" data-cta="hero"><svg aria-hidden="true"><use href="#i-go"/></svg>ابدا التجربة المجانية</a>
-            <a class="btn btn-ghost" href="#demo" data-cta="hero-demo">اطلب ديمو</a>
-          </div>
-          <div class="cta-micro"><span>الشهر الأول مجاني</span><span>بلا خلاص باش تبدا</span><span>مرافقة شخصية</span></div>
-        </div>
-      </div>
-      <div>
-        <div class="hero-visual">
-          <span class="mock-tag">مثال · أرقام وهمية</span>
-          <div class="phone-frame"><div class="phone-notch"></div><div class="ph" style="--s:0.82;--h:580px" role="img" aria-label="لوحة التحكم: الربح الصافي، السيولة، المبالغ غير المدفوعة، الطلبات"><div class="app" dir="rtl"><div class="app-bar"><span class="app-burger"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></span><span class="app-title">لوحة التحكم</span></div><div class="app-body"><div class="kpi"><span class="ic green"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h16a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M3 7l2-3h12v3M16 13.5h3"/></svg></span><p class="l">الربح الصافي الحقيقي</p><p class="v">2 740,00 DT</p><p class="d up">▲ +17% مقارنة بالشهر الماضي</p></div><div class="kpi"><span class="ic green"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10l9-6 9 6M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 20h18"/></svg></span><p class="l">السيولة النقدية للشهر</p><p class="v">2 050,00 DT</p><p class="d up">▲ +15% مقارنة بالشهر الماضي</p></div><div class="kpi"><span class="ic green"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18h.01"/></svg></span><p class="l">المبلغ غير المدفوع</p><p class="v">690,00 DT</p></div><div class="mini-row"><div class="kpi mini"><span class="ic blue sm"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><div><p class="mv">14</p><p class="ml">طلبات قيد التنفيذ</p></div></div><div class="kpi mini"><span class="ic blue sm"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 1 1-3-6.2M20 4v4h-4"/></svg></span><div><p class="mv">3</p><p class="ml">طلبات مُرجعة</p></div></div></div></div></div></div></div>
-        </div>
+        <h1>تبيع كل نهار. أما قدّاش يقعدلك <em>بالحق</em>؟</h1>
+        <p class="lede">البيع، المصاريف، الكريدي والسلعة: fluX يعمل الحسابات في بلاصتك ويوريك الربح الحقيقي متاعك، من تليفونك، وبالدينار.</p>
       </div>
     </div>
-  </section>
-
-  <!-- BANDE DE CONFIANCE (faits uniquement) -->
-  <section class="strip" aria-label="باختصار">
-    <div class="wrap strip-grid">
-      <div class="strip-item"><span class="t">د.ت</span><p>مصنوع لتونس، بالدينار، موش أداة أجنبية مبدّلة.</p></div>
-      <div class="strip-item"><span class="t">عربي · FR · EN</span><p>التطبيق متوفّر بالعربي، بالفرنسي وبالأنقليزي.</p></div>
-      <div class="strip-item"><span class="t">وجهًا لوجه</span><p>عبد حقيقي يعاونك في البداية، موش روبو.</p></div>
-    </div>
-  </section>
-
-  <!-- PROBLÈME -->
-  <section id="probleme">
-    <div class="wrap">
-      <span class="eyebrow">تعرف روحك؟</span>
-      <h2 class="h2">ثلاثة أسئلة يسألها كل تاجر، وما يلقالهاش جواب واضح</h2>
-      <div class="cards3">
-        <div class="card">
-          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7M12 17h.01"/></svg></span>
-          <h3 class="q">« نربح فلوس بالحق؟ »</h3>
-          <p>البيع بالكاش، مصاريف الحانوت ومصاريف الدار، الكلّ في نفس الكاسة. صعيب تعرف شنوّة يقعدلك في آخر الشهر.</p>
-        </div>
-        <div class="card">
-          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h18v12H3z"/><path d="M3 7l2-3h14l2 3M16 13h2"/></svg></span>
-          <h3 class="q">« وين تمشي فلوسي، وشكون مازال يتسالني؟ »</h3>
-          <p>بلا متابعة، المصاريف الصغار تتلمّ بالشوية بالشوية، والكليان اللي عندهم كريدي يتنساو.</p>
-        </div>
-        <div class="card">
-          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8M12 13v8"/></svg></span>
-          <h3 class="q">« السلعة باش تكفّي؟ »</h3>
-          <p>تكتشف اللي سلعة وفات وقت اللي كليان يطلبها، عوض ما تعرف قبل.</p>
-        </div>
-      </div>
-      <p class="pivot">مع fluX، عندك <em>الجواب</em> في لمحة.</p>
-    </div>
-  </section>
-
-  <!-- BÉNÉFICES -->
-  <section class="benefits" id="avantages">
-    <div class="wrap">
-      <span class="eyebrow">شنوّة تربح</span>
-      <h2 class="h2">تجارتك، تتحكّم فيها من تليفونك</h2>
-      <div class="ben-grid">
-        <div class="ben">
-          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h16a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M3 7l2-3h12v3M16 13.5h3"/></svg></span>
-          <div><h3>الربح الصافي الحقيقي متاعك</h3><p>البيع المسلَّم، ناقص التكلفة الحقيقية متاع السلعة، ناقص المصاريف (إشهار وغيرو). الربح يتحسب وحدو.</p></div>
-        </div>
-        <div class="ben">
-          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10l9-6 9 6M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 20h18"/></svg></span>
-          <div><h3>سيولة الشهر</h3><p>الكاش متاع الشهر، حذا الربح متاعك، باش تعرف شنوّة عندك بالحق في يدك.</p></div>
-        </div>
-        <div class="ben">
-          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18h.01"/></svg></span>
-          <div><h3>الكريدي، أخيرًا قدّام عينيك</h3><p>الفلوس اللي مازالت تسالها لحرفائك، مباشرة في لوحة التحكم.</p></div>
-        </div>
-        <div class="ben">
-          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
-          <div><h3>الطلبات متاعك تحت السيطرة</h3><p>الطلبات اللي قاعدة، المسلَّمة، والمرجوعة: الكلّ متتبَّع في بلاصة وحدة.</p></div>
-        </div>
-        <div class="ben">
-          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg></span>
-          <div><h3>السلعة اللي تربّح</h3><p>السلعة اللي تتباع أكثر بالكمية، وقدّاش جابت كل وحدة، هالشهر.</p></div>
-        </div>
-        <div class="ben">
-          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8M12 13v8"/></svg></span>
-          <div><h3>المخزون والتنبيهات</h3><p>مخزون المواد الأولية والسلعة الجاهزة، مع تنبيه كي تنقص سلعة تحت الحدّ متاعها.</p></div>
-        </div>
-      </div>
-      <div class="cta-row">
-        <a class="btn" href="/signup" data-cta="benefits"><svg aria-hidden="true"><use href="#i-go"/></svg><span>نبدا التجربة المجانية متاعي</span></a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ÉCRANS -->
-  <section class="showcase" id="ecrans">
-    <div class="wrap">
-      <span class="eyebrow">في التطبيق</span>
-      <h2 class="h2">شنوّة تشوف كي تحلّ fluX</h2>
+    <div class="wrap hero-screens">
       <div class="showcase-scroll" tabindex="0" aria-label="أمثلة من شاشات التطبيق">
         <div class="phone">
           <div class="phone-frame"><div class="phone-notch"></div><div class="ph" style="--s:0.58;--h:580px" role="img" aria-label="لوحة التحكم: رقم الأعمال، التكلفة الحقيقية، المصاريف"><div class="app" dir="rtl"><div class="app-bar"><span class="app-burger"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></span><span class="app-title">لوحة التحكم</span></div><div class="app-body"><div class="kpi"><span class="ic blue"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg></span><p class="l">رقم الأعمال (المسلَّم)</p><p class="v">6 840,00 DT</p><p class="d up">▲ +12% مقارنة بالشهر الماضي</p></div><div class="kpi"><span class="ic orange"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8M12 13v8"/></svg></span><p class="l">التكلفة الحقيقية</p><p class="v">3 120,00 DT</p><p class="d">▲ +11% مقارنة بالشهر الماضي</p></div><div class="kpi"><span class="ic purple"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3h14v18l-3-2-2 2-2-2-2 2-2-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg></span><p class="l">المصاريف (إشهار، إلخ.)</p><p class="v">980,00 DT</p><p class="d">▲ +9% مقارنة بالشهر الماضي</p></div><div class="kpi"><span class="ic green"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h16a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M3 7l2-3h12v3M16 13.5h3"/></svg></span><p class="l">الربح الصافي الحقيقي</p><p class="v">2 740,00 DT</p><p class="d up">▲ +17% مقارنة بالشهر الماضي</p></div></div></div></div></div>
@@ -522,7 +448,81 @@
           <p class="phone-caption">متوفّر بالعربي، بالفرنسي وبالأنقليزي</p>
         </div>
       </div>
+      <p class="swipe-hint">← اسحب باش تشوف الشاشات الأخرى →</p>
       <p class="illus-note">شاشات حقيقية من التطبيق، بأرقام مثال (وهمية).</p>
+    </div>
+    <div class="wrap hero-grid">
+      <div class="cta-row">
+        <div class="cta-pair">
+          <a class="btn btn-lg btn-pulse" id="hero-cta" href="/signup" data-cta="hero"><svg aria-hidden="true"><use href="#i-go"/></svg>ابدا التجربة المجانية</a>
+          <a class="btn btn-ghost" href="#demo" data-cta="hero-demo">اطلب ديمو</a>
+        </div>
+        <div class="cta-micro"><span>الشهر الأول بلاش</span><span>بلا كارطة بنكية</span><span>التسجيل في دقيقة</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BANDE DE CONFIANCE (faits uniquement) -->
+  <section class="strip" aria-label="باختصار">
+    <div class="wrap strip-grid">
+      <div class="strip-item"><span class="t">د.ت</span><p>مصنوع لتونس، بالدينار، موش أداة أجنبية مبدّلة.</p></div>
+      <div class="strip-item"><span class="t">عربي · FR · EN</span><p>التطبيق متوفّر بالعربي، بالفرنسي وبالأنقليزي.</p></div>
+      <div class="strip-item"><span class="t">وجهًا لوجه</span><p>عبد حقيقي يعاونك في البداية، موش روبو.</p></div>
+    </div>
+  </section>
+
+  <!-- PROBLÈME -->
+  <section id="probleme">
+    <div class="wrap">
+      <span class="eyebrow">تعرف روحك؟</span>
+      <h2 class="h2">الفلوس تدخل… أما في آخر الشهر، ديما ناقصة.</h2>
+      <div class="cards3">
+        <div class="card">
+          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7M12 17h.01"/></svg></span>
+          <h3 class="q">« بعت مليح هالشهر. أما وين الفلوس؟ »</h3>
+          <p>فلوس المشروع وفلوس الدار يتخلّطوا في نفس الكاسة. بلا حساب، ما تنجمش تعرف إذا الشهر كان مليح بالحق.</p>
+        </div>
+        <div class="card">
+          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h18v12H3z"/><path d="M3 7l2-3h14l2 3M16 13h2"/></svg></span>
+          <h3 class="q">« شكون مازال يتسالني فلوس؟ »</h3>
+          <p>الكريدي اللي تعطيه لحرفائك يتنسى بالفيسع. شوية دنانير هوني، شوية دنانير غادي: هذاكا الربح متاعك اللي ماشي.</p>
+        </div>
+        <div class="card">
+          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8M12 13v8"/></svg></span>
+          <h3 class="q">« حريف جا يشري… والسلعة وفات! »</h3>
+          <p>كل سلعة توفى بلا ما تحسّ، هي بيعة تمشي لغيرك. fluX ينبّهك قبل ما توفى.</p>
+        </div>
+      </div>
+      <p class="pivot">مع fluX، عندك <em>الجواب</em> في لمحة، كل نهار.</p>
+    </div>
+  </section>
+
+  <!-- BÉNÉFICES -->
+  <section class="benefits" id="avantages">
+    <div class="wrap">
+      <span class="eyebrow">شنوّة تربح</span>
+      <h2 class="h2">تجارتك، تتحكّم فيها من تليفونك</h2>
+      <div class="ben-grid">
+        <div class="ben">
+          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h16a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M3 7l2-3h12v3M16 13.5h3"/></svg></span>
+          <div><h3>الربح الصافي الحقيقي متاعك</h3><p>البيع متاعك، ناقص تكلفة السلعة، ناقص المصاريف. الربح والكاش متاع الشهر يتحسبوا وحدهم.</p></div>
+        </div>
+        <div class="ben">
+          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18h.01"/></svg></span>
+          <div><h3>الكريدي، أخيرًا قدّام عينيك</h3><p>شكون مازال ما خلّصكش، مباشرة في لوحة التحكم. حتى شي ما يتنسى.</p></div>
+        </div>
+        <div class="ben">
+          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg></span>
+          <div><h3>السلعة اللي تربّح</h3><p>أكثر المنتجات مبيعًا كل شهر، يخلّيك تفهم حريفك أكثر.</p></div>
+        </div>
+        <div class="ben">
+          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8M12 13v8"/></svg></span>
+          <div><h3>المخزون والتنبيهات</h3><p>مخزون المواد الأولية والسلعة الجاهزة، مع تنبيه كي تنقص سلعة تحت الحدّ متاعها.</p></div>
+        </div>
+      </div>
+      <div class="cta-row">
+        <a class="btn" href="/signup" data-cta="benefits"><svg aria-hidden="true"><use href="#i-go"/></svg><span>نبدا التجربة المجانية متاعي</span></a>
+      </div>
     </div>
   </section>
 
@@ -530,15 +530,28 @@
   <section class="steps" id="demarrer">
     <div class="wrap">
       <span class="eyebrow">كيفاش تبدا</span>
-      <h2 class="h2">ثلاثة مراحل، الأولى بكليك واحد</h2>
+      <h2 class="h2">تبدا في دقيقة</h2>
       <div class="steps-grid">
-        <div class="step"><span class="n">1</span><h3>اكليكي على «ابدا التجربة المجانية»</h3><p>كليك واحد، وتسجيل في دقيقة.</p></div>
-        <div class="step"><span class="n">2</span><h3>نرافقوك</h3><p>واحد من فريق fluX يعاونك باش تبدا، على راحتك.</p></div>
-        <div class="step"><span class="n">3</span><h3>الشهر الأول هدية</h3><p>تكتب البيع والمصاريف، وتشوف رقم الشهر متاعك.</p></div>
+        <div class="step"><span class="n">1</span><h3>اعمل حسابك</h3><p>الإيميل متاعك وكلمة سرّ، وبرّا. بلاش، وبلا كارطة بنكية.</p></div>
+        <div class="step"><span class="n">2</span><h3>نعاونوك باش تبدا</h3><p>عبد حقيقي يرافقك على واتساب باش تزيد السلعة متاعك وأوّل بيعاتك.</p></div>
+        <div class="step"><span class="n">3</span><h3>تشوف الربح الحقيقي متاعك</h3><p>من أوّل بيعات ومصاريف، fluX يحسبلك قدّاش تربح. والشهر الأول بلاش.</p></div>
       </div>
       <div class="cta-row">
         <a class="btn btn-lg" href="/signup" data-cta="steps"><svg aria-hidden="true"><use href="#i-go"/></svg>ابدا التجربة المجانية</a>
         <div class="cta-micro"><span>الشهر الأول مجاني</span><span>ولا <a href="#demo" style="color:var(--primary-dark);font-weight:600;">اطلب ديمو قبل</a></span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUI EST DERRIÈRE FLUX : masqué tant que la photo et le texte ne sont pas prêts.
+       Pour l'afficher : retirez l'attribut hidden et remplacez la photo et le texte. -->
+  <section id="equipe" hidden>
+    <div class="wrap" style="text-align:center;">
+      <span class="eyebrow">شكون ورا fluX؟</span>
+      <h2 class="h2">عبد حقيقي، موش روبو</h2>
+      <div class="founder">
+        <img src="PHOTO_ICI" alt="ندى، مؤسِّسة fluX">
+        <p class="sub" style="margin:0;">« نص باش يتكتب: شكونك، علاش عملت fluX، وإنّك إنتِ اللي تجاوب على واتساب. »<br><b>ندى، مؤسِّسة fluX</b></p>
       </div>
     </div>
   </section>
@@ -678,7 +691,7 @@
   <section class="final" id="final">
     <div class="wrap">
       <span class="eyebrow">لقى الـX متاعك.</span>
-      <h2>الشهر الأول بلاش. ابدا بكليك.</h2>
+      <h2>الشهر الأول بلاش. ابدا في دقيقة.</h2>
       <p class="sub">ابدا التجربة توّا، ولا اطلب ديمو إذا تحب تشوف التطبيق قبل.</p>
       <div class="cta-row center">
         <div class="cta-pair">
