@@ -1270,3 +1270,38 @@ select.g-status-select {
   color: var(--g-ink);
   font-family: inherit;
 }
+
+/* ================== LOADING (app/gestion/loading.tsx) ================== */
+
+.g-loading-bar {
+  height: 3px;
+  margin-bottom: 18px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, var(--g-orange), transparent);
+  background-size: 50% 100%;
+  background-repeat: no-repeat;
+  animation: g-loading-slide 1s ease-in-out infinite;
+}
+.g-loading-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0 18px;
+}
+.g-loading-block {
+  height: 96px;
+  animation: g-loading-pulse 1.2s ease-in-out infinite;
+}
+.g-loading-block--tall {
+  height: 260px;
+}
+@keyframes g-loading-slide {
+  from { background-position: -50% 0; }
+  to { background-position: 150% 0; }
+}
+@keyframes g-loading-pulse {
+  50% { opacity: 0.55; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .g-loading-bar,
+  .g-loading-block { animation: none; }
+}
