@@ -138,7 +138,8 @@ export default async function CommandesPage({
       <div className="g-card">
         <h2>{isServices ? t("gestion.commandes.newSaleTitle") : t("gestion.commandes.newOrderTitle")}</h2>
         <div className="g-hint">
-          {isServices ? t("gestion.commandes.newSaleHint") : t("gestion.commandes.newOrderHint")}
+          {isServices ? t("gestion.commandes.newSaleHint") : t("gestion.commandes.newOrderHint")}{" "}
+          {t("gestion.commandes.deliveredClientHint")}
         </div>
         <OrderForm products={products} createOrderAction={createOrder} isServices={isServices} />
       </div>
@@ -164,7 +165,14 @@ export default async function CommandesPage({
                 return (
                   <tr key={order.id}>
                     <td className="num">{order.date.toISOString().slice(0, 10)}</td>
-                    <td>{order.clientName || "—"}</td>
+                    <td>
+                      {order.clientName || (order.clientPhone ? "" : "—")}
+                      {order.clientPhone && (
+                        <div className="g-hint" style={{ margin: 0 }}>
+                          {order.clientPhone}
+                        </div>
+                      )}
+                    </td>
                     <td className="right num">{fmt(orderAmount(order))}</td>
                     <td className="right num">{daysSince}</td>
                     <td>
@@ -233,7 +241,14 @@ export default async function CommandesPage({
                 return (
                   <tr key={order.id}>
                     <td className="num">{order.date.toISOString().slice(0, 10)}</td>
-                    <td>{order.clientName || "—"}</td>
+                    <td>
+                      {order.clientName || (order.clientPhone ? "" : "—")}
+                      {order.clientPhone && (
+                        <div className="g-hint" style={{ margin: 0 }}>
+                          {order.clientPhone}
+                        </div>
+                      )}
+                    </td>
                     <td>{label}</td>
                     <td className="right num">{fmt(orderAmount(order))}</td>
                     <td>

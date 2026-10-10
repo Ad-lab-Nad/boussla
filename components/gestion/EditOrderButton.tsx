@@ -13,6 +13,7 @@ type Order = {
   id: string;
   date: Date;
   clientName: string | null;
+  clientPhone: string | null;
   status: string;
   paymentStatus: string;
   paymentMethod: string;
@@ -114,6 +115,10 @@ export function EditOrderButton({
                   <div className="g-field">
                     <label>{t("gestion.commandes.clientOptionalLabel")}</label>
                     <input type="text" name="clientName" defaultValue={order.clientName ?? ""} />
+                  </div>
+                  <div className="g-field">
+                    <label>{t("gestion.commandes.clientPhoneOptionalLabel")}</label>
+                    <input type="tel" name="clientPhone" inputMode="tel" defaultValue={order.clientPhone ?? ""} />
                   </div>
                   <div className="g-field">
                     <label>{t("gestion.clients.statusLabel")}</label>

@@ -281,7 +281,9 @@
       "unpaidDeliveredHint": "En attente d'encaissement — utile pour relancer une société de livraison COD qui n'a pas encore viré l'argent.",
       "daysSinceColumn": "Jours depuis livraison",
       "markPaidButton": "Marquer payée",
-      "unpaidDeliveredEmpty": "Rien en attente d'encaissement."
+      "unpaidDeliveredEmpty": "Rien en attente d'encaissement.",
+      "clientPhoneOptionalLabel": "Téléphone du client (optionnel)",
+      "deliveredClientHint": "Une fois la commande livrée, le client est ajouté tout seul à la page Clients."
     },
     "depenses": {
       "newExpenseTitle": "Nouvelle dépense (hors stock)",

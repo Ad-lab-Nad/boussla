@@ -281,7 +281,9 @@
       "unpaidDeliveredHint": "في انتظار التحصيل — مفيدة لمتابعة شركة التوصيل بالدفع عند الاستلام التي لم تحوّل المبلغ بعد.",
       "daysSinceColumn": "أيام منذ التسليم",
       "markPaidButton": "تحديد كمدفوعة",
-      "unpaidDeliveredEmpty": "لا شيء في انتظار التحصيل."
+      "unpaidDeliveredEmpty": "لا شيء في انتظار التحصيل.",
+      "clientPhoneOptionalLabel": "هاتف الحريف (اختياري)",
+      "deliveredClientHint": "كي تتسلّم الطلبية، الحريف يتزاد وحدو لصفحة الحرفاء."
     },
     "depenses": {
       "newExpenseTitle": "مصروف جديد (خارج المخزون)",

@@ -64,6 +64,10 @@ export function OrderForm({
           <input type="text" name="clientName" placeholder={t("gestion.commandes.namePlaceholder")} />
         </div>
         <div className="g-field">
+          <label>{t("gestion.commandes.clientPhoneOptionalLabel")}</label>
+          <input type="tel" name="clientPhone" inputMode="tel" autoComplete="off" placeholder={t("gestion.clients.phonePlaceholder")} />
+        </div>
+        <div className="g-field">
           <label>{t("gestion.clients.statusLabel")}</label>
           <select name="status" defaultValue="IN_PROGRESS">
             <option value="IN_PROGRESS">{t("gestion.commandes.statusInProgress")}</option>

@@ -281,7 +281,9 @@
       "unpaidDeliveredHint": "Waiting to be collected — useful for following up with a COD delivery company that hasn't remitted the money yet.",
       "daysSinceColumn": "Days since delivery",
       "markPaidButton": "Mark paid",
-      "unpaidDeliveredEmpty": "Nothing waiting to be collected."
+      "unpaidDeliveredEmpty": "Nothing waiting to be collected.",
+      "clientPhoneOptionalLabel": "Client phone (optional)",
+      "deliveredClientHint": "Once the order is delivered, the client is added to the Clients page automatically."
     },
     "depenses": {
       "newExpenseTitle": "New expense (non-stock)",

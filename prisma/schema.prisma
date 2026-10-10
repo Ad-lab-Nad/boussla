@@ -485,6 +485,9 @@ model Order {
 
   date          DateTime
   clientName    String?
+  // Copied into the Clients page (Client.phone) once the order is delivered —
+  // see lib/gestion/order-client.ts.
+  clientPhone   String?
   status        OrderStatus   @default(IN_PROGRESS)
   paymentStatus PaymentStatus @default(PENDING)
   paymentDate   DateTime?

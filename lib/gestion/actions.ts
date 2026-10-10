@@ -9,11 +9,14 @@ import { EXPENSE_CATEGORY_VALUES } from "@/lib/gestion/expense-categories";
 import { SELL_UNIT_VALUES } from "@/lib/gestion/product-units";
 import { findRecurringExpenseSuggestion } from "@/lib/gestion/queries";
 import { uploadReceipt } from "@/lib/gestion/receipts";
+import { syncDeliveredOrderClient } from "@/lib/gestion/order-client";
 import type { ExpenseCategory, SellUnit } from "@prisma/client";
 
 function revalidateGestion(path?: string) {
   revalidatePath("/gestion");
   if (path) revalidatePath(path);
+  // A delivered order can add a client (syncDeliveredOrderClient).
+  if (path === "/gestion/commandes") revalidatePath("/gestion/clients");
 }
 
 function num(formData: FormData, key: string): number {
@@ -128,6 +131,7 @@ export async function createOrder(formData: FormData) {
   const business = await getCurrentBusiness();
   const date = dateOf(formData, "date");
   const clientName = str(formData, "clientName") || null;
+  const clientPhone = str(formData, "clientPhone") || null;
   const status = str(formData, "status") || "IN_PROGRESS";
   const paymentStatus = str(formData, "paymentStatus") || "PENDING";
   const paymentMethodRaw = str(formData, "paymentMethod");
@@ -158,6 +162,7 @@ export async function createOrder(formData: FormData) {
       businessId: business.id,
       date,
       clientName,
+      clientPhone,
       status: status as "IN_PROGRESS" | "DELIVERED" | "RETURNED",
       paymentStatus: paymentStatus as "PAID" | "PENDING" | "UNPAID",
       paymentDate: paymentStatus === "PAID" ? new Date() : null,
@@ -178,6 +183,7 @@ export async function createOrder(formData: FormData) {
       },
     },
   });
+  await syncDeliveredOrderClient(business.id, { status, clientName, clientPhone });
   revalidateGestion("/gestion/commandes");
 }
 
@@ -186,10 +192,13 @@ export async function updateOrderStatus(formData: FormData) {
   const business = await getCurrentBusiness();
   const id = str(formData, "id");
   const status = str(formData, "status");
-  await prisma.order.updateMany({
-    where: { id, businessId: business.id },
+  const order = await prisma.order.findFirst({ where: { id, businessId: business.id } });
+  if (!order) return;
+  await prisma.order.update({
+    where: { id },
     data: { status: status as "IN_PROGRESS" | "DELIVERED" | "RETURNED" },
   });
+  await syncDeliveredOrderClient(business.id, { ...order, status });
   revalidateGestion("/gestion/commandes");
 }
 
@@ -232,6 +241,7 @@ export async function updateOrder(formData: FormData) {
 
   const date = dateOf(formData, "date");
   const clientName = str(formData, "clientName") || null;
+  const clientPhone = str(formData, "clientPhone") || null;
   const status = str(formData, "status") || order.status;
   const paymentStatus = str(formData, "paymentStatus") || order.paymentStatus;
   const paymentMethodRaw = str(formData, "paymentMethod");
@@ -264,6 +274,7 @@ export async function updateOrder(formData: FormData) {
       data: {
         date,
         clientName,
+        clientPhone,
         status: status as "IN_PROGRESS" | "DELIVERED" | "RETURNED",
         paymentStatus: paymentStatus as "PAID" | "PENDING" | "UNPAID",
         paymentDate: paymentStatus === "PAID" ? order.paymentDate ?? new Date() : order.paymentDate,
@@ -285,6 +296,7 @@ export async function updateOrder(formData: FormData) {
       },
     }),
   ]);
+  await syncDeliveredOrderClient(business.id, { status, clientName, clientPhone });
   revalidateGestion("/gestion/commandes");
 }
 
