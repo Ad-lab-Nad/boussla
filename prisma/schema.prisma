@@ -35,6 +35,10 @@ model User {
   // relabels "Produits" to "Prestations" — see components/gestion/GestionChrome.tsx.
   activityType       ActivityType @default(PRODUCTS)
 
+  // Last time the user opened the app (any /gestion page), at most every
+  // few minutes — see lib/last-seen.ts. Shown in the back office.
+  lastSeenAt DateTime?
+
   subscription Subscription?
   audits       Audit[]
 

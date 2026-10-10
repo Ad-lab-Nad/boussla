@@ -1,5 +1,6 @@
 import { CreditCard, Gift, MessageSquareText, Receipt, TrendingDown, TrendingUp, Users, Wallet } from "lucide-react";
 import { prisma } from "@/lib/prisma";
+import { getUserActivity, type UserActivity } from "@/lib/admin-activity";
 import { accountWhatsAppLink, displayAccount } from "@/lib/auth-identifier";
 import { describeSubscription } from "@/lib/admin";
 import {
@@ -25,6 +26,23 @@ function formatDate(d: Date) {
   return d.toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: "numeric" });
 }
 
+/** "10 oct., 15:20" in Tunis time. */
+function formatDateTime(d: Date) {
+  return d.toLocaleString("fr-FR", {
+    day: "numeric",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: "Africa/Tunis",
+  });
+}
+
+const ACTIVITY_BADGE: Record<UserActivity["status"], { label: string; badge: string }> = {
+  active: { label: "🟢 Actif", badge: "status-valid" },
+  inactive: { label: "🟡 Inactif", badge: "status-warning" },
+  never: { label: "⚪ Jamais utilisé", badge: "pending" },
+};
+
 export default async function AdminPage({
   searchParams,
 }: {
@@ -43,6 +61,8 @@ export default async function AdminPage({
     getExpenses(businessId),
     getAvailableMonthKeys(businessId),
   ]);
+
+  const activity = await getUserActivity(users.map((u) => u.id));
 
   const currentMonth = monthKeyFromDateStr(todayStr());
   const month = requestedMonth && monthOptions.includes(requestedMonth) ? requestedMonth : currentMonth;
@@ -119,6 +139,8 @@ export default async function AdminPage({
               <tr>
                 <th>Email</th>
                 <th>Inscrite le</th>
+                <th>Activité</th>
+                <th>Dernière visite</th>
                 <th>Paiement</th>
                 <th>Accès</th>
                 <th></th>
@@ -146,6 +168,26 @@ export default async function AdminPage({
                       )}
                     </td>
                     <td className="num">{formatDate(u.createdAt)}</td>
+                    <td>
+                      {(() => {
+                        const a = activity.get(u.id);
+                        if (!a) return "—";
+                        const { label, badge } = ACTIVITY_BADGE[a.status];
+                        return (
+                          <>
+                            <span className={`g-badge ${badge}`}>{label}</span>
+                            {a.status !== "never" && (
+                              <div className="g-hint" style={{ margin: "4px 0 0" }}>
+                                {a.products} produit(s) · {a.orders} commande(s) · {a.expenses} dépense(s)
+                                <br />
+                                Dernière saisie : {formatDateTime(a.lastEntryAt!)}
+                              </div>
+                            )}
+                          </>
+                        );
+                      })()}
+                    </td>
+                    <td className="num">{u.lastSeenAt ? formatDateTime(u.lastSeenAt) : "—"}</td>
                     <td>
                       {totalPaid !== undefined ? (
                         <span className="g-badge status-valid">Payé · {fmt(totalPaid)}</span>
