@@ -301,7 +301,9 @@
       "saveError": "Couldn't save this expense. Try again.",
       "spreadCheckbox": "Does this expense span several months?",
       "spreadMonthsLabel": "Spread over how many months",
-      "addButton": "Add"
+      "addButton": "Add",
+      "stockDoubleCountWarning": "Careful: if this purchase (raw materials, ingredients, packaging…) is already in your products' cost, don't enter it here, or it will be counted twice in your profit. Record it on the Stock page, under “Log a stock purchase”: it will count in your cash flow, once.",
+      "stockDoubleCountLink": "Go to the Stock page"
     },
     "stock": {
       "newItemTitle": "New material / supply",

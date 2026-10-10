@@ -1305,3 +1305,20 @@ select.g-status-select {
   .g-loading-bar,
   .g-loading-block { animation: none; }
 }
+
+/* Inline warning inside a form (e.g. a cost that would be counted twice). */
+.g-warn-box {
+  grid-column: 1 / -1;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  background: color-mix(in srgb, var(--g-warning) 16%, transparent);
+  border: 1px solid color-mix(in srgb, var(--g-warning) 45%, transparent);
+  color: var(--g-ink);
+}
+.g-warn-box a {
+  font-weight: 700;
+  color: inherit;
+  text-decoration: underline;
+}

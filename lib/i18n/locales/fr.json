@@ -301,7 +301,9 @@
       "saveError": "Impossible d'enregistrer cette dépense. Réessaie.",
       "spreadCheckbox": "Cette dépense concerne plusieurs mois ?",
       "spreadMonthsLabel": "Étaler sur combien de mois",
-      "addButton": "Ajouter"
+      "addButton": "Ajouter",
+      "stockDoubleCountWarning": "Attention : si le coût de cet achat (matières, fruits, emballages…) est déjà dans le coût de tes produits, ne le saisis pas ici, sinon il sera compté deux fois dans ton bénéfice. Enregistre-le plutôt dans la page Stock, rubrique « Enregistrer un achat de stock » : il comptera dans ta trésorerie, une seule fois.",
+      "stockDoubleCountLink": "Aller à la page Stock"
     },
     "stock": {
       "newItemTitle": "Nouvelle matière / fourniture",

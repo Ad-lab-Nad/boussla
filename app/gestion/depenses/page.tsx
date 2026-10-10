@@ -1,5 +1,8 @@
 import { Paperclip } from "lucide-react";
 import { getCurrentBusiness } from "@/lib/current-business";
+import { getCurrentUser } from "@/lib/current-user";
+import { getOrCreateSubscription } from "@/lib/subscription";
+import { canAccessPalier2 } from "@/lib/subscription-access";
 import { getExpenses } from "@/lib/gestion/queries";
 import { deleteExpense, updateExpense } from "@/lib/gestion/actions";
 import { fmt } from "@/lib/gestion/format";
@@ -14,6 +17,11 @@ export default async function DepensesPage() {
   const { t } = await getServerT();
   const business = await getCurrentBusiness();
   const expenses = await getExpenses(business.id);
+  // Palier 2 product sellers have a per-product cost and a Stock page, so a
+  // "Stock/Achats" expense would count those costs twice in the profit.
+  const user = await getCurrentUser();
+  const warnStockDoubleCount =
+    user.activityType !== "SERVICES" && canAccessPalier2(await getOrCreateSubscription(user.id));
   const categoryLabels = expenseCategoryLabels(t);
   const receiptUrls = await Promise.all(
     expenses.map((d) => (d.receiptPath ? getReceiptSignedUrl(d.receiptPath, business.id) : Promise.resolve(null)))
@@ -24,7 +32,7 @@ export default async function DepensesPage() {
       <div className="g-card">
         <h2>{t("gestion.depenses.newExpenseTitle")}</h2>
         <div className="g-hint">{t("gestion.depenses.hint")}</div>
-        <ExpenseQuickForm />
+        <ExpenseQuickForm warnStockDoubleCount={warnStockDoubleCount} />
       </div>
 
       <div className="g-card">

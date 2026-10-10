@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useTransition } from "react";
 import { Plus } from "lucide-react";
 import { expenseCategoryLabels, expenseCategoryOptions } from "@/lib/gestion/expense-categories";
@@ -10,7 +11,7 @@ import { SpreadExpenseFields } from "@/components/gestion/SpreadExpenseFields";
 
 type Suggestion = { category: string; amount: number; isPersonal: boolean } | null;
 
-export function ExpenseQuickForm() {
+export function ExpenseQuickForm({ warnStockDoubleCount = false }: { warnStockDoubleCount?: boolean }) {
   const { t } = useLocale();
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
@@ -87,6 +88,12 @@ export function ExpenseQuickForm() {
           ))}
         </select>
       </div>
+      {warnStockDoubleCount && category === "STOCK_PURCHASES" && (
+        <div className="g-warn-box" role="note">
+          {t("gestion.depenses.stockDoubleCountWarning")}{" "}
+          <Link href="/gestion/stock">{t("gestion.depenses.stockDoubleCountLink")}</Link>
+        </div>
+      )}
       <div className="g-field">
         <label>{t("gestion.editCommon.amountLabel")}</label>
         <input
