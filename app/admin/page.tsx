@@ -1,5 +1,6 @@
 import { CreditCard, Gift, MessageSquareText, Receipt, TrendingDown, TrendingUp, Users, Wallet } from "lucide-react";
 import { prisma } from "@/lib/prisma";
+import { accountWhatsAppLink, displayAccount } from "@/lib/auth-identifier";
 import { describeSubscription } from "@/lib/admin";
 import {
   cancelLastPayment,
@@ -135,7 +136,15 @@ export default async function AdminPage({
                     : null;
                 return (
                   <tr key={u.id}>
-                    <td>{u.email}</td>
+                    <td>
+                      {accountWhatsAppLink(u.email) ? (
+                        <a href={accountWhatsAppLink(u.email)!} target="_blank" rel="noopener noreferrer" title="Ouvrir WhatsApp">
+                          📱 {displayAccount(u.email)}
+                        </a>
+                      ) : (
+                        u.email
+                      )}
+                    </td>
                     <td className="num">{formatDate(u.createdAt)}</td>
                     <td>
                       {totalPaid !== undefined ? (
@@ -193,7 +202,7 @@ export default async function AdminPage({
                           <form action={cancelLastPayment}>
                             <input type="hidden" name="userId" value={u.id} />
                             <ConfirmSubmitButton
-                              confirmMessage={`Annuler le dernier paiement enregistré pour ${u.email} ? Son accès ne change pas.`}
+                              confirmMessage={`Annuler le dernier paiement enregistré pour ${displayAccount(u.email)} ? Son accès ne change pas.`}
                               title="Annuler le dernier paiement"
                             />
                           </form>

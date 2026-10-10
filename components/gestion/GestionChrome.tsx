@@ -18,6 +18,7 @@ import {
   LogOut,
   ShieldCheck,
 } from "lucide-react";
+import { displayAccount } from "@/lib/auth-identifier";
 import { signOut } from "@/lib/auth-actions";
 import { ADMIN_EMAIL } from "@/lib/admin-email";
 import { LocaleProvider, useLocale } from "@/components/i18n/LocaleProvider";
@@ -156,8 +157,8 @@ function GestionChromeInner({
         </nav>
 
         <div className="g-sidebar__footer">
-          <div className="g-user-email" title={userEmail}>
-            {userEmail}
+          <div className="g-user-email" title={displayAccount(userEmail)}>
+            {displayAccount(userEmail)}
           </div>
           <LanguageSwitcher />
           <Link

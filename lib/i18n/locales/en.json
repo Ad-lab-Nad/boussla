@@ -444,7 +444,9 @@
       "passwordHint": "At least 8 characters",
       "mismatch": "Passwords don't match.",
       "showPassword": "Show password",
-      "hidePassword": "Hide password"
+      "hidePassword": "Hide password",
+      "identifier": "Phone or email",
+      "identifierHint": "Your number (e.g. 20 123 456) or your email address"
     },
     "signup": {
       "title": "Create your account",
@@ -458,7 +460,9 @@
       "planOption": "{plan} — {price} DT/month",
       "planHint": "First month free",
       "later": "I'll choose later",
-      "laterHint": "Full access during the trial"
+      "laterHint": "Full access during the trial",
+      "help": "Need help? Message me on WhatsApp",
+      "helpMessage": "Hello, I'd like to try Flux but I have a question."
     },
     "login": {
       "title": "Log in",
@@ -471,7 +475,7 @@
     },
     "forgot": {
       "title": "Forgot password",
-      "hint": "We'll email you a link to choose a new password.",
+      "hint": "Enter your email: we'll send you a link to choose a new password. Account created with a phone number? Message us on WhatsApp.",
       "submit": "Send reset link",
       "submitting": "Sending…",
       "back": "Back to login"
@@ -508,15 +512,17 @@
       "home": "fluX — home"
     },
     "errors": {
-      "invalidCredentials": "Wrong email or password.",
+      "invalidCredentials": "Incorrect phone/email or password.",
       "emailNotConfirmed": "Please confirm your email address first (check your inbox).",
-      "alreadyRegistered": "An account already exists with this email.",
+      "alreadyRegistered": "An account already exists with this number or email.",
       "passwordTooShort": "Your password must be at least 8 characters.",
       "rateLimit": "Too many attempts — try again in a few minutes.",
-      "emailPasswordRequired": "Email and password are required.",
-      "accountExists": "An account already exists with this email. Log in, or use “Forgot your password?” if you don't remember it.",
-      "emailRequired": "Enter your email.",
-      "feedbackRequired": "Enter your email and your message."
+      "emailPasswordRequired": "Phone (or email) and password required.",
+      "accountExists": "An account already exists with this number or email. Log in, or use “Forgot password” if you don't remember it.",
+      "emailRequired": "Enter your phone or email.",
+      "feedbackRequired": "Enter your email and your message.",
+      "identifierInvalid": "Enter a Tunisian phone number (8 digits) or a valid email address.",
+      "phoneReset": "For an account created with a phone number, message us on WhatsApp at +216 23 958 603: we'll help you choose a new password."
     },
     "success": {
       "signupCheckEmail": "Account created! Check your inbox (and spam) to confirm your address, then log in.",

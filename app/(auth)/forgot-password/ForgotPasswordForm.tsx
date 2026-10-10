@@ -16,8 +16,16 @@ export function ForgotPasswordForm() {
       {state?.error && <div className="g-auth-error">{state.error}</div>}
       {state?.success && <div className="g-auth-success">{state.success}</div>}
       <div className="g-field">
-        <label htmlFor="forgot-email">{t("auth.fields.email")}</label>
-        <input id="forgot-email" type="email" name="email" required autoComplete="email" inputMode="email" />
+<label htmlFor="forgot-identifier">{t("auth.fields.identifier")}</label>
+        <input
+          id="forgot-identifier"
+          type="text"
+          name="identifier"
+          required
+          autoComplete="username"
+          autoCapitalize="none"
+          spellCheck={false}
+        />
       </div>
       <button type="submit" className="g-btn g-auth-submit" disabled={pending}>
         {pending ? t("auth.forgot.submitting") : t("auth.forgot.submit")}

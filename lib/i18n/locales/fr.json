@@ -444,7 +444,9 @@
       "passwordHint": "8 caractères minimum",
       "mismatch": "Les mots de passe ne correspondent pas.",
       "showPassword": "Afficher le mot de passe",
-      "hidePassword": "Masquer le mot de passe"
+      "hidePassword": "Masquer le mot de passe",
+      "identifier": "Téléphone ou e-mail",
+      "identifierHint": "Ton numéro (ex : 20 123 456) ou ton adresse e-mail"
     },
     "signup": {
       "title": "Crée ton compte",
@@ -458,7 +460,9 @@
       "planOption": "{plan} — {price} DT/mois",
       "planHint": "1er mois offert",
       "later": "Je choisirai plus tard",
-      "laterHint": "Accès complet pendant l'essai"
+      "laterHint": "Accès complet pendant l'essai",
+      "help": "Besoin d'aide ? Écris-moi sur WhatsApp",
+      "helpMessage": "Bonjour, je veux essayer Flux mais j'ai une question."
     },
     "login": {
       "title": "Connexion",
@@ -471,7 +475,7 @@
     },
     "forgot": {
       "title": "Mot de passe oublié",
-      "hint": "On t'envoie un lien pour choisir un nouveau mot de passe.",
+      "hint": "Indique ton e-mail : on t'envoie un lien pour choisir un nouveau mot de passe. Compte créé avec un numéro ? Écris-nous sur WhatsApp.",
       "submit": "Envoyer le lien de réinitialisation",
       "submitting": "Envoi…",
       "back": "Retour à la connexion"
@@ -508,15 +512,17 @@
       "home": "fluX — accueil"
     },
     "errors": {
-      "invalidCredentials": "Email ou mot de passe incorrect.",
+      "invalidCredentials": "Téléphone/e-mail ou mot de passe incorrect.",
       "emailNotConfirmed": "Confirme d'abord ton adresse email (vérifie ta boîte mail).",
-      "alreadyRegistered": "Un compte existe déjà avec cet email.",
+      "alreadyRegistered": "Un compte existe déjà avec ce numéro ou cet e-mail.",
       "passwordTooShort": "Le mot de passe doit contenir au moins 8 caractères.",
       "rateLimit": "Trop de tentatives — réessaie dans quelques minutes.",
-      "emailPasswordRequired": "Email et mot de passe requis.",
-      "accountExists": "Un compte existe déjà avec cet email. Connecte-toi, ou utilise « Mot de passe oublié » si tu ne t'en souviens plus.",
-      "emailRequired": "Indique ton email.",
-      "feedbackRequired": "Indique ton email et ton message."
+      "emailPasswordRequired": "Téléphone (ou e-mail) et mot de passe requis.",
+      "accountExists": "Un compte existe déjà avec ce numéro ou cet e-mail. Connecte-toi, ou utilise « Mot de passe oublié » si tu ne t'en souviens plus.",
+      "emailRequired": "Indique ton téléphone ou ton e-mail.",
+      "feedbackRequired": "Indique ton email et ton message.",
+      "identifierInvalid": "Indique un numéro de téléphone tunisien (8 chiffres) ou une adresse e-mail valide.",
+      "phoneReset": "Pour un compte créé avec un numéro de téléphone, écris-nous sur WhatsApp au 23 958 603 : on t'aide à choisir un nouveau mot de passe."
     },
     "success": {
       "signupCheckEmail": "Compte créé ! Vérifie ta boîte mail (et les spams) pour confirmer ton adresse, puis connecte-toi.",

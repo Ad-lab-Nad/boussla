@@ -172,3 +172,26 @@
   direction: ltr;
   text-align: right;
 }
+
+/* WhatsApp "need help?" link under the sign-up form. */
+.g-auth-help {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, #25d366 45%, transparent);
+  background: color-mix(in srgb, #25d366 10%, transparent);
+  color: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+.g-auth-help svg {
+  color: #1da851;
+  flex: none;
+}
+.g-auth-help:hover {
+  background: color-mix(in srgb, #25d366 18%, transparent);
+}

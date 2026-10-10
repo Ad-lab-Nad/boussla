@@ -1,6 +1,7 @@
 import { cache } from "react";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/current-user";
+import { isPhoneAccount } from "@/lib/auth-identifier";
 
 /**
  * The signed-in user's Business — every Gestion business-data table
@@ -24,7 +25,7 @@ export const getCurrentBusiness = cache(async function getCurrentBusiness() {
 
   return prisma.business.create({
     data: {
-      name: user.email.split("@")[0] || "Mon entreprise",
+      name: isPhoneAccount(user.email) ? "Mon entreprise" : user.email.split("@")[0] || "Mon entreprise",
       memberships: { create: { userId: user.id, role: "OWNER" } },
     },
   });

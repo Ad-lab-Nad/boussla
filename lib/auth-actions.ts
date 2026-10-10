@@ -1,11 +1,14 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { after } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { createClient } from "@/lib/supabase/server";
 import { getOrCreateSubscription, priceFor } from "@/lib/subscription";
 import { getServerT } from "@/lib/i18n/server";
 import type { TFunction } from "@/lib/i18n/translate";
+import { sendWelcomeEmail } from "@/lib/welcome-email";
+import { parseIdentifier } from "@/lib/auth-identifier";
 
 export type AuthActionState = { error?: string; success?: string } | null;
 
@@ -28,17 +31,19 @@ export async function signUp(
   _prevState: AuthActionState,
   formData: FormData
 ): Promise<AuthActionState> {
-  const email = String(formData.get("email") || "")
-    .trim()
-    .toLowerCase();
+  // "identifier" = phone number or email (lib/auth-identifier.ts).
+  const rawIdentifier = String(formData.get("identifier") ?? formData.get("email") ?? "");
   const password = String(formData.get("password") || "");
   const confirmPassword = String(formData.get("confirmPassword") || "");
   const industry = String(formData.get("industry") || "").trim() || null;
   const marketingConsent = formData.get("marketingConsent") === "on";
   const activityType = formData.get("activityType") === "SERVICES" ? "SERVICES" : "PRODUCTS";
-  const { t } = await getServerT();
+  const { t, locale } = await getServerT();
 
-  if (!email || !password) return { error: t("auth.errors.emailPasswordRequired") };
+  if (!rawIdentifier.trim() || !password) return { error: t("auth.errors.emailPasswordRequired") };
+  const identifier = parseIdentifier(rawIdentifier);
+  if (!identifier) return { error: t("auth.errors.identifierInvalid") };
+  const email = identifier.email;
   if (password.length < 8) return { error: t("auth.errors.passwordTooShort") };
   // The signup form no longer asks for a confirmation (eye toggle instead);
   // still checked when one is sent.
@@ -100,6 +105,12 @@ export async function signUp(
         data: { tier, billingInterval: "MONTHLY", priceAmount: priceFor(tier, "MONTHLY") },
       });
     }
+
+    // After the response (and the redirect below): a slow mail server must
+    // never hold up or fail the sign-up itself.
+    // Phone accounts have no real mailbox — the founder reaches them on
+    // WhatsApp instead.
+    if (identifier.kind === "email") after(() => sendWelcomeEmail(email, locale));
   }
 
   if (data.session) {
@@ -115,14 +126,15 @@ export async function signIn(
   _prevState: AuthActionState,
   formData: FormData
 ): Promise<AuthActionState> {
-  const email = String(formData.get("email") || "")
-    .trim()
-    .toLowerCase();
+  const rawIdentifier = String(formData.get("identifier") ?? formData.get("email") ?? "");
   const password = String(formData.get("password") || "");
   const next = String(formData.get("next") || "/gestion");
   const { t } = await getServerT();
 
-  if (!email || !password) return { error: t("auth.errors.emailPasswordRequired") };
+  if (!rawIdentifier.trim() || !password) return { error: t("auth.errors.emailPasswordRequired") };
+  const identifier = parseIdentifier(rawIdentifier);
+  if (!identifier) return { error: t("auth.errors.invalidCredentials") };
+  const email = identifier.email;
 
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -141,11 +153,14 @@ export async function requestPasswordReset(
   _prevState: AuthActionState,
   formData: FormData
 ): Promise<AuthActionState> {
-  const email = String(formData.get("email") || "")
-    .trim()
-    .toLowerCase();
+  const rawIdentifier = String(formData.get("identifier") ?? formData.get("email") ?? "");
   const { t } = await getServerT();
-  if (!email) return { error: t("auth.errors.emailRequired") };
+  if (!rawIdentifier.trim()) return { error: t("auth.errors.emailRequired") };
+  const identifier = parseIdentifier(rawIdentifier);
+  if (!identifier) return { error: t("auth.errors.identifierInvalid") };
+  // A phone account has no mailbox to send the link to.
+  if (identifier.kind === "phone") return { error: t("auth.errors.phoneReset") };
+  const email = identifier.email;
 
   const supabase = await createClient();
   const { error } = await supabase.auth.resetPasswordForEmail(email, {

@@ -14,8 +14,16 @@ export function LoginForm({ next }: { next: string }) {
       <input type="hidden" name="next" value={next} />
       {state?.error && <div className="g-auth-error">{state.error}</div>}
       <div className="g-field">
-        <label htmlFor="login-email">{t("auth.fields.email")}</label>
-        <input id="login-email" type="email" name="email" required autoComplete="email" inputMode="email" />
+<label htmlFor="login-identifier">{t("auth.fields.identifier")}</label>
+        <input
+          id="login-identifier"
+          type="text"
+          name="identifier"
+          required
+          autoComplete="username"
+          autoCapitalize="none"
+          spellCheck={false}
+        />
       </div>
       <div className="g-field">
         <label htmlFor="login-password">{t("auth.fields.password")}</label>
