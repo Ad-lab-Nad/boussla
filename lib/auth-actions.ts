@@ -40,7 +40,9 @@ export async function signUp(
 
   if (!email || !password) return { error: t("auth.errors.emailPasswordRequired") };
   if (password.length < 8) return { error: t("auth.errors.passwordTooShort") };
-  if (password !== confirmPassword) return { error: t("auth.fields.mismatch") };
+  // The signup form no longer asks for a confirmation (eye toggle instead);
+  // still checked when one is sent.
+  if (confirmPassword && password !== confirmPassword) return { error: t("auth.fields.mismatch") };
 
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signUp({
