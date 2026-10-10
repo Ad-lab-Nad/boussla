@@ -230,7 +230,8 @@
       "emptyReceivables": "لا توجد ديون مسجّلة.",
       "amountPaidLabel": "المدفوع سابقًا (د.ت)",
       "saveReceivableError": "تعذّر حفظ هذا الدين. حاول مجددًا.",
-      "editReceivableTitle": "تعديل الدين"
+      "editReceivableTitle": "تعديل الدين",
+      "totalDueHint": "المجموع = الكريدي اللي ما تخلّصش + الطلبيات المسلَّمة اللي مازالت ما تخلّصتش."
     },
     "commandes": {
       "statusInProgress": "قيد التنفيذ",

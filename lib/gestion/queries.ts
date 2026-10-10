@@ -89,6 +89,14 @@ export async function getClients(businessId: string) {
   });
 }
 
+/** Delivered orders not paid yet — they count in a client's "Total dû". */
+export async function getUnpaidDeliveredOrders(businessId: string) {
+  return prisma.order.findMany({
+    where: { businessId, status: "DELIVERED", paymentStatus: { not: "PAID" } },
+    include: { lines: true },
+  });
+}
+
 export async function getReceivables(businessId: string) {
   return prisma.receivable.findMany({
     where: { client: { businessId } },

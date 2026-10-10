@@ -1,7 +1,8 @@
 import { Plus } from "lucide-react";
 import { getCurrentBusiness } from "@/lib/current-business";
 import { requirePalier2Page } from "@/lib/subscription-access";
-import { getClients, getReceivables } from "@/lib/gestion/queries";
+import { getClients, getReceivables, getUnpaidDeliveredOrders } from "@/lib/gestion/queries";
+import { unpaidOrdersByClient } from "@/lib/gestion/order-client";
 import {
   createClient,
   createReceivable,
@@ -22,10 +23,12 @@ export default async function ClientsPage() {
   await requirePalier2Page();
   const { t } = await getServerT();
   const business = await getCurrentBusiness();
-  const [clients, receivables] = await Promise.all([
+  const [clients, receivables, unpaidOrders] = await Promise.all([
     getClients(business.id),
     getReceivables(business.id),
+    getUnpaidDeliveredOrders(business.id),
   ]);
+  const owedOnOrders = unpaidOrdersByClient(clients, unpaidOrders);
   const now = new Date();
 
   return (
@@ -88,6 +91,7 @@ export default async function ClientsPage() {
 
       <div className="g-card">
         <h2>{t("gestion.clients.clientsTitle")}</h2>
+        <div className="g-hint">{t("gestion.clients.totalDueHint")}</div>
         <div className="g-table-wrap">
           <table className="g-table">
             <thead>
@@ -100,10 +104,9 @@ export default async function ClientsPage() {
             </thead>
             <tbody>
               {clients.map((client) => {
-                const totalDue = client.receivables.reduce(
-                  (sum, r) => sum + describeReceivable(r, now, t).remaining,
-                  0
-                );
+                const totalDue =
+                  client.receivables.reduce((sum, r) => sum + describeReceivable(r, now, t).remaining, 0) +
+                  (owedOnOrders.get(client.id) ?? 0);
                 const hasLate = client.receivables.some((r) => describeReceivable(r, now, t).isLate);
                 return (
                   <tr key={client.id}>

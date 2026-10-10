@@ -230,7 +230,8 @@
       "emptyReceivables": "Aucune créance enregistrée.",
       "amountPaidLabel": "Déjà payé (DT)",
       "saveReceivableError": "Impossible d'enregistrer cette créance. Réessaie.",
-      "editReceivableTitle": "Modifier la créance"
+      "editReceivableTitle": "Modifier la créance",
+      "totalDueHint": "Total dû = créances non réglées + commandes livrées pas encore payées."
     },
     "commandes": {
       "statusInProgress": "En cours",

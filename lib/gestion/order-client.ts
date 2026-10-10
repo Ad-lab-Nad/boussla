@@ -1,7 +1,8 @@
 import { prisma } from "@/lib/prisma";
+import { orderAmount, type OrderLike } from "@/lib/gestion/calculations";
 
 // Last 8 digits: "+216 20 123 456", "20123456" and "20 123 456" all match.
-function phoneKey(phone: string | null | undefined): string {
+export function phoneKey(phone: string | null | undefined): string {
   return (phone ?? "").replace(/\D/g, "").slice(-8);
 }
 
@@ -38,4 +39,31 @@ export async function syncDeliveredOrderClient(
   } else if (phone && !client.phone) {
     await prisma.client.update({ where: { id: client.id }, data: { phone } });
   }
+}
+
+/** What each client still owes on delivered, not-yet-paid orders — matched
+ * to the Clients page the same way syncDeliveredOrderClient does (phone,
+ * then name), so each order counts for at most one client. */
+export function unpaidOrdersByClient(
+  clients: { id: string; name: string; phone: string | null }[],
+  orders: (OrderLike & { clientName: string | null; clientPhone: string | null })[]
+): Map<string, number> {
+  const byPhone = new Map<string, string>();
+  const byName = new Map<string, string>();
+  for (const c of clients) {
+    const key = phoneKey(c.phone);
+    if (key.length >= 8 && !byPhone.has(key)) byPhone.set(key, c.id);
+    const name = c.name.trim().toLowerCase();
+    if (!byName.has(name)) byName.set(name, c.id);
+  }
+  const owed = new Map<string, number>();
+  for (const o of orders) {
+    if (o.status !== "DELIVERED" || o.paymentStatus === "PAID") continue;
+    const key = phoneKey(o.clientPhone);
+    const clientId =
+      (key.length >= 8 ? byPhone.get(key) : undefined) ??
+      (o.clientName ? byName.get(o.clientName.trim().toLowerCase()) : undefined);
+    if (clientId) owed.set(clientId, (owed.get(clientId) ?? 0) + orderAmount(o));
+  }
+  return owed;
 }

@@ -230,7 +230,8 @@
       "emptyReceivables": "No receivables recorded.",
       "amountPaidLabel": "Already paid (DT)",
       "saveReceivableError": "Couldn't save this receivable. Try again.",
-      "editReceivableTitle": "Edit receivable"
+      "editReceivableTitle": "Edit receivable",
+      "totalDueHint": "Total due = unsettled receivables + delivered orders not paid yet."
     },
     "commandes": {
       "statusInProgress": "In progress",
