@@ -38,7 +38,9 @@ type Row = {
   visitors: Set<string>;
   visits: number;
   durationMs: number;
-  cta: number;
+  // Visitors who clicked a sign-up button (people, not clicks — one
+  // hesitant visitor tapping three times is still one).
+  clickers: Set<string>;
   reachedSignup: number;
 };
 
@@ -58,17 +60,33 @@ function group<T extends { visitorId: string; durationMs: number; ctaClicks: num
   const map = new Map<string, Row>();
   for (const v of items) {
     const key = keyOf(v);
-    const row = map.get(key) ?? { key, visitors: new Set(), visits: 0, durationMs: 0, cta: 0, reachedSignup: 0 };
+    const row = map.get(key) ?? { key, visitors: new Set(), visits: 0, durationMs: 0, clickers: new Set(), reachedSignup: 0 };
     row.visitors.add(v.visitorId);
     row.visits += 1;
     row.durationMs += v.durationMs;
-    row.cta += realClicks(v);
+    if (realClicks(v) > 0) row.clickers.add(v.visitorId);
     map.set(key, row);
   }
   for (const row of map.values()) {
     row.reachedSignup = [...row.visitors].filter((id) => signupVisitors.has(id)).length;
   }
   return [...map.values()].sort((a, b) => b.visits - a.visits);
+}
+
+/** Our own verification runs (utm_source / utm_campaign "test…"). */
+function isTestVisit(v: { source: string; utmSource: string | null; utmCampaign: string | null }): boolean {
+  return v.source === "test" || v.utmSource === "test" || (v.utmCampaign ?? "").startsWith("test");
+}
+
+/** A sign-up arrival right after a landing visit that was never on screen
+ * and never clicked is a link checker (Meta's ad review follows every
+ * link) — not a person. Arrivals with no landing visit before them stay. */
+function isBotArrival(
+  arrival: { visitorId: string; createdAt: Date },
+  landingVisits: { visitorId: string; createdAt: Date; durationMs: number; ctaClicks: number }[]
+): boolean {
+  const before = landingVisits.find((v) => v.visitorId === arrival.visitorId && v.createdAt <= arrival.createdAt);
+  return !!before && before.durationMs === 0 && before.ctaClicks === 0;
 }
 
 function dayKey(d: Date): string {
@@ -89,10 +107,18 @@ export default async function VisitesPage({ searchParams }: { searchParams: Prom
     prisma.user.findMany({ where: { createdAt: { gte: since } }, select: { createdAt: true } }),
   ]);
 
+  // Our test visitors are dropped entirely (their sign-up arrivals carry no
+  // UTM, so they're matched by visitor id).
+  const testVisitors = new Set(allVisits.filter(isTestVisit).map((v) => v.visitorId));
+  const realVisits = allVisits.filter((v) => !testVisitors.has(v.visitorId));
+
   // Landing-page views vs. arrivals on the sign-up form (recorded by the
-  // signup page itself — see components/TrackSignupArrival.tsx).
-  const visits = allVisits.filter((v) => v.path !== "/signup");
-  const signupArrivals = allVisits.filter((v) => v.path === "/signup");
+  // signup page itself — see components/TrackSignupArrival.tsx). allVisits
+  // is newest-first, so isBotArrival finds the latest landing visit before.
+  const visits = realVisits.filter((v) => v.path !== "/signup");
+  const rawArrivals = realVisits.filter((v) => v.path === "/signup");
+  const signupArrivals = rawArrivals.filter((a) => !isBotArrival(a, visits));
+  const hiddenBotArrivals = rawArrivals.length - signupArrivals.length;
   const signupVisitors = new Set(signupArrivals.map((v) => v.visitorId));
 
   const uniqueVisitors = new Set(visits.map((v) => v.visitorId)).size;
@@ -189,7 +215,7 @@ export default async function VisitesPage({ searchParams }: { searchParams: Prom
                 <th>Jour</th>
                 <th className="right">Visiteurs</th>
                 <th className="right">Visites</th>
-                <th className="right">Clics essai</th>
+                <th className="right">Ont cliqué essai</th>
                 <th className="right">Arrivés inscription</th>
                 <th className="right">Inscriptions</th>
               </tr>
@@ -206,7 +232,7 @@ export default async function VisitesPage({ searchParams }: { searchParams: Prom
                   </td>
                   <td className="right num">{r.visitors.size}</td>
                   <td className="right num">{r.visits}</td>
-                  <td className="right num">{r.cta}</td>
+                  <td className="right num">{r.clickers.size}</td>
                   <td className="right num">{arrivalsByDay.get(r.key)?.size ?? 0}</td>
                   <td className="right num">{signupsByDay.get(r.key) ?? 0}</td>
                 </tr>
@@ -220,9 +246,16 @@ export default async function VisitesPage({ searchParams }: { searchParams: Prom
       <div className="g-hint" style={{ marginTop: 4 }}>
         Mesure anonyme de la page d&apos;accueil (pas de nom, d&apos;email ni d&apos;adresse IP). Les robots
         sont ignorés, et tes propres visites en « Aperçu » ne sont pas comptées. Le temps compté est celui où
-        la page est réellement à l&apos;écran. « Clics essai » ne compte que les clics de visiteurs qui ont
-        vraiment vu la page (les robots vérificateurs de liens cliquent sans l&apos;afficher). « Arrivés
+        la page est réellement à l&apos;écran. « Ont cliqué essai » compte les personnes (pas les clics) qui ont
+        cliqué sur un bouton d&apos;essai après avoir vraiment vu la page (les robots vérificateurs de liens cliquent sans l&apos;afficher). « Arrivés
         inscription » = visiteurs qui ont réellement ouvert la page d&apos;inscription.
+        {(testVisitors.size > 0 || hiddenBotArrivals > 0) && (
+          <>
+            {" "}
+            Masqués sur cette période : {testVisitors.size} visiteur(s) de test et {hiddenBotArrivals} arrivée(s)
+            de robot sur l&apos;inscription (page jamais affichée juste avant).
+          </>
+        )}
       </div>
     </>
   );
@@ -239,7 +272,7 @@ function SourceTable({ rows, empty }: { rows: Row[]; empty: string }) {
               <th className="right">Visiteurs</th>
               <th className="right">Visites</th>
               <th className="right">Temps moyen</th>
-              <th className="right">Clics essai</th>
+              <th className="right">Ont cliqué essai</th>
               <th className="right">Arrivés inscription</th>
             </tr>
           </thead>
@@ -250,7 +283,7 @@ function SourceTable({ rows, empty }: { rows: Row[]; empty: string }) {
                 <td className="right num">{r.visitors.size}</td>
                 <td className="right num">{r.visits}</td>
                 <td className="right num">{fmtDuration(r.durationMs / r.visits)}</td>
-                <td className="right num">{r.cta}</td>
+                <td className="right num">{r.clickers.size}</td>
                 <td className="right num">{r.reachedSignup}</td>
               </tr>
             ))}
