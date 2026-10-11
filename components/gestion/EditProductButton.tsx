@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Pencil, X } from "lucide-react";
 import { sellUnitOptions } from "@/lib/gestion/product-units";
 import { useLocale } from "@/components/i18n/LocaleProvider";
+import { PriceFields } from "@/components/gestion/PriceFields";
 
 type Product = { id: string; name: string; sellPrice: number; unitCost: number; sellUnit: string };
 
@@ -76,28 +77,7 @@ export function EditProductButton({
                     <label>{t("gestion.clients.nameLabel")}</label>
                     <input type="text" name="name" defaultValue={product.name} required />
                   </div>
-                  <div className="g-field">
-                    <label>{t("gestion.produits.sellPriceLabel")}</label>
-                    <input
-                      type="number"
-                      name="sellPrice"
-                      min="0"
-                      step="0.01"
-                      defaultValue={product.sellPrice}
-                      required
-                    />
-                  </div>
-                  <div className="g-field">
-                    <label>{t("gestion.editCommon.unitCostLabel")}</label>
-                    <input
-                      type="number"
-                      name="unitCost"
-                      min="0"
-                      step="0.01"
-                      defaultValue={product.unitCost}
-                      required
-                    />
-                  </div>
+                  <PriceFields sellPrice={product.sellPrice} unitCost={product.unitCost} />
                   {!isServices && (
                     <div className="g-field">
                       <label>{t("gestion.produits.sellUnitLabel")}</label>

@@ -34,6 +34,13 @@ function dateOf(formData: FormData, key: string) {
 
 // ---------- PRODUITS ----------
 
+/** Product prices are stored in DT; the form may send them in millimes
+ * (components/gestion/PriceFields.tsx). */
+function priceOf(formData: FormData, key: string): number {
+  const value = num(formData, key);
+  return str(formData, "priceUnit") === "MILLIMES" ? value / 1000 : value;
+}
+
 function sellUnitOf(formData: FormData): SellUnit {
   const raw = str(formData, "sellUnit");
   return (SELL_UNIT_VALUES.includes(raw) ? raw : "PIECE") as SellUnit;
@@ -48,8 +55,8 @@ export async function createProduct(formData: FormData) {
     data: {
       businessId: business.id,
       name,
-      sellPrice: num(formData, "sellPrice"),
-      unitCost: num(formData, "unitCost"),
+      sellPrice: priceOf(formData, "sellPrice"),
+      unitCost: priceOf(formData, "unitCost"),
       sellUnit: sellUnitOf(formData),
     },
   });
@@ -78,8 +85,8 @@ export async function updateProduct(formData: FormData) {
     where: { id, businessId: business.id },
     data: {
       name,
-      sellPrice: num(formData, "sellPrice"),
-      unitCost: num(formData, "unitCost"),
+      sellPrice: priceOf(formData, "sellPrice"),
+      unitCost: priceOf(formData, "unitCost"),
       sellUnit: sellUnitOf(formData),
     },
   });

@@ -9,6 +9,7 @@ import { getServerT } from "@/lib/i18n/server";
 import { ConfirmSubmitButton } from "@/components/gestion/ConfirmSubmitButton";
 import { ImportProductsButton } from "@/components/gestion/ImportProductsButton";
 import { EditProductButton } from "@/components/gestion/EditProductButton";
+import { PriceFields } from "@/components/gestion/PriceFields";
 
 export default async function ProduitsPage() {
   await requirePalier2Page();
@@ -39,14 +40,7 @@ export default async function ProduitsPage() {
               required
             />
           </div>
-          <div className="g-field">
-            <label>{t("gestion.produits.sellPriceLabel")}</label>
-            <input type="number" name="sellPrice" min="0" step="0.01" required />
-          </div>
-          <div className="g-field">
-            <label>{t("gestion.editCommon.unitCostLabel")}</label>
-            <input type="number" name="unitCost" min="0" step="0.01" required />
-          </div>
+          <PriceFields />
           {!isServices && (
             <div className="g-field">
               <label>{t("gestion.produits.sellUnitLabel")}</label>

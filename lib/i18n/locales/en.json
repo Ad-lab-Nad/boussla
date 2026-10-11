@@ -361,7 +361,16 @@
       "saveProductError": "Couldn't save this product. Try again.",
       "editServiceTitle": "Edit service",
       "editProductTitle": "Edit product",
-      "editSnapshotHint": "Already-recorded orders keep their original price and cost — only future orders will use these new values."
+      "editSnapshotHint": "Already-recorded orders keep their original price and cost — only future orders will use these new values.",
+      "priceUnitLabel": "Prices in",
+      "priceUnitDinar": "Dinars",
+      "priceUnitMillime": "Millimes",
+      "sellPriceIn": "Sell price ({unit})",
+      "unitCostIn": "Unit cost ({unit})",
+      "unitDt": "DT",
+      "unitMillime": "millimes",
+      "priceExampleDinar": "E.g. 0.700 for a product at 700 millimes",
+      "priceExampleMillime": "E.g. 700 — saved automatically as 0.700 DT"
     },
     "produitsFinis": {
       "newBatchTitle": "Log a production batch",

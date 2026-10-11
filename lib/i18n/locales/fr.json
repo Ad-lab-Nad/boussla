@@ -361,7 +361,16 @@
       "saveProductError": "Impossible d'enregistrer ce produit. Réessaie.",
       "editServiceTitle": "Modifier la prestation",
       "editProductTitle": "Modifier le produit",
-      "editSnapshotHint": "Les commandes déjà enregistrées gardent leur prix et coût d'origine — seules les prochaines commandes utiliseront ces nouvelles valeurs."
+      "editSnapshotHint": "Les commandes déjà enregistrées gardent leur prix et coût d'origine — seules les prochaines commandes utiliseront ces nouvelles valeurs.",
+      "priceUnitLabel": "Prix en",
+      "priceUnitDinar": "Dinars",
+      "priceUnitMillime": "Millimes",
+      "sellPriceIn": "Prix de vente ({unit})",
+      "unitCostIn": "Coût unitaire ({unit})",
+      "unitDt": "DT",
+      "unitMillime": "millimes",
+      "priceExampleDinar": "Ex. : 0,700 pour un produit à 700 millimes",
+      "priceExampleMillime": "Ex. : 700 — enregistré tout seul comme 0,700 DT"
     },
     "produitsFinis": {
       "newBatchTitle": "Enregistrer un lot produit",

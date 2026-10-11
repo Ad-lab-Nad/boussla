@@ -361,7 +361,16 @@
       "saveProductError": "تعذّر حفظ هذا المنتج. حاول مجددًا.",
       "editServiceTitle": "تعديل الخدمة",
       "editProductTitle": "تعديل المنتج",
-      "editSnapshotHint": "الطلبات المسجّلة مسبقًا تحتفظ بسعرها وتكلفتها الأصليين — الطلبات القادمة فقط ستستخدم هذه القيم الجديدة."
+      "editSnapshotHint": "الطلبات المسجّلة مسبقًا تحتفظ بسعرها وتكلفتها الأصليين — الطلبات القادمة فقط ستستخدم هذه القيم الجديدة.",
+      "priceUnitLabel": "السوم بـ",
+      "priceUnitDinar": "الدينار",
+      "priceUnitMillime": "المليم",
+      "sellPriceIn": "سعر البيع ({unit})",
+      "unitCostIn": "تكلفة الوحدة ({unit})",
+      "unitDt": "د.ت",
+      "unitMillime": "مليم",
+      "priceExampleDinar": "مثلًا: 0,700 لمنتج بـ 700 مليم",
+      "priceExampleMillime": "مثلًا: 700 — يتسجّل وحدو 0,700 د.ت"
     },
     "produitsFinis": {
       "newBatchTitle": "تسجيل دفعة إنتاج",

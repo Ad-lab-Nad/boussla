@@ -1480,3 +1480,37 @@ select.g-status-select {
 @media (prefers-reduced-motion: reduce) {
   .g-bubble { animation: none; }
 }
+
+/* ================== PRICE UNIT (components/gestion/PriceFields.tsx) ================== */
+
+.g-field--full {
+  grid-column: 1 / -1;
+}
+.g-field .g-field-hint {
+  font-size: 0.74rem;
+  color: var(--g-muted);
+}
+.g-seg {
+  display: inline-flex;
+  width: fit-content;
+  padding: 3px;
+  border-radius: 10px;
+  border: 1px solid var(--g-border);
+  background: var(--g-page);
+}
+.g-seg button {
+  border: none;
+  background: none;
+  padding: 7px 16px;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--g-muted);
+  cursor: pointer;
+}
+.g-seg button.is-on {
+  background: var(--g-surface);
+  color: var(--g-blue);
+  box-shadow: 0 1px 3px rgba(15, 20, 40, 0.15);
+}
