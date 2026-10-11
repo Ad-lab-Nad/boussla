@@ -1407,3 +1407,76 @@ select.g-status-select {
     justify-content: center;
   }
 }
+
+/* ================== WELCOME BUBBLE (components/gestion/WelcomeBubble.tsx) ================== */
+
+.g-bubble {
+  position: fixed;
+  inset-inline-end: 16px;
+  bottom: 16px;
+  z-index: 40;
+  width: min(320px, calc(100vw - 32px));
+  padding: 16px 16px 14px;
+  border-radius: 16px;
+  background: var(--g-surface);
+  border: 1px solid var(--g-border);
+  box-shadow: 0 18px 40px -16px rgba(15, 20, 40, 0.35);
+  animation: g-bubble-in 0.25s ease-out;
+}
+.g-bubble__close {
+  position: absolute;
+  top: 8px;
+  inset-inline-end: 8px;
+  border: none;
+  background: none;
+  color: var(--g-muted);
+  cursor: pointer;
+  padding: 4px;
+}
+.g-bubble__title {
+  margin: 0 24px 4px 0;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+.g-bubble__text {
+  margin: 0 0 12px;
+  font-size: 0.86rem;
+  color: var(--g-muted);
+  line-height: 1.45;
+}
+.g-bubble__actions {
+  display: grid;
+  gap: 6px;
+}
+.g-bubble__yes {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #25d366;
+  color: #08331a;
+  font-weight: 700;
+  font-size: 0.88rem;
+  text-decoration: none;
+}
+.g-bubble__no {
+  border: none;
+  background: none;
+  color: var(--g-muted);
+  font-size: 0.82rem;
+  cursor: pointer;
+  padding: 6px;
+  font-family: inherit;
+}
+[dir="rtl"] .g-bubble__title {
+  margin: 0 0 4px 24px;
+}
+@keyframes g-bubble-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .g-bubble { animation: none; }
+}

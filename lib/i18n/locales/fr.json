@@ -449,6 +449,12 @@
       "progress": "{done} sur 3",
       "help": "Besoin d'aide ? Écris-moi sur WhatsApp",
       "helpMessage": "Bonjour, je viens de créer mon compte Flux et j'aimerais de l'aide pour démarrer."
+    },
+    "welcomeBubble": {
+      "title": "👋 Bonjour ! Moi c'est Nada, de Flux.",
+      "text": "Tu veux que je t'aide à démarrer ? Je te réponds sur WhatsApp.",
+      "yes": "Oui, écrire sur WhatsApp",
+      "no": "Non merci"
     }
   },
   "auth": {
