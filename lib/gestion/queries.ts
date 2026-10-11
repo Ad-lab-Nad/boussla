@@ -288,6 +288,17 @@ export type Palier1HistoryEntry = {
  * 3 months of history behind it, and a 6-month revenue/profit trend (for
  * the blurred Palier-2 upsell preview — real data, not a mockup).
  */
+/** Which of the first three steps (a product, a sale, an expense) the
+ * business has done — drives the dashboard's "Commence ici" card. */
+export async function getSetupProgress(businessId: string) {
+  const [product, order, expense] = await Promise.all([
+    prisma.product.findFirst({ where: { businessId }, select: { id: true } }),
+    prisma.order.findFirst({ where: { businessId }, select: { id: true } }),
+    prisma.expense.findFirst({ where: { businessId }, select: { id: true } }),
+  ]);
+  return { hasProduct: !!product, hasOrder: !!order, hasExpense: !!expense };
+}
+
 export async function getPalier1Overview(businessId: string) {
   const currentMonth = monthKeyFromDateStr(todayStr());
   const monthKeys = [0, -1, -2, -3].map((i) => shiftMonthKey(currentMonth, i));

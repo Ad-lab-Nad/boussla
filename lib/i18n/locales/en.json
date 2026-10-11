@@ -434,6 +434,21 @@
       "title": "Your access has ended",
       "body": "Your free trial or subscription has run out. Your data is safe: pick a tier, and access comes back as soon as your payment is received.",
       "cta": "Choose a tier"
+    },
+    "gettingStarted": {
+      "title": "Welcome! 3 steps to see your real profit",
+      "subtitle": "It takes 5 minutes. Each step ticks itself off once done.",
+      "step1": "Add your first product: its name, selling price and cost",
+      "step1Services": "Add your first service: its name and price",
+      "step2": "Record your first sale (order)",
+      "step3": "Record an expense: ads, delivery, rent…",
+      "step1Cta": "Add a product",
+      "step1CtaServices": "Add a service",
+      "step2Cta": "Add a sale",
+      "step3Cta": "Add an expense",
+      "progress": "{done} of 3",
+      "help": "Need help? Message me on WhatsApp",
+      "helpMessage": "Hello, I just created my Flux account and I'd like help getting started."
     }
   },
   "auth": {

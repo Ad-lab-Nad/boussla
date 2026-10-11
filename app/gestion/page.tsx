@@ -19,6 +19,7 @@ import {
   getDashboardData,
   getMonthlyGoal,
   getPalier1Overview,
+  getSetupProgress,
 } from "@/lib/gestion/queries";
 import { setMonthlyGoal } from "@/lib/gestion/actions";
 import { Palier1Dashboard } from "@/components/gestion/Palier1Dashboard";
@@ -36,6 +37,7 @@ import { fmtQty } from "@/lib/gestion/product-units";
 import { AutoSubmitSelect } from "@/components/gestion/AutoSubmitSelect";
 import { KpiCard } from "@/components/gestion/KpiCard";
 import { MonthlyGoalCard } from "@/components/gestion/MonthlyGoalCard";
+import { GettingStartedCard } from "@/components/gestion/GettingStartedCard";
 import { RevenueTrendChart } from "@/components/gestion/RevenueTrendChart";
 import { TopProductsChart } from "@/components/gestion/TopProductsChart";
 
@@ -61,11 +63,12 @@ export default async function DashboardPage({
   const month =
     requestedMonth && monthOptions.includes(requestedMonth) ? requestedMonth : currentMonth;
 
-  const [{ totals, previousTotals, trend, stockAlerts, productAlerts }, monthlyGoal, avgSellPrice] =
+  const [{ totals, previousTotals, trend, stockAlerts, productAlerts }, monthlyGoal, avgSellPrice, setup] =
     await Promise.all([
       getDashboardData(business.id, month),
       getMonthlyGoal(business.id, month),
       getAverageSellPrice(business.id),
+      getSetupProgress(business.id),
     ]);
 
   const isCurrentMonth = month === currentMonth;
@@ -88,6 +91,8 @@ export default async function DashboardPage({
           />
         </div>
       </form>
+
+      <GettingStartedCard progress={setup} isServices={user.activityType === "SERVICES"} t={t} />
 
       <MonthlyGoalCard
         month={month}

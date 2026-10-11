@@ -434,6 +434,21 @@
       "title": "Ton accès est terminé",
       "body": "Ton essai gratuit ou ton abonnement est arrivé à échéance. Tes données sont bien conservées : choisis un palier, et ton accès revient dès réception de ton paiement.",
       "cta": "Choisir un palier"
+    },
+    "gettingStarted": {
+      "title": "Bienvenue ! 3 étapes pour voir ton vrai bénéfice",
+      "subtitle": "Ça prend 5 minutes. Chaque étape se coche toute seule une fois faite.",
+      "step1": "Ajoute ton premier produit : son nom, son prix de vente et son coût",
+      "step1Services": "Ajoute ta première prestation : son nom et son prix",
+      "step2": "Enregistre ta première vente (commande)",
+      "step3": "Enregistre une dépense : pub, livraison, loyer…",
+      "step1Cta": "Ajouter un produit",
+      "step1CtaServices": "Ajouter une prestation",
+      "step2Cta": "Ajouter une vente",
+      "step3Cta": "Ajouter une dépense",
+      "progress": "{done} sur 3",
+      "help": "Besoin d'aide ? Écris-moi sur WhatsApp",
+      "helpMessage": "Bonjour, je viens de créer mon compte Flux et j'aimerais de l'aide pour démarrer."
     }
   },
   "auth": {

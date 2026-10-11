@@ -1322,3 +1322,88 @@ select.g-status-select {
   color: inherit;
   text-decoration: underline;
 }
+
+/* ================== "COMMENCE ICI" (components/gestion/GettingStartedCard.tsx) ================== */
+
+.g-start {
+  border: 1.5px solid color-mix(in srgb, var(--g-blue) 35%, var(--g-border));
+}
+.g-start__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+.g-start__head h2 {
+  font-size: 1.05rem;
+}
+.g-start__count {
+  flex: none;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--g-blue);
+}
+.g-start__steps {
+  list-style: none;
+  margin: 6px 0 14px;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+.g-start__steps li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--g-border);
+  border-radius: 10px;
+  background: var(--g-surface);
+}
+.g-start__dot {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--g-blue);
+  border: 1.5px solid var(--g-blue);
+}
+.g-start__label {
+  flex: 1;
+  font-size: 0.88rem;
+  line-height: 1.4;
+}
+.g-start__steps li .g-btn {
+  flex: none;
+  text-decoration: none;
+}
+.g-start__steps li.is-done .g-start__dot {
+  background: var(--g-good);
+  border-color: var(--g-good);
+  color: #fff;
+}
+.g-start__steps li.is-done .g-start__label {
+  color: var(--g-muted);
+  text-decoration: line-through;
+}
+.g-start__help {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--g-success-text);
+  text-decoration: none;
+}
+@media (max-width: 560px) {
+  .g-start__steps li {
+    flex-wrap: wrap;
+  }
+  .g-start__steps li .g-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
