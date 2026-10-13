@@ -284,7 +284,12 @@
       "markPaidButton": "Marquer payée",
       "unpaidDeliveredEmpty": "Rien en attente d'encaissement.",
       "clientPhoneOptionalLabel": "Téléphone du client (optionnel)",
-      "deliveredClientHint": "Une fois la commande livrée, le client est ajouté tout seul à la page Clients."
+      "deliveredClientHint": "Une fois la commande livrée, le client est ajouté tout seul à la page Clients.",
+      "advanceToggle": "Le client a payé une avance",
+      "advanceLabel": "Montant de l'avance (DT)",
+      "remainingLabel": "Reste à payer :",
+      "advanceCoversAll": "L'avance couvre toute la commande : elle sera marquée « Payé ».",
+      "advanceBadge": "Avance {advance} · reste {rest}"
     },
     "depenses": {
       "newExpenseTitle": "Nouvelle dépense (hors stock)",
@@ -369,8 +374,11 @@
       "unitCostIn": "Coût unitaire ({unit})",
       "unitDt": "DT",
       "unitMillime": "millimes",
-      "priceExampleDinar": "Ex. : 0,700 pour un produit à 700 millimes",
-      "priceExampleMillime": "Ex. : 700 — enregistré tout seul comme 0,700 DT"
+      "priceExampleDinar": "Ex. : 6,500 pour un pot de confiture à 6 dinars 500",
+      "priceExampleMillime": "Ex. : 6500 pour un pot de confiture à 6 dinars 500 — enregistré comme 6,500 DT",
+      "millimesWarning": "Tu voulais dire {dt} DT ({typed} millimes) ? Par exemple, un pot de confiture à 6 dinars 500 s'écrit 6,500 en dinars, ou 6500 en millimes.",
+      "millimesYes": "Oui, c'est en millimes",
+      "millimesNo": "Non, c'est bien {typed} DT"
     },
     "produitsFinis": {
       "newBatchTitle": "Enregistrer un lot produit",

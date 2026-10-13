@@ -502,6 +502,11 @@ model Order {
   paymentMethod PaymentMethod @default(CASH)
   checkDueDate  DateTime?
 
+  // Advance (avance / tasbi9a) the client paid when ordering — tailoring,
+  // cakes to order… Counted as cash on the order's date while the rest is
+  // unpaid; "reste à payer" = total − advance. 0 = no advance.
+  advanceAmount Float @default(0)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

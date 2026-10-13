@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { orderAmount, type OrderLike } from "@/lib/gestion/calculations";
+import { orderAdvance, orderAmount, type OrderLike } from "@/lib/gestion/calculations";
 
 // Last 8 digits: "+216 20 123 456", "20123456" and "20 123 456" all match.
 export function phoneKey(phone: string | null | undefined): string {
@@ -63,7 +63,7 @@ export function unpaidOrdersByClient(
     const clientId =
       (key.length >= 8 ? byPhone.get(key) : undefined) ??
       (o.clientName ? byName.get(o.clientName.trim().toLowerCase()) : undefined);
-    if (clientId) owed.set(clientId, (owed.get(clientId) ?? 0) + orderAmount(o));
+    if (clientId) owed.set(clientId, (owed.get(clientId) ?? 0) + orderAmount(o) - orderAdvance(o));
   }
   return owed;
 }

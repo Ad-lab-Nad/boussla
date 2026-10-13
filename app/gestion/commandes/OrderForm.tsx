@@ -5,6 +5,7 @@ import { Plus, X } from "lucide-react";
 import { fmt, todayStr } from "@/lib/gestion/format";
 import { fmtPrice } from "@/lib/gestion/product-units";
 import { useLocale } from "@/components/i18n/LocaleProvider";
+import { AdvanceField } from "@/components/gestion/AdvanceField";
 
 type Product = { id: string; name: string; sellPrice: number; unitCost: number; sellUnit: string };
 type Line = { id: string; productId: string; quantity: number };
@@ -31,6 +32,8 @@ export function OrderForm({
     products.length > 0 ? [newLine(products)] : []
   );
   const [paymentMethod, setPaymentMethod] = useState("CASH");
+  // Bumped after each saved order so the advance box starts empty again.
+  const [formKey, setFormKey] = useState(0);
 
   const total = lines.reduce((sum, l) => {
     const product = products.find((p) => p.id === l.productId);
@@ -52,6 +55,7 @@ export function OrderForm({
         await createOrderAction(formData);
         setLines([newLine(products)]);
         setPaymentMethod("CASH");
+        setFormKey((k) => k + 1);
       }}
     >
       <div className="g-field-grid">
@@ -165,6 +169,8 @@ export function OrderForm({
           <Plus size={13} /> {isServices ? t("gestion.commandes.addServiceLine") : t("gestion.commandes.addProductLine")}
         </button>
       </div>
+
+      <AdvanceField key={formKey} total={total} />
 
       <div
         style={{

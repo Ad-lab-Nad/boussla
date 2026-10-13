@@ -284,7 +284,12 @@
       "markPaidButton": "Mark paid",
       "unpaidDeliveredEmpty": "Nothing waiting to be collected.",
       "clientPhoneOptionalLabel": "Client phone (optional)",
-      "deliveredClientHint": "Once the order is delivered, the client is added to the Clients page automatically."
+      "deliveredClientHint": "Once the order is delivered, the client is added to the Clients page automatically.",
+      "advanceToggle": "The client paid an advance",
+      "advanceLabel": "Advance amount (DT)",
+      "remainingLabel": "Left to pay:",
+      "advanceCoversAll": "The advance covers the whole order: it will be marked “Paid”.",
+      "advanceBadge": "Advance {advance} · {rest} left"
     },
     "depenses": {
       "newExpenseTitle": "New expense (non-stock)",
@@ -369,8 +374,11 @@
       "unitCostIn": "Unit cost ({unit})",
       "unitDt": "DT",
       "unitMillime": "millimes",
-      "priceExampleDinar": "E.g. 0.700 for a product at 700 millimes",
-      "priceExampleMillime": "E.g. 700 — saved automatically as 0.700 DT"
+      "priceExampleDinar": "E.g. 6.500 for a jar of jam at 6 dinars 500",
+      "priceExampleMillime": "E.g. 6500 for a jar of jam at 6 dinars 500 — saved as 6.500 DT",
+      "millimesWarning": "Did you mean {dt} DT ({typed} millimes)? For example, a jar of jam at 6 dinars 500 is 6.500 in dinars, or 6500 in millimes.",
+      "millimesYes": "Yes, it's in millimes",
+      "millimesNo": "No, it really is {typed} DT"
     },
     "produitsFinis": {
       "newBatchTitle": "Log a production batch",

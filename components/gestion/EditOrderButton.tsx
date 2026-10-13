@@ -6,6 +6,7 @@ import { Pencil, Plus, X } from "lucide-react";
 import { fmt } from "@/lib/gestion/format";
 import { fmtPrice } from "@/lib/gestion/product-units";
 import { useLocale } from "@/components/i18n/LocaleProvider";
+import { AdvanceField } from "@/components/gestion/AdvanceField";
 
 type Product = { id: string; name: string; sellPrice: number; unitCost: number; sellUnit: string };
 type OrderLine = { productId: string | null; quantity: number };
@@ -18,6 +19,7 @@ type Order = {
   paymentStatus: string;
   paymentMethod: string;
   checkDueDate: Date | null;
+  advanceAmount: number;
   lines: OrderLine[];
 };
 type Line = { id: string; productId: string; quantity: number };
@@ -242,6 +244,8 @@ export function EditOrderButton({
                   {isServices ? t("gestion.commandes.totalSale") : t("gestion.commandes.totalOrder")} :{" "}
                   <strong className="num">{fmt(total)}</strong>
                 </div>
+
+                <AdvanceField total={total} defaultAdvance={order.advanceAmount} />
 
                 <div className="g-hint" style={{ marginTop: 12, marginBottom: 0 }}>
                   {t("gestion.commandes.editSnapshotHint")}

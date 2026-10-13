@@ -222,6 +222,7 @@ function toOrderLike(o: Awaited<ReturnType<typeof getOrders>>[number]): OrderLik
     paymentStatus: o.paymentStatus,
     paymentMethod: o.paymentMethod,
     checkDueDate: o.checkDueDate,
+    advanceAmount: o.advanceAmount,
     lines: o.lines,
   };
 }

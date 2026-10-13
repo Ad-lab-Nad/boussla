@@ -4,7 +4,7 @@ import { getCurrentBusiness } from "@/lib/current-business";
 import { getOrCreateSubscription } from "@/lib/subscription";
 import { canAccessPalier2 } from "@/lib/subscription-access";
 import { getOrders, getPalier1Overview, getProducts, type Palier1HistoryEntry } from "@/lib/gestion/queries";
-import { orderAmount } from "@/lib/gestion/calculations";
+import { orderAdvance, orderAmount } from "@/lib/gestion/calculations";
 import {
   createOrder,
   createQuickSale,
@@ -173,7 +173,17 @@ export default async function CommandesPage({
                         </div>
                       )}
                     </td>
-                    <td className="right num">{fmt(orderAmount(order))}</td>
+                    <td className="right num">
+                      {fmt(orderAmount(order))}
+                      {order.paymentStatus !== "PAID" && orderAdvance(order) > 0 && (
+                        <div className="g-hint" style={{ margin: 0, whiteSpace: "nowrap" }}>
+                          {t("gestion.commandes.advanceBadge", {
+                            advance: fmt(orderAdvance(order)),
+                            rest: fmt(orderAmount(order) - orderAdvance(order)),
+                          })}
+                        </div>
+                      )}
+                    </td>
                     <td className="right num">{daysSince}</td>
                     <td>
                       <span className={`g-badge ${PAYMENT_BADGE_CLASS[order.paymentStatus]}`}>
@@ -250,7 +260,17 @@ export default async function CommandesPage({
                       )}
                     </td>
                     <td>{label}</td>
-                    <td className="right num">{fmt(orderAmount(order))}</td>
+                    <td className="right num">
+                      {fmt(orderAmount(order))}
+                      {order.paymentStatus !== "PAID" && orderAdvance(order) > 0 && (
+                        <div className="g-hint" style={{ margin: 0, whiteSpace: "nowrap" }}>
+                          {t("gestion.commandes.advanceBadge", {
+                            advance: fmt(orderAdvance(order)),
+                            rest: fmt(orderAmount(order) - orderAdvance(order)),
+                          })}
+                        </div>
+                      )}
+                    </td>
                     <td>
                       <form action={updateOrderStatus}>
                         <input type="hidden" name="id" value={order.id} />

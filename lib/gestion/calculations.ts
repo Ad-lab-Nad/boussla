@@ -62,8 +62,14 @@ export type OrderLike = {
   paymentStatus: "PAID" | "PENDING" | "UNPAID";
   paymentMethod: "CASH" | "CHECK" | "TRANSFER" | "OTHER";
   checkDueDate: Date | null;
+  advanceAmount?: number;
   lines: OrderLineLike[];
 };
+
+/** The advance actually counted: never more than the order is worth. */
+export function orderAdvance(order: OrderLike): number {
+  return Math.min(Math.max(order.advanceAmount ?? 0, 0), orderAmount(order));
+}
 
 export function orderAmount(order: OrderLike): number {
   return order.lines.reduce(
@@ -130,6 +136,12 @@ export function computeDashboardTotals(params: {
   const delivered = ordersInMonth.filter((o) => o.status === "DELIVERED");
   const inProgress = ordersInMonth.filter((o) => o.status === "IN_PROGRESS");
   const returned = ordersInMonth.filter((o) => o.status === "RETURNED");
+  // In Tunisia an advance is usually kept when the client cancels: that
+  // money is earned (revenue and profit, no product cost since nothing was
+  // handed over) and stays in the till.
+  const keptAdvances = returned
+    .filter((o) => o.paymentStatus !== "PAID")
+    .reduce((sum, o) => sum + orderAdvance(o), 0);
 
   let revenue = 0;
   let cost = 0;
@@ -145,7 +157,7 @@ export function computeDashboardTotals(params: {
   for (const order of delivered) {
     const amount = orderAmount(order);
     const isPaid = order.paymentStatus === "PAID";
-    if (!isPaid) unpaidAmount += amount;
+    if (!isPaid) unpaidAmount += amount - orderAdvance(order);
     for (const line of order.lines) {
       const lineAmount = line.sellPriceSnapshot * line.quantity;
       const lineCost = line.unitCostSnapshot * line.quantity;
@@ -171,11 +183,19 @@ export function computeDashboardTotals(params: {
 
   // Same principle for cash-on-hand: an unpaid COD delivery isn't cash yet
   // either, regardless of what orderCashDate says about its payment method.
-  const cashRevenue = cashOrdersInMonth
-    .filter((o) => o.status === "DELIVERED" && o.paymentStatus === "PAID")
-    .reduce((sum, o) => sum + orderAmount(o), 0);
+  // An advance is cash in hand on the order's date even before the order is
+  // delivered or fully paid — and stays there if the order is cancelled;
+  // once fully paid, the whole amount counts above.
+  const cashRevenue =
+    cashOrdersInMonth
+      .filter((o) => o.status === "DELIVERED" && o.paymentStatus === "PAID")
+      .reduce((sum, o) => sum + orderAmount(o), 0) +
+    cashOrdersInMonth
+      .filter((o) => o.paymentStatus !== "PAID")
+      .reduce((sum, o) => sum + orderAdvance(o), 0);
 
-  const netProfit = paidRevenue - paidCost - expensesAccrualInMonth;
+  revenue += keptAdvances;
+  const netProfit = paidRevenue + keptAdvances - paidCost - expensesAccrualInMonth;
   const cashFlow = cashRevenue - stockPurchasesCostInMonth - expensesCashInMonth;
 
   return {

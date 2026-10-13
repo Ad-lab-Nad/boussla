@@ -133,6 +133,12 @@ export async function bulkCreateProducts(
 
 type OrderLineInput = { productId: string; quantity: number };
 
+/** The "Avance" box: only read when ticked, never more than the order total. */
+function advanceOf(formData: FormData, total: number): number {
+  if (formData.get("hasAdvance") !== "on") return 0;
+  return Math.min(Math.max(num(formData, "advanceAmount"), 0), total);
+}
+
 export async function createOrder(formData: FormData) {
   await assertPalier2Access();
   const business = await getCurrentBusiness();
@@ -140,7 +146,7 @@ export async function createOrder(formData: FormData) {
   const clientName = str(formData, "clientName") || null;
   const clientPhone = str(formData, "clientPhone") || null;
   const status = str(formData, "status") || "IN_PROGRESS";
-  const paymentStatus = str(formData, "paymentStatus") || "PENDING";
+  const requestedPaymentStatus = str(formData, "paymentStatus") || "PENDING";
   const paymentMethodRaw = str(formData, "paymentMethod");
   const paymentMethod = ["CASH", "CHECK", "TRANSFER", "OTHER"].includes(paymentMethodRaw)
     ? paymentMethodRaw
@@ -163,6 +169,10 @@ export async function createOrder(formData: FormData) {
     where: { businessId: business.id, id: { in: validLines.map((l) => l.productId) } },
   });
   const byId = new Map(products.map((p) => [p.id, p]));
+  const total = validLines.reduce((sum, l) => sum + (byId.get(l.productId)?.sellPrice ?? 0) * l.quantity, 0);
+  const advanceAmount = advanceOf(formData, total);
+  // An advance covering the whole order means it's paid.
+  const paymentStatus = advanceAmount > 0 && advanceAmount >= total ? "PAID" : requestedPaymentStatus;
 
   await prisma.order.create({
     data: {
@@ -173,6 +183,7 @@ export async function createOrder(formData: FormData) {
       status: status as "IN_PROGRESS" | "DELIVERED" | "RETURNED",
       paymentStatus: paymentStatus as "PAID" | "PENDING" | "UNPAID",
       paymentDate: paymentStatus === "PAID" ? new Date() : null,
+      advanceAmount,
       paymentMethod: paymentMethod as "CASH" | "CHECK" | "TRANSFER" | "OTHER",
       checkDueDate,
       lines: {
@@ -250,7 +261,7 @@ export async function updateOrder(formData: FormData) {
   const clientName = str(formData, "clientName") || null;
   const clientPhone = str(formData, "clientPhone") || null;
   const status = str(formData, "status") || order.status;
-  const paymentStatus = str(formData, "paymentStatus") || order.paymentStatus;
+  const requestedPaymentStatus = str(formData, "paymentStatus") || order.paymentStatus;
   const paymentMethodRaw = str(formData, "paymentMethod");
   const paymentMethod = ["CASH", "CHECK", "TRANSFER", "OTHER"].includes(paymentMethodRaw)
     ? paymentMethodRaw
@@ -273,6 +284,9 @@ export async function updateOrder(formData: FormData) {
     where: { businessId: business.id, id: { in: validLines.map((l) => l.productId) } },
   });
   const byId = new Map(products.map((p) => [p.id, p]));
+  const total = validLines.reduce((sum, l) => sum + (byId.get(l.productId)?.sellPrice ?? 0) * l.quantity, 0);
+  const advanceAmount = advanceOf(formData, total);
+  const paymentStatus = advanceAmount > 0 && advanceAmount >= total ? "PAID" : requestedPaymentStatus;
 
   await prisma.$transaction([
     prisma.orderLine.deleteMany({ where: { orderId: id } }),
@@ -285,6 +299,7 @@ export async function updateOrder(formData: FormData) {
         status: status as "IN_PROGRESS" | "DELIVERED" | "RETURNED",
         paymentStatus: paymentStatus as "PAID" | "PENDING" | "UNPAID",
         paymentDate: paymentStatus === "PAID" ? order.paymentDate ?? new Date() : order.paymentDate,
+        advanceAmount,
         paymentMethod: paymentMethod as "CASH" | "CHECK" | "TRANSFER" | "OTHER",
         checkDueDate,
         lines: {

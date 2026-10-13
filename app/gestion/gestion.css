@@ -1514,3 +1514,62 @@ select.g-status-select {
   color: var(--g-blue);
   box-shadow: 0 1px 3px rgba(15, 20, 40, 0.15);
 }
+
+.g-warn-box__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+.g-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  border: 0;
+}
+
+/* ================== AVANCE (components/gestion/AdvanceField.tsx) ================== */
+
+.g-advance {
+  margin-top: 14px;
+  display: grid;
+  gap: 10px;
+}
+.g-advance__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.86rem;
+  font-weight: 600;
+  cursor: pointer;
+  width: fit-content;
+}
+.g-advance__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 16px;
+}
+.g-advance__row .g-field {
+  width: 180px;
+}
+.g-advance__rest {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding-bottom: 10px;
+  font-size: 0.86rem;
+  color: var(--g-muted);
+}
+.g-advance__rest strong {
+  font-size: 1.05rem;
+  color: var(--g-ink);
+}
+.g-advance__paid {
+  color: var(--g-success-text);
+  font-weight: 600;
+}

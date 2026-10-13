@@ -284,7 +284,12 @@
       "markPaidButton": "تحديد كمدفوعة",
       "unpaidDeliveredEmpty": "لا شيء في انتظار التحصيل.",
       "clientPhoneOptionalLabel": "هاتف الحريف (اختياري)",
-      "deliveredClientHint": "كي تتسلّم الطلبية، الحريف يتزاد وحدو لصفحة الحرفاء."
+      "deliveredClientHint": "كي تتسلّم الطلبية، الحريف يتزاد وحدو لصفحة الحرفاء.",
+      "advanceToggle": "الحريف خلّص تسبقة",
+      "advanceLabel": "قدّاش التسبقة (د.ت)",
+      "remainingLabel": "الباقي للخلاص:",
+      "advanceCoversAll": "التسبقة تغطّي الطلبية الكلّ: تتسجّل «خالصة».",
+      "advanceBadge": "تسبقة {advance} · الباقي {rest}"
     },
     "depenses": {
       "newExpenseTitle": "مصروف جديد (خارج المخزون)",
@@ -369,8 +374,11 @@
       "unitCostIn": "تكلفة الوحدة ({unit})",
       "unitDt": "د.ت",
       "unitMillime": "مليم",
-      "priceExampleDinar": "مثلًا: 0,700 لمنتج بـ 700 مليم",
-      "priceExampleMillime": "مثلًا: 700 — يتسجّل وحدو 0,700 د.ت"
+      "priceExampleDinar": "مثلًا: 6,500 لبوكال كونفيتير بـ 6 دينار و500",
+      "priceExampleMillime": "مثلًا: 6500 لبوكال كونفيتير بـ 6 دينار و500 — يتسجّل 6,500 د.ت",
+      "millimesWarning": "قصدك {dt} د.ت ({typed} مليم)؟ مثلًا، بوكال كونفيتير بـ 6 دينار و500 يتكتب 6,500 بالدينار، ولا 6500 بالمليم.",
+      "millimesYes": "إيه، بالمليم",
+      "millimesNo": "لا، هو {typed} د.ت"
     },
     "produitsFinis": {
       "newBatchTitle": "تسجيل دفعة إنتاج",
