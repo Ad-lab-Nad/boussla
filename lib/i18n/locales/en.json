@@ -35,7 +35,8 @@
       "backOffice": "Back office",
       "logout": "Sign out",
       "openMenu": "Open menu",
-      "brandSubtitle": "Management"
+      "brandSubtitle": "Management",
+      "quickSale": "Quick sale"
     },
     "editCommon": {
       "cancel": "Cancel",
@@ -472,6 +473,27 @@
       "text": "Would you like help getting started? I'll answer you on WhatsApp.",
       "yes": "Yes, message me on WhatsApp",
       "no": "No thanks"
+    },
+    "reminder": {
+      "button": "WhatsApp reminder",
+      "noPhone": "Add this client's number to send a WhatsApp reminder.",
+      "message": "Hello{name} 👋 A small reminder: {amount} is still to be paid. Thank you very much 🙏\n\n— Sent with Flux · fluxtunisie.com"
+    },
+    "install": {
+      "title": "Keep Flux on your phone 📱",
+      "text": "Add Flux to your home screen to open it in one tap, like WhatsApp.",
+      "button": "Add Flux",
+      "iosSteps": "Add Flux to your home screen to open it in one tap: in Safari, tap the Share button ⬆️ at the bottom, then “Add to Home Screen”.",
+      "later": "Later"
+    },
+    "week": {
+      "title": "Your week",
+      "subtitle": "Last 7 days",
+      "sales": "Delivered sales",
+      "revenue": "Revenue",
+      "profit": "What's left for you",
+      "share": "Share on WhatsApp",
+      "shareText": "📊 My week with Flux: {sales} sales, {revenue} in revenue and {profit} in profit 💪\n\nfluxtunisie.com"
     }
   },
   "auth": {

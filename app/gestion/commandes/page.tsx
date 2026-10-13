@@ -22,6 +22,7 @@ import { AutoSubmitSelect } from "@/components/gestion/AutoSubmitSelect";
 import { EditOrderButton } from "@/components/gestion/EditOrderButton";
 import { Palier1History, type Palier1HistoryEntryView } from "@/components/gestion/Palier1History";
 import { OrderForm } from "./OrderForm";
+import { WhatsAppReminder } from "@/components/gestion/WhatsAppReminder";
 
 /** Quick sales never carry a receipt, so this mapping is synchronous —
  * unlike Palier1Dashboard's history resolution, which also handles
@@ -86,8 +87,12 @@ function paymentMethodFilterOptions(t: TFunction) {
 export default async function CommandesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ method?: string }>;
+  searchParams: Promise<{ method?: string; rapide?: string }>;
 }) {
+  // ?rapide=1 = opened from the "+ Vente" button: jump to the form, ready
+  // for a sale that's delivered and paid on the spot.
+  const { method, rapide } = await searchParams;
+  const quick = rapide === "1";
   const { t } = await getServerT();
   const user = await getCurrentUser();
   const business = await getCurrentBusiness();
@@ -97,7 +102,7 @@ export default async function CommandesPage({
     const overview = await getPalier1Overview(business.id);
     return (
       <>
-        <div className="g-card">
+        <div className="g-card" id="nouvelle-vente">
           <h2>{t("gestion.palier1.newSaleTitle")}</h2>
           <form action={createQuickSale} className="g-field-grid">
             <div className="g-field">
@@ -106,7 +111,7 @@ export default async function CommandesPage({
             </div>
             <div className="g-field">
               <label>{t("gestion.palier1.amountLabel")}</label>
-              <input type="number" name="amount" min="0.01" step="0.01" required />
+              <input type="number" name="amount" min="0.001" step="0.001" inputMode="decimal" autoFocus={quick} required />
             </div>
             <button type="submit" className="g-btn">
               <Plus size={15} /> {t("gestion.palier1.registerSale")}
@@ -118,7 +123,6 @@ export default async function CommandesPage({
     );
   }
 
-  const { method } = await searchParams;
   const [allOrders, products] = await Promise.all([getOrders(business.id), getProducts(business.id)]);
   const isServices = user.activityType === "SERVICES";
   const methodLabels = paymentMethodLabels(t);
@@ -135,13 +139,13 @@ export default async function CommandesPage({
 
   return (
     <>
-      <div className="g-card">
+      <div className="g-card" id="nouvelle-vente">
         <h2>{isServices ? t("gestion.commandes.newSaleTitle") : t("gestion.commandes.newOrderTitle")}</h2>
         <div className="g-hint">
           {isServices ? t("gestion.commandes.newSaleHint") : t("gestion.commandes.newOrderHint")}{" "}
           {t("gestion.commandes.deliveredClientHint")}
         </div>
-        <OrderForm products={products} createOrderAction={createOrder} isServices={isServices} />
+        <OrderForm products={products} createOrderAction={createOrder} isServices={isServices} quick={quick} />
       </div>
 
       <div className="g-card">
@@ -190,7 +194,12 @@ export default async function CommandesPage({
                         {order.paymentStatus === "PENDING" ? t("gestion.commandes.paymentPending") : t("gestion.commandes.paymentUnpaid")}
                       </span>
                     </td>
-                    <td>
+                    <td style={{ display: "flex", gap: 4, alignItems: "center" }}>
+                      <WhatsAppReminder
+                        phone={order.clientPhone}
+                        name={order.clientName}
+                        amount={fmt(orderAmount(order) - orderAdvance(order))}
+                      />
                       <form action={updateOrderPaymentStatus}>
                         <input type="hidden" name="id" value={order.id} />
                         <input type="hidden" name="paymentStatus" value="PAID" />

@@ -17,6 +17,7 @@ import {
   X,
   LogOut,
   ShieldCheck,
+  Plus,
 } from "lucide-react";
 import { displayAccount } from "@/lib/auth-identifier";
 import { signOut } from "@/lib/auth-actions";
@@ -211,6 +212,13 @@ function GestionChromeInner({
           )}
         </div>
       </div>
+      {/* Always within reach: record a sale in two taps from any page. */}
+      {!accessExpired && (
+        <Link href="/gestion/commandes?rapide=1#nouvelle-vente" className="g-fab" aria-label={t("gestion.nav.quickSale")}>
+          <Plus size={22} strokeWidth={2.6} aria-hidden="true" />
+          <span>{t("gestion.nav.quickSale")}</span>
+        </Link>
+      )}
     </div>
   );
 }

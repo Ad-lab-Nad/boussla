@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Plus, X } from "lucide-react";
 import { fmt, todayStr } from "@/lib/gestion/format";
 import { fmtPrice } from "@/lib/gestion/product-units";
@@ -22,16 +22,25 @@ export function OrderForm({
   products,
   createOrderAction,
   isServices = false,
+  quick = false,
 }: {
   products: Product[];
   createOrderAction: (formData: FormData) => Promise<void>;
   isServices?: boolean;
+  /** Opened from the "+ Vente" button: delivered + paid by default, form in view. */
+  quick?: boolean;
 }) {
   const { t } = useLocale();
   const [lines, setLines] = useState<Line[]>(() =>
     products.length > 0 ? [newLine(products)] : []
   );
   const [paymentMethod, setPaymentMethod] = useState("CASH");
+  const formRef = useRef<HTMLFormElement>(null);
+  useEffect(() => {
+    if (!quick) return;
+    formRef.current?.scrollIntoView({ block: "center" });
+    formRef.current?.querySelector<HTMLSelectElement>(".g-line-row select")?.focus();
+  }, [quick]);
   // Bumped after each saved order so the advance box starts empty again.
   const [formKey, setFormKey] = useState(0);
 
@@ -50,6 +59,7 @@ export function OrderForm({
 
   return (
     <form
+      ref={formRef}
       action={async (formData) => {
         formData.set("linesJson", JSON.stringify(lines));
         await createOrderAction(formData);
@@ -73,7 +83,7 @@ export function OrderForm({
         </div>
         <div className="g-field">
           <label>{t("gestion.clients.statusLabel")}</label>
-          <select name="status" defaultValue="IN_PROGRESS">
+          <select name="status" defaultValue={quick ? "DELIVERED" : "IN_PROGRESS"}>
             <option value="IN_PROGRESS">{t("gestion.commandes.statusInProgress")}</option>
             <option value="DELIVERED">{t("gestion.commandes.statusDelivered")}</option>
             <option value="RETURNED">{t("gestion.commandes.statusReturned")}</option>
@@ -81,7 +91,7 @@ export function OrderForm({
         </div>
         <div className="g-field">
           <label>{t("gestion.commandes.paymentColumn")}</label>
-          <select name="paymentStatus" defaultValue="PENDING">
+          <select name="paymentStatus" defaultValue={quick ? "PAID" : "PENDING"}>
             <option value="PENDING">{t("gestion.commandes.paymentPending")}</option>
             <option value="PAID">{t("gestion.commandes.paymentPaid")}</option>
             <option value="UNPAID">{t("gestion.commandes.paymentUnpaid")}</option>

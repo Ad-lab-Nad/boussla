@@ -20,6 +20,7 @@ import {
   getMonthlyGoal,
   getPalier1Overview,
   getSetupProgress,
+  getWeekSummary,
 } from "@/lib/gestion/queries";
 import { setMonthlyGoal } from "@/lib/gestion/actions";
 import { Palier1Dashboard } from "@/components/gestion/Palier1Dashboard";
@@ -38,6 +39,8 @@ import { AutoSubmitSelect } from "@/components/gestion/AutoSubmitSelect";
 import { KpiCard } from "@/components/gestion/KpiCard";
 import { MonthlyGoalCard } from "@/components/gestion/MonthlyGoalCard";
 import { GettingStartedCard } from "@/components/gestion/GettingStartedCard";
+import { InstallAppCard } from "@/components/gestion/InstallApp";
+import { WeekSummaryCard } from "@/components/gestion/WeekSummaryCard";
 import { RevenueTrendChart } from "@/components/gestion/RevenueTrendChart";
 import { TopProductsChart } from "@/components/gestion/TopProductsChart";
 
@@ -63,12 +66,13 @@ export default async function DashboardPage({
   const month =
     requestedMonth && monthOptions.includes(requestedMonth) ? requestedMonth : currentMonth;
 
-  const [{ totals, previousTotals, trend, stockAlerts, productAlerts }, monthlyGoal, avgSellPrice, setup] =
+  const [{ totals, previousTotals, trend, stockAlerts, productAlerts }, monthlyGoal, avgSellPrice, setup, week] =
     await Promise.all([
       getDashboardData(business.id, month),
       getMonthlyGoal(business.id, month),
       getAverageSellPrice(business.id),
       getSetupProgress(business.id),
+      getWeekSummary(business.id),
     ]);
 
   const isCurrentMonth = month === currentMonth;
@@ -93,6 +97,9 @@ export default async function DashboardPage({
       </form>
 
       <GettingStartedCard progress={setup} isServices={user.activityType === "SERVICES"} t={t} />
+      {/* Once they've put something in, give them a way back: the home-screen icon. */}
+      {setup.hasProduct && <InstallAppCard />}
+      <WeekSummaryCard week={week} t={t} />
 
       <MonthlyGoalCard
         month={month}

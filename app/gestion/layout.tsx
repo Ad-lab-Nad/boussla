@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import { GestionChrome } from "@/components/gestion/GestionChrome";
 import { WelcomePixel } from "@/components/WelcomePixel";
 import { WelcomeBubble } from "@/components/gestion/WelcomeBubble";
+import { InstallCapture } from "@/components/gestion/InstallApp";
 import { ADMIN_EMAIL } from "@/lib/admin-email";
 import { getCurrentUser } from "@/lib/current-user";
 import { recordLastSeen } from "@/lib/last-seen";
@@ -64,6 +65,7 @@ export default async function GestionLayout({ children }: { children: React.Reac
         </Suspense>
         {children}
         <WelcomeBubble enabled={isNewAccount(user)} />
+        <InstallCapture />
       </GestionChrome>
     </div>
   );

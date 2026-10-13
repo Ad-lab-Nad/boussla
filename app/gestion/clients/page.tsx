@@ -18,6 +18,7 @@ import { getServerT } from "@/lib/i18n/server";
 import { ConfirmSubmitButton } from "@/components/gestion/ConfirmSubmitButton";
 import { EditClientButton } from "@/components/gestion/EditClientButton";
 import { EditReceivableButton } from "@/components/gestion/EditReceivableButton";
+import { WhatsAppReminder } from "@/components/gestion/WhatsAppReminder";
 
 export default async function ClientsPage() {
   await requirePalier2Page();
@@ -118,7 +119,8 @@ export default async function ClientsPage() {
                     >
                       {fmt(totalDue)}
                     </td>
-                    <td style={{ display: "flex", gap: 2 }}>
+                    <td style={{ display: "flex", gap: 2, alignItems: "center" }}>
+                      {totalDue > 0 && <WhatsAppReminder phone={client.phone} name={client.name} amount={fmt(totalDue)} />}
                       <EditClientButton client={client} updateClientAction={updateClient} />
                       <form action={deleteClient}>
                         <input type="hidden" name="id" value={client.id} />
@@ -160,7 +162,10 @@ export default async function ClientsPage() {
                     <td>
                       <span className={`g-badge ${badge}`}>{label}</span>
                     </td>
-                    <td style={{ display: "flex", gap: 2 }}>
+                    <td style={{ display: "flex", gap: 2, alignItems: "center" }}>
+                      {r.status !== "PAID" && remaining > 0 && (
+                        <WhatsAppReminder phone={r.client.phone} name={r.client.name} amount={fmt(remaining)} />
+                      )}
                       {r.status !== "PAID" && (
                         <form action={markReceivablePaid}>
                           <input type="hidden" name="id" value={r.id} />

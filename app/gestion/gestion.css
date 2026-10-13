@@ -1573,3 +1573,150 @@ select.g-status-select {
   color: var(--g-success-text);
   font-weight: 600;
 }
+
+/* ================== WHATSAPP REMINDER (components/gestion/WhatsAppReminder.tsx) ================== */
+
+.g-wa-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: 8px;
+  border: 1px solid color-mix(in srgb, #25d366 50%, transparent);
+  background: color-mix(in srgb, #25d366 12%, transparent);
+  color: var(--g-ink);
+  font-size: 0.76rem;
+  font-weight: 600;
+  white-space: nowrap;
+  text-decoration: none;
+}
+.g-wa-btn svg {
+  color: #1da851;
+}
+.g-wa-btn:hover {
+  background: color-mix(in srgb, #25d366 22%, transparent);
+}
+.g-wa-btn.is-off {
+  opacity: 0.45;
+  cursor: help;
+}
+
+/* ================== "+ VENTE RAPIDE" (components/gestion/GestionChrome.tsx) ================== */
+
+.g-fab {
+  position: fixed;
+  inset-inline-end: 18px;
+  bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+  z-index: 30;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 13px 18px 13px 14px;
+  border-radius: 999px;
+  background: var(--g-blue);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.88rem;
+  text-decoration: none;
+  box-shadow: 0 10px 24px -8px rgba(15, 30, 70, 0.45);
+}
+.g-fab:hover {
+  background: color-mix(in srgb, var(--g-blue) 85%, black);
+}
+.g-fab:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--g-blue) 40%, transparent);
+  outline-offset: 2px;
+}
+/* The welcome bubble sits above the button. */
+.g-bubble {
+  bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+}
+
+/* ================== INSTALL CARD (components/gestion/InstallApp.tsx) ================== */
+
+.g-install {
+  position: relative;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.g-install__icon {
+  flex: none;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: color-mix(in srgb, var(--g-blue) 12%, transparent);
+  color: var(--g-blue);
+}
+.g-install__body {
+  display: grid;
+  gap: 8px;
+  justify-items: start;
+  padding-inline-end: 24px;
+}
+.g-install__body h2 {
+  margin: 0;
+}
+.g-install__body p {
+  margin: 0;
+  font-size: 0.86rem;
+  color: var(--g-muted);
+  line-height: 1.5;
+}
+.g-install__close {
+  position: absolute;
+  top: 10px;
+  inset-inline-end: 10px;
+  border: none;
+  background: none;
+  color: var(--g-muted);
+  cursor: pointer;
+  padding: 4px;
+}
+
+/* ================== WEEK SUMMARY (components/gestion/WeekSummaryCard.tsx) ================== */
+
+.g-week {
+  display: grid;
+  gap: 14px;
+  justify-items: start;
+}
+.g-week__head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.g-week__head h2 {
+  margin: 0;
+}
+.g-week__stats {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.g-week__stats > div {
+  display: grid;
+  gap: 2px;
+}
+.g-week__label {
+  font-size: 0.74rem;
+  color: var(--g-muted);
+}
+.g-week__stats strong {
+  font-size: 1.15rem;
+}
+.g-week__pos {
+  color: var(--g-success-text);
+}
+.g-week__neg {
+  color: var(--g-critical);
+}
+@media (max-width: 420px) {
+  .g-week__stats strong {
+    font-size: 1rem;
+  }
+}

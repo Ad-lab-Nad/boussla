@@ -289,6 +289,25 @@ export type Palier1HistoryEntry = {
  * 3 months of history behind it, and a 6-month revenue/profit trend (for
  * the blurred Palier-2 upsell preview — real data, not a mockup).
  */
+/** The last 7 days at a glance — the dashboard's "Ta semaine" card. Profit
+ * here = delivered sales minus their product cost minus the week's business
+ * expenses (cash basis, kept simple on purpose). */
+export async function getWeekSummary(businessId: string, now: Date = new Date()) {
+  const since = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+  const [orders, expenses] = await Promise.all([
+    prisma.order.findMany({ where: { businessId, status: "DELIVERED", date: { gte: since } }, include: { lines: true } }),
+    prisma.expense.findMany({ where: { businessId, isPersonal: false, date: { gte: since } }, select: { amount: true } }),
+  ]);
+  let revenue = 0;
+  let cost = 0;
+  for (const o of orders) for (const l of o.lines) {
+    revenue += l.sellPriceSnapshot * l.quantity;
+    cost += l.unitCostSnapshot * l.quantity;
+  }
+  const spent = expenses.reduce((sum, e) => sum + e.amount, 0);
+  return { sales: orders.length, revenue, profit: revenue - cost - spent };
+}
+
 /** Which of the first three steps (a product, a sale, an expense) the
  * business has done — drives the dashboard's "Commence ici" card. */
 export async function getSetupProgress(businessId: string) {
