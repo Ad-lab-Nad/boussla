@@ -1,6 +1,8 @@
 import { CreditCard, Gift, MessageSquareText, Receipt, TrendingDown, TrendingUp, Users, Wallet } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { getUserActivity, type UserActivity } from "@/lib/admin-activity";
+import { ADMIN_GOAL } from "@/lib/admin-goal";
+import { GoalCard } from "./GoalCard";
 import { accountWhatsAppLink, displayAccount } from "@/lib/auth-identifier";
 import { describeSubscription } from "@/lib/admin";
 import {
@@ -84,8 +86,17 @@ export default async function AdminPage({
   const expensesInMonth = expenses.filter((e) => monthKeyFromDate(e.date) === month);
   const now = new Date();
 
+  // Birthday goal: payments and ad spend since ADMIN_GOAL.since.
+  const goalSince = new Date(`${ADMIN_GOAL.since}T00:00:00+01:00`);
+  const goalCollected = payments.filter((p) => p.date >= goalSince).reduce((s, p) => s + orderAmount(p), 0);
+  const goalAdSpend = expenses
+    .filter((e) => e.date >= goalSince && e.category === "ADVERTISING")
+    .reduce((s, e) => s + e.amount, 0);
+
   return (
     <>
+      <GoalCard collected={goalCollected} adSpend={goalAdSpend} now={now} />
+
       <form method="get">
         <div className="g-month-pill">
           <span style={{ fontSize: "0.8rem", color: "var(--g-muted)" }}>Mois analysé</span>
