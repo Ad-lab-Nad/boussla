@@ -41,6 +41,8 @@ import { MonthlyGoalCard } from "@/components/gestion/MonthlyGoalCard";
 import { GettingStartedCard } from "@/components/gestion/GettingStartedCard";
 import { InstallAppCard } from "@/components/gestion/InstallApp";
 import { WeekSummaryCard } from "@/components/gestion/WeekSummaryCard";
+import { IndustryQuestion } from "@/components/gestion/IndustryQuestion";
+import { normalizeIndustry } from "@/lib/industries";
 import { RevenueTrendChart } from "@/components/gestion/RevenueTrendChart";
 import { TopProductsChart } from "@/components/gestion/TopProductsChart";
 
@@ -96,6 +98,7 @@ export default async function DashboardPage({
         </div>
       </form>
 
+      {!normalizeIndustry(user.industry) && <IndustryQuestion t={t} />}
       <GettingStartedCard progress={setup} isServices={user.activityType === "SERVICES"} t={t} />
       {/* Once they've put something in, give them a way back: the home-screen icon. */}
       {setup.hasProduct && <InstallAppCard />}

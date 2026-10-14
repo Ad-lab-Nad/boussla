@@ -494,6 +494,17 @@
       "profit": "الربح المتبقي",
       "share": "شارك على واتساب",
       "shareText": "📊 أسبوعي مع Flux: {sales} عملية بيع، {revenue} رقم معاملات و{profit} ربح 💪\n\nfluxtunisie.com"
+    },
+    "industry": {
+      "question": "في أي مجال تعمل؟",
+      "hint": "لمسة واحدة تكفي. يساعدنا ذلك على تكييف Flux مع نشاطك.",
+      "FOOD": "مواد غذائية",
+      "CRAFTS": "حِرف وهدايا",
+      "TEXTILE": "خياطة ونسيج",
+      "FASHION": "ملابس وإكسسوارات",
+      "BEAUTY": "تجميل وعطور",
+      "SERVICES": "خدمات",
+      "OTHER": "أخرى"
     }
   },
   "auth": {

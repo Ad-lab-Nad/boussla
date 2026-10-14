@@ -38,6 +38,8 @@ model User {
   // Last time the user opened the app (any /gestion page), at most every
   // few minutes — see lib/last-seen.ts. Shown in the back office.
   lastSeenAt DateTime?
+  // Language the app was last used in (fr | ar | en), noted with lastSeenAt.
+  locale     String?
 
   subscription Subscription?
   audits       Audit[]

@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { getUserActivity, type UserActivity } from "@/lib/admin-activity";
 import { ADMIN_GOAL } from "@/lib/admin-goal";
 import { GoalCard } from "./GoalCard";
+import { AudienceCard } from "./AudienceCard";
+import { ADMIN_EMAIL } from "@/lib/admin-email";
 import { accountWhatsAppLink, displayAccount } from "@/lib/auth-identifier";
 import { describeSubscription } from "@/lib/admin";
 import {
@@ -129,6 +131,8 @@ export default async function AdminPage({
           tone={isProfitable ? "good" : "critical"}
         />
       </div>
+
+      <AudienceCard users={users.filter((u) => u.email !== ADMIN_EMAIL)} activity={activity} />
 
       <div className="g-kpi-grid">
         <KpiCard label="Inscrites au total" value={String(users.length)} icon={Users} tone="violet" />

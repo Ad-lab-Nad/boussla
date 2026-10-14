@@ -10,6 +10,8 @@ import { SELL_UNIT_VALUES } from "@/lib/gestion/product-units";
 import { findRecurringExpenseSuggestion } from "@/lib/gestion/queries";
 import { uploadReceipt } from "@/lib/gestion/receipts";
 import { syncDeliveredOrderClient } from "@/lib/gestion/order-client";
+import { INDUSTRIES } from "@/lib/industries";
+import { getCurrentUser } from "@/lib/current-user";
 import type { ExpenseCategory, SellUnit } from "@prisma/client";
 
 function revalidateGestion(path?: string) {
@@ -815,4 +817,15 @@ export async function setProductAlertThreshold(formData: FormData) {
     data: { alertThreshold: value },
   });
   revalidateGestion("/gestion/produits-finis");
+}
+
+// ---------- DOMAINE D'ACTIVITÉ ----------
+
+/** The dashboard's one-tap "Tu travailles dans quel domaine ?". */
+export async function setIndustry(formData: FormData) {
+  const value = str(formData, "industry");
+  if (!INDUSTRIES.some((i) => i.key === value)) return;
+  const user = await getCurrentUser();
+  await prisma.user.update({ where: { id: user.id }, data: { industry: value } });
+  revalidatePath("/gestion");
 }

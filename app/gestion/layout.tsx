@@ -44,12 +44,13 @@ function isNewAccount(user: { email: string; createdAt: Date }): boolean {
 
 export default async function GestionLayout({ children }: { children: React.ReactNode }) {
   const user = await getCurrentUser();
-  // Off the response path: the back office's "dernière visite".
-  after(() => recordLastSeen(user));
+
   const subscription = await getOrCreateSubscription(user.id);
   const hasPalier2 = canAccessPalier2(subscription);
   const accessExpired = !hasActiveAccess(subscription);
   const initialLocale = await getServerLocale();
+  // Off the response path: the back office's "dernière visite" and language.
+  after(() => recordLastSeen(user, initialLocale));
 
   return (
     <div className={`gestion g-doodle ${inter.variable} ${jetbrainsMono.variable}`}>

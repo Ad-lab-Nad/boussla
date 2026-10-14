@@ -494,6 +494,17 @@
       "profit": "What's left for you",
       "share": "Share on WhatsApp",
       "shareText": "📊 My week with Flux: {sales} sales, {revenue} in revenue and {profit} in profit 💪\n\nfluxtunisie.com"
+    },
+    "industry": {
+      "question": "What's your line of business?",
+      "hint": "One tap is enough. It helps us fit Flux to your trade.",
+      "FOOD": "Food",
+      "CRAFTS": "Crafts & gifts",
+      "TEXTILE": "Sewing & textile",
+      "FASHION": "Fashion & accessories",
+      "BEAUTY": "Beauty & perfumes",
+      "SERVICES": "Services",
+      "OTHER": "Other"
     }
   },
   "auth": {
