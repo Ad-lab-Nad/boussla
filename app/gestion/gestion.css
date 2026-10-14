@@ -1760,3 +1760,32 @@ select.g-status-select {
     grid-template-columns: 1fr;
   }
 }
+
+/* ================== BACK OFFICE: PERIOD PICKER (app/admin/visites/page.tsx) ================== */
+
+.g-period {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+  margin-bottom: 18px;
+}
+.g-period .g-month-pill {
+  margin-bottom: 0;
+}
+.g-period__range {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  color: var(--g-muted);
+}
+.g-period__range input[type="date"] {
+  padding: 7px 9px;
+  border: 1px solid var(--g-border);
+  border-radius: 8px;
+  background: var(--g-surface);
+  color: var(--g-ink);
+  font: inherit;
+}

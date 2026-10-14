@@ -13,6 +13,29 @@ const PERIODS = [
 
 const DEVICE_LABELS: Record<string, string> = { mobile: "Téléphone", tablet: "Tablette", desktop: "Ordinateur" };
 
+const DAY_MS = 24 * 60 * 60 * 1000;
+const TUNIS_OFFSET_MS = 60 * 60 * 1000; // UTC+1, no DST
+
+/** Tunis midnight starting the given "YYYY-MM-DD" day; null if malformed. */
+function tunisDayStart(value: string | undefined): Date | null {
+  if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return null;
+  const d = new Date(`${value}T00:00:00Z`);
+  return Number.isNaN(d.getTime()) ? null : new Date(d.getTime() - TUNIS_OFFSET_MS);
+}
+
+/** Today in Tunis as "YYYY-MM-DD". */
+function tunisToday(): string {
+  return new Date(Date.now() + TUNIS_OFFSET_MS).toISOString().slice(0, 10);
+}
+
+/** A chosen range ("du … au …", both days included) wins over the presets. */
+function periodRange(period: string, du?: string, au?: string): { since: Date; until: Date; isCustom: boolean } {
+  const start = tunisDayStart(du);
+  const endDay = tunisDayStart(au) ?? tunisDayStart(tunisToday())!;
+  if (start && start <= endDay) return { since: start, until: new Date(endDay.getTime() + DAY_MS), isCustom: true };
+  return { since: periodStart(Number(period)), until: new Date(Date.now() + DAY_MS), isCustom: false };
+}
+
 /** "Aujourd'hui" = since local midnight (Tunis, UTC+1); otherwise the last N×24h. */
 function periodStart(days: number): Date {
   if (days === 1) {
@@ -95,18 +118,23 @@ function dayKey(d: Date): string {
   return new Date(d.getTime() + 60 * 60 * 1000).toISOString().slice(0, 10);
 }
 
-export default async function VisitesPage({ searchParams }: { searchParams: Promise<{ p?: string }> }) {
-  const { p } = await searchParams;
+export default async function VisitesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ p?: string; du?: string; au?: string }>;
+}) {
+  const { p, du, au } = await searchParams;
   const period = PERIODS.some((o) => o.value === p) ? p! : "7";
-  const since = periodStart(Number(period));
+  const { since, until, isCustom } = periodRange(period, du, au);
+  const range = { gte: since, lt: until };
 
   const [allVisits, signups, signupEvents] = await Promise.all([
     prisma.pageVisit.findMany({
-      where: { createdAt: { gte: since } },
+      where: { createdAt: range },
       orderBy: { createdAt: "desc" },
     }),
-    prisma.user.findMany({ where: { createdAt: { gte: since } }, select: { createdAt: true } }),
-    prisma.signupEvent.findMany({ where: { createdAt: { gte: since } }, select: { event: true, detail: true } }),
+    prisma.user.findMany({ where: { createdAt: range }, select: { createdAt: true } }),
+    prisma.signupEvent.findMany({ where: { createdAt: range }, select: { event: true, detail: true } }),
   ]);
 
   // Our test visitors are dropped entirely (their sign-up arrivals carry no
@@ -147,12 +175,21 @@ export default async function VisitesPage({ searchParams }: { searchParams: Prom
 
   return (
     <>
-      <form method="get">
-        <div className="g-month-pill">
-          <span style={{ fontSize: "0.8rem", color: "var(--g-muted)" }}>Période</span>
-          <AutoSubmitSelect name="p" defaultValue={period} options={PERIODS} />
-        </div>
-      </form>
+      <div className="g-period">
+        <form method="get">
+          <div className="g-month-pill">
+            <span style={{ fontSize: "0.8rem", color: "var(--g-muted)" }}>Période</span>
+            <AutoSubmitSelect name="p" defaultValue={isCustom ? "" : period} options={isCustom ? [{ value: "", label: "Dates choisies" }, ...PERIODS] : PERIODS} />
+          </div>
+        </form>
+        <form method="get" className="g-period__range">
+          <label htmlFor="du">Du</label>
+          <input id="du" type="date" name="du" required max={tunisToday()} defaultValue={isCustom ? du : ""} />
+          <label htmlFor="au">au</label>
+          <input id="au" type="date" name="au" max={tunisToday()} defaultValue={isCustom ? (au ?? tunisToday()) : tunisToday()} />
+          <button type="submit" className="g-btn small">Afficher</button>
+        </form>
+      </div>
 
       <div className="g-kpi-grid">
         <KpiCard label="Visiteurs uniques" value={String(uniqueVisitors)} icon={Users} tone="blue" />
