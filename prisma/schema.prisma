@@ -692,6 +692,21 @@ model HomepageBlock {
 // injects into the static landing page (see app/api/visit). Anonymous:
 // visitorId is a random id kept in the visitor's localStorage — no name,
 // email or IP stored. Read by /admin/visites.
+// One step of a sign-up attempt, anonymous (no email, phone or IP): where
+// people stop on the form — see lib/signup-events.ts and /admin/visites.
+model SignupEvent {
+  id String @id @default(cuid())
+  // started | submitted | client_invalid | error | success
+  event  String
+  // e.g. "password:tooShort" (browser check) or "invalid_identifier"
+  detail String?
+
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@map("signup_events")
+}
+
 model PageVisit {
   id        String @id @default(cuid())
   visitorId String

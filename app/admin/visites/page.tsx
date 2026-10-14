@@ -1,5 +1,6 @@
 import { Clock, Eye, LogIn, MousePointerClick, Percent, UserPlus, Users } from "lucide-react";
 import { prisma } from "@/lib/prisma";
+import { SignupFunnel } from "./SignupFunnel";
 import { KpiCard } from "@/components/gestion/KpiCard";
 import { AutoSubmitSelect } from "@/components/gestion/AutoSubmitSelect";
 
@@ -99,12 +100,13 @@ export default async function VisitesPage({ searchParams }: { searchParams: Prom
   const period = PERIODS.some((o) => o.value === p) ? p! : "7";
   const since = periodStart(Number(period));
 
-  const [allVisits, signups] = await Promise.all([
+  const [allVisits, signups, signupEvents] = await Promise.all([
     prisma.pageVisit.findMany({
       where: { createdAt: { gte: since } },
       orderBy: { createdAt: "desc" },
     }),
     prisma.user.findMany({ where: { createdAt: { gte: since } }, select: { createdAt: true } }),
+    prisma.signupEvent.findMany({ where: { createdAt: { gte: since } }, select: { event: true, detail: true } }),
   ]);
 
   // Our test visitors are dropped entirely (their sign-up arrivals carry no
@@ -205,6 +207,8 @@ export default async function VisitesPage({ searchParams }: { searchParams: Prom
         <h2>Par appareil</h2>
         <SourceTable rows={byDevice.map((r) => ({ ...r, key: DEVICE_LABELS[r.key] ?? r.key }))} empty="—" />
       </div>
+
+      <SignupFunnel arrivals={signupVisitors.size} events={signupEvents} />
 
       <div className="g-card">
         <h2>Jour par jour</h2>

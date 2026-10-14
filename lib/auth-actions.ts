@@ -9,6 +9,7 @@ import { getServerT } from "@/lib/i18n/server";
 import type { TFunction } from "@/lib/i18n/translate";
 import { sendWelcomeEmail } from "@/lib/welcome-email";
 import { parseIdentifier } from "@/lib/auth-identifier";
+import { authErrorCode, recordSignupEvent } from "@/lib/signup-events";
 
 export type AuthActionState = { error?: string; success?: string } | null;
 
@@ -40,14 +41,24 @@ export async function signUp(
   const activityType = formData.get("activityType") === "SERVICES" ? "SERVICES" : "PRODUCTS";
   const { t, locale } = await getServerT();
 
-  if (!rawIdentifier.trim() || !password) return { error: t("auth.errors.emailPasswordRequired") };
+  // Each early exit is logged (anonymously) so /admin/visites can show
+  // where people get stuck on the form.
+  const fail = (code: string, message: string) => {
+    after(() => recordSignupEvent("error", code));
+    return { error: message };
+  };
+  if (!rawIdentifier.trim() || !password) return fail("missing_fields", t("auth.errors.emailPasswordRequired"));
   const identifier = parseIdentifier(rawIdentifier);
-  if (!identifier) return { error: t("auth.errors.identifierInvalid") };
+  if (!identifier) {
+    // Which shape was rejected, never the value itself.
+    const shape = /@/.test(rawIdentifier) ? "email" : `digits_${rawIdentifier.replace(/\D/g, "").length}`;
+    return fail(`invalid_identifier:${shape}`, t("auth.errors.identifierInvalid"));
+  }
   const email = identifier.email;
-  if (password.length < 8) return { error: t("auth.errors.passwordTooShort") };
+  if (password.length < 8) return fail("password_short", t("auth.errors.passwordTooShort"));
   // The signup form no longer asks for a confirmation (eye toggle instead);
   // still checked when one is sent.
-  if (confirmPassword && password !== confirmPassword) return { error: t("auth.fields.mismatch") };
+  if (confirmPassword && password !== confirmPassword) return fail("password_mismatch", t("auth.fields.mismatch"));
 
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signUp({
@@ -56,14 +67,14 @@ export async function signUp(
     options: { emailRedirectTo: `${siteUrl()}/auth/confirm?next=/gestion` },
   });
 
-  if (error) return { error: mapAuthError(error.message, t) };
+  if (error) return fail(authErrorCode(error.message), mapAuthError(error.message, t));
 
   // Signing up with an email that already has an account doesn't error:
   // Supabase returns a fake user with no identities and sends no email. Say
   // so instead of a misleading "check your inbox" — and never touch the
   // existing User row with that fake id.
   if (data.user && data.user.identities?.length === 0) {
-    return { error: t("auth.errors.accountExists") };
+    return fail(`account_exists:${identifier.kind}`, t("auth.errors.accountExists"));
   }
 
   const authUserId = data.user?.id;
@@ -111,6 +122,7 @@ export async function signUp(
     // Phone accounts have no real mailbox — the founder reaches them on
     // WhatsApp instead.
     if (identifier.kind === "email") after(() => sendWelcomeEmail(email, locale));
+    after(() => recordSignupEvent("success", identifier.kind));
   }
 
   if (data.session) {

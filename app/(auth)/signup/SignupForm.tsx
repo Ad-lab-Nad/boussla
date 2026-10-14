@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useRef, useState } from "react";
 import { signUp, type AuthActionState } from "@/lib/auth-actions";
 import { PasswordInput } from "@/components/auth/PasswordInput";
 import { useLocale } from "@/components/i18n/LocaleProvider";
@@ -13,6 +13,28 @@ import { WhatsAppHelpLink } from "@/components/auth/WhatsAppHelpLink";
 // picked on the landing page (?plan=) is still recorded; otherwise it's
 // chosen later on the Abonnement page. Launch is Produits-only (the
 // Services mode is built but hidden), hence the fixed activityType.
+/** Anonymous step of the form, for /admin/visites ("où ça bloque"). */
+function track(event: "started" | "submitted" | "client_invalid", detail?: string) {
+  const body = JSON.stringify({ event, detail });
+  try {
+    if (!navigator.sendBeacon?.("/api/signup-event", body)) {
+      void fetch("/api/signup-event", { method: "POST", body, keepalive: true });
+    }
+  } catch {
+    // Measuring must never get in the way of signing up.
+  }
+}
+
+/** Which built-in check stopped the field, e.g. "tooShort" (never the value). */
+function invalidReason(el: HTMLInputElement): string {
+  const v = el.validity;
+  if (v.valueMissing) return "valueMissing";
+  if (v.tooShort) return "tooShort";
+  if (v.typeMismatch) return "typeMismatch";
+  if (v.patternMismatch) return "patternMismatch";
+  return "other";
+}
+
 export function SignupForm({ plan }: { plan: "palier1" | "palier2" | null }) {
   const { t } = useLocale();
   const [state, formAction, pending] = useActionState<AuthActionState, FormData>(signUp, null);
@@ -20,9 +42,34 @@ export function SignupForm({ plan }: { plan: "palier1" | "palier2" | null }) {
   // resets uncontrolled fields).
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
+  const started = useRef(false);
+  // One report per field and reason per visit — the browser fires
+  // `invalid` for every bad field each time the button is pressed.
+  const reported = useRef(new Set<string>());
+  function markStarted() {
+    if (started.current) return;
+    started.current = true;
+    track("started");
+  }
 
   return (
-    <form action={formAction} className="g-auth-field-stack">
+    <form
+      action={formAction}
+      className="g-auth-field-stack"
+      onFocusCapture={markStarted}
+      onInputCapture={markStarted}
+      onSubmit={() => {
+        reported.current.clear();
+        track("submitted");
+      }}
+      onInvalidCapture={(e) => {
+        const el = e.target as HTMLInputElement;
+        const detail = `${el.name}:${invalidReason(el)}`;
+        if (reported.current.has(detail)) return;
+        reported.current.add(detail);
+        track("client_invalid", detail);
+      }}
+    >
       {state?.error && <div className="g-auth-error">{state.error}</div>}
       {state?.success && <div className="g-auth-success">{state.success}</div>}
       {/* Account created, pending email confirmation. */}
