@@ -4,6 +4,8 @@ import { getUserActivity, type UserActivity } from "@/lib/admin-activity";
 import { ADMIN_GOAL } from "@/lib/admin-goal";
 import { GoalCard } from "./GoalCard";
 import { AudienceCard } from "./AudienceCard";
+import { RemindersCard } from "./RemindersCard";
+import { dueReminders } from "@/lib/reminders";
 import { ADMIN_EMAIL } from "@/lib/admin-email";
 import { accountWhatsAppLink, displayAccount } from "@/lib/auth-identifier";
 import { describeSubscription } from "@/lib/admin";
@@ -66,7 +68,13 @@ export default async function AdminPage({
     getAvailableMonthKeys(businessId),
   ]);
 
-  const activity = await getUserActivity(users.map((u) => u.id));
+  const [activity, due, emailsSentToday] = await Promise.all([
+    getUserActivity(users.map((u) => u.id)),
+    dueReminders(),
+    prisma.userReminder.count({
+      where: { channel: "email", sentAt: { gte: new Date(new Date().setUTCHours(0, 0, 0, 0) - 60 * 60 * 1000) } },
+    }),
+  ]);
 
   const currentMonth = monthKeyFromDateStr(todayStr());
   const month = requestedMonth && monthOptions.includes(requestedMonth) ? requestedMonth : currentMonth;
@@ -98,6 +106,8 @@ export default async function AdminPage({
   return (
     <>
       <GoalCard collected={goalCollected} adSpend={goalAdSpend} now={now} />
+
+      <RemindersCard due={due} emailsSentToday={emailsSentToday} />
 
       <form method="get">
         <div className="g-month-pill">

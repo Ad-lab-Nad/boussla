@@ -41,6 +41,12 @@ model User {
   // Language the app was last used in (fr | ar | en), noted with lastSeenAt.
   locale     String?
 
+  // Follow-up reminders (lib/reminders.ts): a real address for accounts
+  // created with a phone number, and the "stop these emails" choice.
+  contactEmail String?
+  remindersOff Boolean @default(false)
+  reminders    UserReminder[]
+
   subscription Subscription?
   audits       Audit[]
 
@@ -694,6 +700,21 @@ model HomepageBlock {
 // injects into the static landing page (see app/api/visit). Anonymous:
 // visitorId is a random id kept in the visitor's localStorage — no name,
 // email or IP stored. Read by /admin/visites.
+// A follow-up reminder already sent to a user — one per step, ever.
+model UserReminder {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // D1 | D3 | D7 (days after sign-up)
+  step    String
+  // email (sent by the daily job) | whatsapp (sent by the founder from the back office)
+  channel String
+  sentAt  DateTime @default(now())
+
+  @@unique([userId, step])
+  @@map("user_reminders")
+}
+
 // One step of a sign-up attempt, anonymous (no email, phone or IP): where
 // people stop on the form — see lib/signup-events.ts and /admin/visites.
 model SignupEvent {

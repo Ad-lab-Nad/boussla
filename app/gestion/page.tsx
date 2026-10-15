@@ -43,6 +43,8 @@ import { InstallAppCard } from "@/components/gestion/InstallApp";
 import { WeekSummaryCard } from "@/components/gestion/WeekSummaryCard";
 import { IndustryQuestion } from "@/components/gestion/IndustryQuestion";
 import { normalizeIndustry } from "@/lib/industries";
+import { ContactEmailCard } from "@/components/gestion/ContactEmailCard";
+import { isPhoneAccount } from "@/lib/auth-identifier";
 import { RevenueTrendChart } from "@/components/gestion/RevenueTrendChart";
 import { TopProductsChart } from "@/components/gestion/TopProductsChart";
 
@@ -102,6 +104,7 @@ export default async function DashboardPage({
       <GettingStartedCard progress={setup} isServices={user.activityType === "SERVICES"} t={t} />
       {/* Once they've put something in, give them a way back: the home-screen icon. */}
       {setup.hasProduct && <InstallAppCard />}
+      {isPhoneAccount(user.email) && !user.contactEmail && <ContactEmailCard />}
       <WeekSummaryCard week={week} t={t} />
 
       <MonthlyGoalCard

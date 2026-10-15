@@ -505,6 +505,14 @@
       "BEAUTY": "Beauté & parfums",
       "SERVICES": "Services",
       "OTHER": "Autre"
+    },
+    "contactEmail": {
+      "title": "Reçois tes astuces par e-mail 📧",
+      "text": "Tu t'es inscrit(e) avec ton numéro. Ajoute ton e-mail (facultatif) pour recevoir des astuces et ne rien rater.",
+      "placeholder": "ton.email@gmail.com",
+      "save": "Enregistrer",
+      "later": "Plus tard",
+      "invalid": "Cette adresse e-mail ne semble pas valide."
     }
   },
   "auth": {

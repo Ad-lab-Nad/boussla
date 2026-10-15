@@ -1789,3 +1789,14 @@ select.g-status-select {
   color: var(--g-ink);
   font: inherit;
 }
+
+.g-contact-email {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  width: 100%;
+}
+.g-contact-email input {
+  flex: 1 1 200px;
+  min-width: 0;
+}

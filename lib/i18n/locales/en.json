@@ -505,6 +505,14 @@
       "BEAUTY": "Beauty & perfumes",
       "SERVICES": "Services",
       "OTHER": "Other"
+    },
+    "contactEmail": {
+      "title": "Get your tips by email 📧",
+      "text": "You signed up with your phone number. Add your email (optional) to receive tips and not miss anything.",
+      "placeholder": "your.email@gmail.com",
+      "save": "Save",
+      "later": "Later",
+      "invalid": "This email address doesn't look valid."
     }
   },
   "auth": {

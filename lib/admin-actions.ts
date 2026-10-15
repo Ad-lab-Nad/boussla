@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/admin";
+import { markReminderSent, type ReminderStep } from "@/lib/reminders";
 import { getPlatformBusinessId } from "@/lib/platform-business";
 import { addMonths, addYears, priceFor } from "@/lib/subscription";
 import { parseDateInput, todayStr } from "@/lib/gestion/format";
@@ -190,5 +191,15 @@ export async function deletePlatformExpense(formData: FormData) {
   const businessId = await getPlatformBusinessId();
   await prisma.expense.deleteMany({ where: { id, businessId } });
 
+  revalidatePath("/admin");
+}
+
+/** "Relance envoyée" next to a WhatsApp reminder in the back office. */
+export async function markWhatsappReminderSent(formData: FormData) {
+  await requireAdmin();
+  const userId = String(formData.get("userId") ?? "");
+  const step = String(formData.get("step") ?? "");
+  if (!userId || !["D1", "D3", "D7"].includes(step)) return;
+  await markReminderSent(userId, step as ReminderStep, "whatsapp");
   revalidatePath("/admin");
 }

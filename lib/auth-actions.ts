@@ -87,6 +87,7 @@ export async function signUp(
       update: {
         authUserId,
         industry,
+        locale,
         marketingConsent,
         marketingConsentAt: marketingConsent ? new Date() : null,
         activityType,
@@ -95,6 +96,7 @@ export async function signUp(
         email,
         authUserId,
         industry,
+        locale,
         marketingConsent,
         marketingConsentAt: marketingConsent ? new Date() : null,
         activityType,

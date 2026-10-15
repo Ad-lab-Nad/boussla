@@ -829,3 +829,15 @@ export async function setIndustry(formData: FormData) {
   await prisma.user.update({ where: { id: user.id }, data: { industry: value } });
   revalidatePath("/gestion");
 }
+
+// ---------- E-MAIL DE CONTACT (comptes créés avec un numéro) ----------
+
+/** Optional email for phone accounts, so they get the follow-up emails too. */
+export async function setContactEmail(formData: FormData): Promise<{ ok: boolean }> {
+  const email = str(formData, "contactEmail").toLowerCase();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 200) return { ok: false };
+  const user = await getCurrentUser();
+  await prisma.user.update({ where: { id: user.id }, data: { contactEmail: email } });
+  revalidatePath("/gestion");
+  return { ok: true };
+}

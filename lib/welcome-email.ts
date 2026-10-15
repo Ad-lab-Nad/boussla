@@ -1,11 +1,9 @@
-import nodemailer from "nodemailer";
+import { linesToHtml, mailerConfigured, sendMail } from "@/lib/mailer";
 import type { Locale } from "@/lib/i18n/config";
 import { SITE } from "@/lib/site-config";
 
-// Sent once, right after sign-up, from the founder's own mailbox (OVH MX
-// Plan) so a reply lands with a person. Configured by env vars on Vercel:
-// SMTP_USER / SMTP_PASSWORD (+ optional SMTP_HOST / SMTP_PORT). Unset =
-// nothing is sent — sign-up never depends on it.
+// Sent once, right after sign-up, from the founder's own mailbox — see
+// lib/mailer.ts. Unconfigured = nothing is sent; sign-up never depends on it.
 
 const WHATSAPP = "https://wa.me/21623958603";
 const APP_URL = `${SITE.url}/gestion`;
@@ -52,36 +50,10 @@ const MESSAGES: Record<Locale, { subject: string; lines: string[]; signature: st
   },
 };
 
-function escapeHtml(s: string): string {
-  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-}
-
-function linkify(s: string): string {
-  return escapeHtml(s).replace(/https:\/\/\S+/g, (url) => `<a href="${url}">${url}</a>`);
-}
-
 export async function sendWelcomeEmail(to: string, locale: Locale): Promise<void> {
-  const user = process.env.SMTP_USER;
-  const pass = process.env.SMTP_PASSWORD;
-  if (!user || !pass) return;
-
+  if (!mailerConfigured()) return;
   const m = MESSAGES[locale] ?? MESSAGES.fr;
   const dir = locale === "ar" ? "rtl" : "ltr";
-  const text = [...m.lines, "", m.signature, APP_URL].join("\n\n");
-  const html = `<div dir="${dir}" style="font-family:Arial,sans-serif;font-size:15px;line-height:1.6;color:#16274E">${m.lines
-    .map((l) => `<p style="margin:0 0 12px">${linkify(l)}</p>`)
-    .join("")}<p style="margin:18px 0 4px"><b>${escapeHtml(m.signature)}</b></p><p style="margin:0"><a href="${APP_URL}">${APP_URL}</a></p></div>`;
-
-  const transport = nodemailer.createTransport({
-    host: process.env.SMTP_HOST || "ssl0.ovh.net",
-    port: Number(process.env.SMTP_PORT) || 465,
-    secure: (Number(process.env.SMTP_PORT) || 465) === 465,
-    auth: { user, pass },
-  });
-
-  try {
-    await transport.sendMail({ from: `"${m.signature}" <${user}>`, to, subject: m.subject, text, html });
-  } catch (err) {
-    console.error("Welcome email not sent:", err);
-  }
+  const lines = [...m.lines, "", m.signature, APP_URL];
+  await sendMail({ to, subject: m.subject, text: lines.join("\n\n"), html: linesToHtml(lines, dir), fromName: m.signature });
 }
