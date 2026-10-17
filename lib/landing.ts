@@ -39,14 +39,16 @@ function withTracker(html: string): string {
 
 export async function serveLanding(
   request: NextRequest,
-  fileName: "index.html" | "ar.html",
-  options: { appLocale?: Locale } = {}
+  fileName: "index.html" | "ar.html" | "adlab.html",
+  // stayForSignedIn: a page that isn't the app's front door (Ad Lab) —
+  // signed-in visitors see it too instead of being sent to /gestion.
+  options: { appLocale?: Locale; stayForSignedIn?: boolean } = {}
 ) {
   // Signed-in visitors go straight to their dashboard — except the admin's
   // "Aperçu" link (?preview=1), which wants the public page (and isn't
   // counted as a visit).
   const isPreview = request.nextUrl.searchParams.get("preview") === "1";
-  if (!isPreview) {
+  if (!isPreview && !options.stayForSignedIn) {
     const supabase = await createClient();
     const { data } = await supabase.auth.getClaims();
     if (data?.claims) return NextResponse.redirect(new URL("/gestion", request.url));

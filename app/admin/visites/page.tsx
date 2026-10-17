@@ -145,7 +145,9 @@ export default async function VisitesPage({
   // Landing-page views vs. arrivals on the sign-up form (recorded by the
   // signup page itself — see components/TrackSignupArrival.tsx). allVisits
   // is newest-first, so isBotArrival finds the latest landing visit before.
-  const visits = realVisits.filter((v) => v.path !== "/signup");
+  // Flux Ad Lab (/adlab) is a separate service: kept out of Flux's numbers.
+  const adlabVisits = realVisits.filter((v) => v.path.startsWith("/adlab"));
+  const visits = realVisits.filter((v) => v.path !== "/signup" && !v.path.startsWith("/adlab"));
   const rawArrivals = realVisits.filter((v) => v.path === "/signup");
   const signupArrivals = rawArrivals.filter((a) => !isBotArrival(a, visits));
   const hiddenBotArrivals = rawArrivals.length - signupArrivals.length;
@@ -246,6 +248,24 @@ export default async function VisitesPage({
       </div>
 
       <SignupFunnel arrivals={signupVisitors.size} events={signupEvents} />
+
+      <div className="g-card">
+        <h2>Flux Ad Lab (/adlab)</h2>
+        <div className="g-hint">
+          Visites de la page du service pub, comptées à part. Les clics WhatsApp sont mesurés par le Pixel Meta
+          (événement « Contact »).
+        </div>
+        <div className="g-kpi-grid" style={{ marginBottom: 0 }}>
+          <KpiCard label="Visiteurs" value={String(new Set(adlabVisits.map((v) => v.visitorId)).size)} icon={Users} tone="blue" />
+          <KpiCard label="Visites" value={String(adlabVisits.length)} icon={Eye} tone="violet" />
+          <KpiCard
+            label="Temps moyen"
+            value={adlabVisits.length ? fmtDuration(adlabVisits.reduce((s, v) => s + v.durationMs, 0) / adlabVisits.length) : "—"}
+            icon={Clock}
+            tone="aqua"
+          />
+        </div>
+      </div>
 
       <div className="g-card">
         <h2>Jour par jour</h2>
