@@ -748,7 +748,8 @@ model PageVisit {
 
   // Visible time on the page, updated by beacons while the visitor stays.
   durationMs Int     @default(0)
-  // Clicks on a sign-up button (data-cta links to /signup).
+  // Clicks on a sign-up button (data-cta links to /signup); on /adlab,
+  // clicks on a WhatsApp button (lastCta "wa:<button>").
   ctaClicks  Int     @default(0)
   lastCta    String?
 

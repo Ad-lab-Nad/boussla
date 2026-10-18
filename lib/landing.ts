@@ -17,7 +17,8 @@ const cache = new Map<string, string>();
 
 // Anonymous audience beacon (see app/api/visit and /admin/visites),
 // appended at serve time so the landing files themselves stay untouched.
-// Counts only visible time; flags clicks on sign-up buttons.
+// Counts only visible time; flags clicks on sign-up buttons, and on Ad Lab
+// (/adlab) the WhatsApp buttons too (cta "wa:<button>").
 const TRACKER = `<script>(function(){
 var v;try{v=localStorage.getItem("fx_vid");if(!v){v=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():Date.now()+"-"+Math.random().toString(36).slice(2);localStorage.setItem("fx_vid",v)}}catch(e){v="nostore-"+Math.random().toString(36).slice(2)}
 var q=new URLSearchParams(location.search),id=null,active=0,since=Date.now();
@@ -27,7 +28,9 @@ function send(extra){if(!id)return;var b=JSON.stringify(Object.assign({d:active}
 document.addEventListener("visibilitychange",function(){if(document.hidden){active+=Date.now()-since;send()}else{since=Date.now()}});
 addEventListener("pagehide",function(){tick();send()});
 setInterval(function(){tick();send()},15000);
-document.addEventListener("click",function(e){var a=e.target&&e.target.closest&&e.target.closest("a[data-cta]");if(a&&(a.getAttribute("href")||"").indexOf("/signup")===0){tick();send({cta:a.getAttribute("data-cta")})}},true);
+document.addEventListener("click",function(e){var a=e.target&&e.target.closest&&e.target.closest("a[href]");if(!a)return;var h=a.getAttribute("href")||"",c=a.getAttribute("data-cta");
+if(c&&h.indexOf("/signup")===0){tick();send({cta:c})}
+else if(h.indexOf("https://wa.me/")===0&&location.pathname.indexOf("/adlab")===0){tick();send({cta:"wa:"+(c||"whatsapp")})}},true);
 })();</script>`;
 
 function withTracker(html: string): string {
