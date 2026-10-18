@@ -9,6 +9,9 @@ import { SITE } from "@/lib/site-config";
 //   ViewContent           a landing visitor kept the page on screen ≥ 15 s
 //   Lead                  click on a sign-up button ("Essai gratuit", tiers)
 //   Contact               click on a WhatsApp link (demo request, FAQ)
+//   Schedule              click on a WhatsApp link on /adlab (Ad Lab audit
+//                         request) — its own event so Ad Lab campaigns can
+//                         optimize on it without mixing in Flux contacts
 //   CompleteRegistration  account created
 export const META_PIXEL_ID: string = SITE.metaPixelId;
 
@@ -24,7 +27,7 @@ function vis(){return !document.hidden}
 setInterval(function(){if(vc)return;if(vis()){seen+=1000}if(seen>=15000){vc=true;fbq('track','ViewContent')}},1000);
 document.addEventListener("click",function(e){var a=e.target&&e.target.closest&&e.target.closest("a[href]");if(!a||e.defaultPrevented)return;var h=a.getAttribute("href")||"";
 if(h.indexOf("/signup")===0){fbq('track','Lead',{content_name:a.getAttribute("data-cta")||"signup"})}
-else if(h.indexOf("https://wa.me/")===0){fbq('track','Contact',{content_name:a.getAttribute("data-cta")||"whatsapp"})}});
+else if(h.indexOf("https://wa.me/")===0){fbq('track',location.pathname.indexOf("/adlab")===0?'Schedule':'Contact',{content_name:a.getAttribute("data-cta")||"whatsapp"})}});
 })();</script>
 <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=${id}&ev=PageView&noscript=1" alt=""/></noscript>`;
 }
