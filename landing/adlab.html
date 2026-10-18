@@ -99,6 +99,20 @@
 
   .proof{ background:var(--sun-soft); }
   .proof .h2 .big{ font-size:1.12em; }
+  .case1{ margin-top:30px; }
+  .case{ margin-top:14px; padding:22px; display:grid; gap:18px; transform:rotate(-.6deg); }
+  .case-head{ display:flex; flex-wrap:wrap; gap:8px; }
+  .tag-mint{ background:var(--mint); color:#0F6B3E; }
+  .case-grid{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px; }
+  @media (max-width:860px){ .case-grid{ grid-template-columns:repeat(2,minmax(0,1fr)); } }
+  .case-kpi{ background:var(--sky); border:2px solid var(--line); border-radius:18px; padding:14px; display:grid; gap:4px; }
+  .case-kpi.hot{ background:var(--sun); color:#fff; }
+  .case-kpi.hot span{ color:#fff; }
+  .case-kpi strong{ font-family:var(--display); font-weight:800; font-size:clamp(26px,3.6vw,38px); line-height:1; }
+  .case-kpi span{ font-size:13.5px; color:var(--ink-2); }
+  .case .say{ font-size:15px; color:var(--ink-2); font-style:italic; }
+  .case2{ margin-top:44px; font-size:clamp(20px,2.6vw,26px); }
+  .proof .case2 + .lead{ margin-top:8px; }
   .ba{ display:grid; grid-template-columns:1fr auto 1.15fr; gap:18px; align-items:center; margin-top:34px; }
   @media (max-width:860px){ .ba{ grid-template-columns:1fr; } }
   .ba-card{ padding:22px; display:grid; gap:16px; }
@@ -207,10 +221,10 @@
         <p class="note">🟢 Places limitées : 3 nouvelles boutiques par mois</p>
       </div>
       <div class="stack" aria-label="Résultats de la campagne de lancement de Flux">
-        <div class="sticker stat tilt-l"><span>Coût par inscription</span><strong class="num">&lt; 1 $ 🎯</strong></div>
-        <div class="sticker stat sky tilt-r"><span>Inscriptions en 1 journée</span><strong class="num">11 🚀</strong></div>
-        <div class="sticker stat honey tilt-l"><span>Avec seulement</span><strong class="num">5 $ / jour</strong></div>
-        <p class="stat-foot">Ma propre campagne de lancement de l'app Flux, octobre 2026.</p>
+        <div class="sticker stat tilt-l"><span>Conversations WhatsApp</span><strong class="num">156 💬</strong></div>
+        <div class="sticker stat sky tilt-r"><span>Coût par conversation</span><strong class="num">0,46 $ 🎯</strong></div>
+        <div class="sticker stat honey tilt-l"><span>Avec seulement</span><strong class="num">7 $ / jour</strong></div>
+        <p class="stat-foot">Campagne « Ventes » pour une boutique de fruits à Tunis, octobre 2026.</p>
       </div>
     </div>
   </section>
@@ -263,9 +277,26 @@
 
   <section class="proof" id="resultats">
     <div class="wrap">
-      <span class="pill">📈 La preuve : ma propre campagne</span>
-      <h2 class="h2">Même budget, <span class="mark">5 $ par jour</span>.<br>Des clients en plus, chaque jour.</h2>
-      <p class="lead">Le lancement de l'app Flux, mesuré avec le Pixel Meta. Même produit, même argent : seule la méthode a changé.</p>
+      <span class="pill">📈 La preuve : mes propres campagnes</span>
+      <h2 class="h2">Des conversations WhatsApp<br>à <span class="mark">moins de 0,50 $</span></h2>
+
+      <h3 class="case2 case1">Cas 1 · Boutique de fruits à Tunis</h3>
+      <article class="sticker case">
+        <header class="case-head">
+          <span class="tag tag-mint">Campagne « Ventes »</span>
+          <span class="tag">Ciblage Grand Tunis</span>
+        </header>
+        <div class="case-grid">
+          <div class="case-kpi"><strong class="num">156</strong><span>conversations WhatsApp</span></div>
+          <div class="case-kpi hot"><strong class="num">0,46 $</strong><span>par conversation (≈ 1,4 DT)</span></div>
+          <div class="case-kpi"><strong class="num">29 000+</strong><span>personnes touchées</span></div>
+          <div class="case-kpi"><strong class="num">72 $</strong><span>dépensés au total, 7 $ par jour</span></div>
+        </div>
+        <p class="say">Un seul objectif : que le client écrive sur WhatsApp. Chaque conversation est une commande possible.</p>
+      </article>
+
+      <h3 class="case2">Cas 2 · Lancement de l'app Flux</h3>
+      <p class="lead">Mesuré avec le Pixel Meta. Même produit, même argent : seule la méthode a changé.</p>
 
       <div class="ba">
         <article class="sticker ba-card ba-before">
@@ -319,27 +350,27 @@
           <span class="tag">Pour bien démarrer</span>
           <h3>Essentiel</h3>
           <p class="price"><small>à partir de</small> 450 DT <small>/ mois</small></p>
-          <ul><li>4 visuels produits</li><li>2 vidéos courtes (Reels)</li><li>Les légendes et accroches</li><li>1 campagne pub gérée</li><li>Un bilan chaque mois</li></ul>
+          <ul><li>1 séance photo/vidéo par mois</li><li>4 visuels produits</li><li>2 vidéos courtes (Reels)</li><li>Les légendes et accroches</li><li>1 campagne pub gérée</li><li>Un bilan chaque mois</li></ul>
           <a class="btn btn-white" href="https://wa.me/21623958603?text=Bonjour%20Nada%20%F0%9F%91%8B%20Je%20suis%20int%C3%A9ress%C3%A9%28e%29%20par%20la%20formule%20Essentiel%20de%20Flux%20Ad%20Lab%20pour%20ma%20boutique%20en%20ligne." target="_blank" rel="noopener" data-cta="adlab-tier1"><svg aria-hidden="true"><use href="#i-wa"/></svg>Choisir Essentiel</a>
         </div>
         <div class="sticker offer featured">
           <span class="tag">⭐ Le plus demandé</span>
           <h3>Croissance</h3>
           <p class="price"><small>à partir de</small> 750 DT <small>/ mois</small></p>
-          <ul><li>8 visuels produits</li><li>4 vidéos courtes (Reels)</li><li>Les légendes et accroches</li><li>Jusqu'à 2 campagnes pub gérées</li><li>Un rapport chaque semaine</li></ul>
+          <ul><li>1 séance photo/vidéo par mois</li><li>8 visuels produits</li><li>4 vidéos courtes (Reels)</li><li>Les légendes et accroches</li><li>Jusqu'à 2 campagnes pub gérées</li><li>Un rapport chaque semaine</li></ul>
           <a class="btn btn-sun" href="https://wa.me/21623958603?text=Bonjour%20Nada%20%F0%9F%91%8B%20Je%20suis%20int%C3%A9ress%C3%A9%28e%29%20par%20la%20formule%20Croissance%20de%20Flux%20Ad%20Lab%20pour%20ma%20boutique%20en%20ligne." target="_blank" rel="noopener" data-cta="adlab-tier2"><svg aria-hidden="true"><use href="#i-wa"/></svg>Choisir Croissance</a>
         </div>
         <div class="sticker offer combo">
           <span class="tag">🔥 Le plus complet</span>
           <h3>Performance</h3>
           <p class="price"><small>à partir de</small> 1 100 DT <small>/ mois</small></p>
-          <ul><li>12 visuels produits + stories</li><li>8 vidéos courtes (Reels)</li><li>Les légendes, accroches et réponses types</li><li>Toutes tes campagnes, dont le reciblage</li><li>Rapport chaque semaine + appel stratégie chaque mois</li><li>L'app Flux offerte</li></ul>
+          <ul><li>1 séance photo/vidéo par mois</li><li>12 visuels produits + stories</li><li>8 vidéos courtes (Reels)</li><li>Les légendes, accroches et réponses types</li><li>Toutes tes campagnes, dont le reciblage</li><li>Rapport chaque semaine + appel stratégie chaque mois</li><li>Suivi de ton vrai bénéfice chaque mois</li></ul>
           <a class="btn btn-sun" href="https://wa.me/21623958603?text=Bonjour%20Nada%20%F0%9F%91%8B%20Je%20suis%20int%C3%A9ress%C3%A9%28e%29%20par%20la%20formule%20Performance%20de%20Flux%20Ad%20Lab%20pour%20ma%20boutique%20en%20ligne." target="_blank" rel="noopener" data-cta="adlab-tier3"><svg aria-hidden="true"><use href="#i-wa"/></svg>Choisir Performance</a>
         </div>
       </div>
       <p class="sticker launch">🎁 <b>Pas encore sûr(e) ?</b> Commence par le <b>mini-audit offert</b> : 15 minutes sur WhatsApp, 3 conseils concrets. <a href="https://wa.me/21623958603?text=Bonjour%20Nada%20%F0%9F%91%8B%20J%27ai%20une%20boutique%20en%20ligne%20et%20je%20veux%20mon%20mini-audit%20offert%20de%20mes%20pubs%20Facebook%2FInstagram." target="_blank" rel="noopener" data-cta="adlab-audit">Je le veux →</a></p>
       <p class="sticker launch" style="background:var(--sky-2)">🚀 <b>Offre de lancement : −20 % le premier mois</b> pour les 3 premières boutiques, sur toutes les formules.</p>
-      <p class="fine">Les formules sont mensuelles, sans engagement après le premier mois. Le budget publicitaire est payé directement à Meta avec ta carte : tu gardes le contrôle de chaque dinar. Nous créons ton contenu de A à Z : photos et vidéos de tes produits, visuels, montage et textes. Le tarif final est fixé ensemble avant de commencer.</p>
+      <p class="fine">Les formules démarrent par un <b>engagement de 3 mois</b> : le temps de tout mettre en place, que Meta apprenne (environ 7 jours) et que les campagnes soient optimisées. Ensuite, sans engagement, mois par mois. <b>Paiement au début de chaque mois</b>, avant le démarrage. Le budget publicitaire est payé directement à Meta avec ta carte : tu gardes le contrôle de chaque dinar. Nous créons ton contenu de A à Z : photos et vidéos de tes produits (une séance par mois, chez toi ou avec tes produits déposés chez nous, à une date fixée ensemble), visuels, montage et textes. <b>Non inclus :</b> les réponses aux messages de tes clients et la publication quotidienne ; on te donne les réponses types pour aller vite. Le tarif final est fixé ensemble avant de commencer.</p>
     </div>
   </section>
 
@@ -372,6 +403,7 @@
         <details class="sticker"><summary>Vous faites les photos et les vidéos ?</summary><p>Oui. Nous organisons avec toi la prise de vue de tes produits, puis nous faisons les visuels, le montage et les textes. Tu n'as rien à préparer à part tes produits.</p></details>
         <details class="sticker"><summary>Ça marche pour ma boutique ?</summary><p>Si tu vends déjà en ligne (vêtements, cosmétiques, accessoires, déco…) et que tu livres, oui. Le mini-audit offert sert justement à vérifier ensemble.</p></details>
         <details class="sticker"><summary>Les résultats sont-ils garantis ?</summary><p>Personne ne peut garantir des ventes. Ce que je garantis : une campagne bien réglée, des chiffres clairs chaque semaine, et des décisions basées sur ces chiffres.</p></details>
+        <details class="sticker"><summary>Pourquoi 3 mois minimum ?</summary><p>La première semaine sert à tout mettre en place (audit, séance photo, Pixel, campagnes). Ensuite, Meta a besoin d'environ 7 jours pour apprendre qui achète. Les résultats solides arrivent au 2e et au 3e mois : un seul mois ne suffit pas pour juger.</p></details>
         <details class="sticker"><summary>Comment on se parle ?</summary><p>Sur WhatsApp, par message ou par appel, en derja ou en français. Les rapports arrivent aussi sur WhatsApp.</p></details>
       </div>
     </div>
