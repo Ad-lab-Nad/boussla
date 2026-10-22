@@ -26,6 +26,7 @@ const BUTTON_LABELS: Record<string, string> = {
   "adlab-tier3": "Formule Performance",
   "adlab-audit": "Bandeau · Mini-audit (Je le veux)",
   "adlab-final": "Bas de page",
+  "adlab-sticky": "Bouton fixe (mobile)",
   whatsapp: "Autre lien WhatsApp",
 };
 

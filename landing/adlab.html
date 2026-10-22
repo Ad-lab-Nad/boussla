@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Flux Ad Lab — Pubs Meta et contenu pour boutiques en ligne</title>
-<meta name="description" content="Pubs Facebook et Instagram et création de contenu pour les boutiques en ligne tunisiennes, par Nada : 8 ans de marketing digital à Dubaï, en Belgique et en Tunisie. Mini-audit offert.">
+<meta name="description" content="Pubs Facebook et Instagram et création de contenu pour les boutiques en ligne tunisiennes, par Nada : 8 ans de marketing digital à Dubaï, en Belgique et en Tunisie, plus de 50 marques nationales et internationales gérées. Mini-audit offert.">
 <meta property="og:title" content="Flux Ad Lab — Des pubs qui font sonner ton WhatsApp 📲">
 <meta property="og:description" content="Pour les boutiques Instagram et Facebook : du contenu qui donne envie, des pubs qui ramènent des commandes. Mini-audit offert.">
 <meta property="og:type" content="website">
@@ -62,6 +62,20 @@
   .hero .ctas{ display:flex; gap:14px; flex-wrap:wrap; margin-top:26px; }
   .reassure{ margin-top:12px; font-size:14.5px; font-weight:600; color:var(--good); }
   .reassure.on-dark{ color:inherit; opacity:.95; }
+  .pill-avatar{ padding:4px 14px 4px 4px; }
+  .avatar{ width:34px; height:34px; border-radius:50%; border:2px solid var(--line); object-fit:cover; flex:none; }
+  .avatar-initial{ display:grid; place-items:center; background:var(--sun); color:#fff; font-family:var(--display); font-weight:800; font-size:16px; }
+  .derja{ margin-top:10px; font-size:16px; font-style:italic; color:var(--ink-2); }
+  .stat .dt{ font-family:var(--sans); font-size:14px; font-weight:600; color:var(--ink-2); }
+  .receipt-note{ margin-top:10px; font-size:13px; color:var(--muted); }
+  .sticky-cta{ display:none; }
+  @media (max-width:767px){
+    body{ padding-bottom:calc(84px + env(safe-area-inset-bottom,0px)); }
+    .sticky-cta{ display:flex; position:fixed; left:16px; right:16px; bottom:calc(14px + env(safe-area-inset-bottom,0px)); z-index:50; justify-content:center;
+      transform:translateY(140%); opacity:0; pointer-events:none; transition:transform .25s ease, opacity .25s ease; }
+    .sticky-cta.is-on{ transform:none; opacity:1; pointer-events:auto; }
+  }
+  @media (prefers-reduced-motion:reduce){ .sticky-cta{ transition:none; } }
   .hero .note{ margin-top:16px; font-size:14px; color:var(--ink-2); }
   .stack{ display:grid; gap:14px; }
   .stat{ padding:16px 18px; display:flex; justify-content:space-between; align-items:center; gap:12px; }
@@ -213,9 +227,13 @@
     <span class="blob" style="width:200px;height:200px;background:var(--sky-2);left:-90px;bottom:-60px" aria-hidden="true"></span>
     <div class="wrap hero-grid">
       <div>
-        <span class="pill">👋 Hello, moi c'est Nada · 8 ans de marketing digital</span>
+        <!-- Photo de Nada : remplacer le rond « N » par
+             <img class="avatar" src="/nada.webp" width="34" height="34" alt="Nada, fondatrice de Flux Ad Lab">
+             (photo carrée en WebP, moins de 80 Ko, dans public/nada.webp). -->
+        <span class="pill pill-avatar"><span class="avatar avatar-initial" aria-hidden="true">N</span>Hello, moi c'est Nada · 8 ans de marketing digital</span>
         <h1>Des pubs qui font <span class="mark">sonner</span> ton WhatsApp 📲</h1>
-        <p class="lead">Tu vends sur Instagram ou Facebook ? Nous créons le contenu qui donne envie, puis nous lançons et suivons tes pubs pour qu'elles ramènent des <b>commandes</b>, pas des likes.</p>
+        <p class="lead">Tu vends sur Instagram ou Facebook ? Je crée le contenu qui donne envie, puis je lance et je suis tes pubs pour qu'elles ramènent des <b>commandes</b>, pas des likes.</p>
+        <p class="derja">Tbi3 3al Insta walla Facebook ? Ab3athli message, nchoufou m3a ba3dhna 📲</p>
         <div class="ctas">
           <a class="btn btn-sun" href="https://wa.me/21623958603?text=Bonjour%20Nada%20%F0%9F%91%8B%20Je%20veux%20mon%20mini-audit%20gratuit." target="_blank" rel="noopener" data-cta="adlab-hero"><svg aria-hidden="true"><use href="#i-wa"/></svg>Mon mini-audit offert 🎁</a>
           <a class="btn btn-white" href="#offres">Voir les offres</a>
@@ -226,7 +244,7 @@
       <div class="stack" aria-label="Résultats de la campagne de lancement de Flux">
         <div class="sticker stat tilt-l"><span>Conversations WhatsApp</span><strong class="num">156 💬</strong></div>
         <div class="sticker stat sky tilt-r"><span>Coût par conversation</span><strong class="num">0,46 $ 🎯</strong></div>
-        <div class="sticker stat honey tilt-l"><span>Avec seulement</span><strong class="num">7 $ / jour</strong></div>
+        <div class="sticker stat honey tilt-l"><span>Avec seulement</span><strong class="num">7 $ / jour <small class="dt">(≈ 21 DT)</small></strong></div>
         <p class="stat-foot">Campagne « Ventes » pour une boutique de fruits à Tunis, octobre 2026.</p>
       </div>
     </div>
@@ -236,6 +254,7 @@
     <div class="wrap">
       <p>🌍 8 ans de marketing digital entre</p>
       <div class="places"><span class="sticker place">🇦🇪 Dubaï</span><span class="sticker place">🇧🇪 Belgique</span><span class="sticker place">🇹🇳 Tunisie</span></div>
+      <p>⭐ <span class="mark">+ de 50 marques</span> nationales et internationales gérées</p>
     </div>
   </div>
 
@@ -256,7 +275,7 @@
     <div class="wrap">
       <span class="pill">🎨 Création de contenu</span>
       <h2 class="h2">Une bonne pub commence par un <span class="mark">bon contenu</span></h2>
-      <p class="lead">Nous nous occupons de tout : la prise de vue de tes produits, les visuels, les vidéos et les textes. Des contenus qui arrêtent le défilement et donnent envie d'écrire « je veux commander ».</p>
+      <p class="lead">Je m'occupe de tout : la prise de vue de tes produits, les visuels, les vidéos et les textes. Des contenus qui arrêtent le défilement et donnent envie d'écrire « je veux commander ».</p>
       <div class="grid3">
         <div class="sticker pain"><span class="emo">🖼️</span><h3>Visuels produits</h3><p>Photos de tes produits, retouchées et mises en page pour le fil, les stories et les pubs, aux couleurs de ta marque.</p></div>
         <div class="sticker pain"><span class="emo">🎬</span><h3>Vidéos courtes (Reels)</h3><p>Tournage, montage dynamique, textes à l'écran, musique : le format qui coûte le moins cher en pub.</p></div>
@@ -293,9 +312,20 @@
           <div class="case-kpi"><strong class="num">156</strong><span>conversations WhatsApp</span></div>
           <div class="case-kpi hot"><strong class="num">0,46 $</strong><span>par conversation (≈ 1,4 DT)</span></div>
           <div class="case-kpi"><strong class="num">29 000+</strong><span>personnes touchées</span></div>
-          <div class="case-kpi"><strong class="num">72 $</strong><span>dépensés au total, 7 $ par jour</span></div>
+          <div class="case-kpi"><strong class="num">72 $</strong><span>(≈ 215 DT) dépensés au total, 7 $ (≈ 21 DT) par jour</span></div>
         </div>
         <p class="say">Un seul objectif : que le client écrive sur WhatsApp. Chaque conversation est une commande possible.</p>
+        <!-- Preuve « commandes » + témoignage : jamais affichés tant qu'ils sont dans ce <template>.
+             Pour les publier : remplir les [À COMPLÉTER …], puis sortir le contenu du <template>
+             (la 5e stat va dans .case-grid ci-dessus). -->
+        <template id="cas1-a-completer">
+          <div class="case-kpi"><strong class="num">[À COMPLÉTER : X]</strong><span>commandes livrées</span></div>
+          <figure class="testimonial">
+            <blockquote>« [À COMPLÉTER : citation du client] »</blockquote>
+            <figcaption>[À COMPLÉTER : prénom] · [À COMPLÉTER : type de boutique]</figcaption>
+            <img src="[À COMPLÉTER : capture WhatsApp floutée]" alt="Capture de la conversation WhatsApp avec le client (floutée)" width="320" height="560" loading="lazy">
+          </figure>
+        </template>
       </article>
 
       <h3 class="case2">Cas 2 · Lancement de l'app Flux</h3>
@@ -337,7 +367,7 @@
       </div>
 
       <div class="proof-cta">
-        <p>On applique la même méthode à ta boutique.</p>
+        <p>J'applique la même méthode à ta boutique.</p>
         <a class="btn btn-sun" href="https://wa.me/21623958603?text=Bonjour%20Nada%20%F0%9F%91%8B%20Je%20veux%20mon%20mini-audit%20gratuit." target="_blank" rel="noopener" data-cta="adlab-proof"><svg aria-hidden="true"><use href="#i-wa"/></svg>Je veux ce résultat</a>
         <p class="reassure" style="flex-basis:100%">✅ Gratuit · Sans engagement · Réponse le jour même</p>
       </div>
@@ -373,8 +403,9 @@
         </div>
       </div>
       <p class="sticker launch">🎁 <b>Pas encore sûr(e) ?</b> Commence par le <b>mini-audit offert</b> : 15 minutes sur WhatsApp, 3 conseils concrets. <a href="https://wa.me/21623958603?text=Bonjour%20Nada%20%F0%9F%91%8B%20Je%20veux%20mon%20mini-audit%20gratuit." target="_blank" rel="noopener" data-cta="adlab-audit">Je le veux →</a></p>
-      <p class="sticker launch" style="background:var(--sky-2)">🚀 <b>Offre de lancement : −20 % le premier mois</b> pour les 3 premières boutiques, sur toutes les formules.</p>
-      <p class="fine">Les formules démarrent par un <b>engagement de 3 mois</b> : le temps de tout mettre en place, que Meta apprenne (environ 7 jours) et que les campagnes soient optimisées. Ensuite, sans engagement, mois par mois. <b>Paiement au début de chaque mois</b>, avant le démarrage. Le budget publicitaire est payé directement à Meta avec ta carte : tu gardes le contrôle de chaque dinar. Nous créons ton contenu de A à Z : photos et vidéos de tes produits (une séance par mois, chez toi ou avec tes produits déposés ou envoyés chez nous, à une date fixée ensemble), visuels, montage et textes. <b>Non inclus :</b> les réponses aux messages de tes clients et la publication quotidienne ; on te donne les réponses types pour aller vite. Le tarif final est fixé ensemble avant de commencer.</p>
+      <!-- Offre lancement : à retirer après 3 clients (avec la phrase « Offre de lancement » de la FAQ « Pourquoi 3 mois minimum ? »). -->
+      <p class="sticker launch launch-offer" style="background:var(--sky-2)">🚀 <b>Offre de lancement (3 premières boutiques) :</b> −20 % le 1er mois, et si après 30 jours tu n'es pas convaincu(e), tu arrêtes sans payer la suite.</p>
+      <p class="fine">Les formules démarrent par un <b>engagement de 3 mois</b> : le temps de tout mettre en place, que Meta apprenne (environ 7 jours) et que les campagnes soient optimisées. Ensuite, sans engagement, mois par mois. <b>Paiement au début de chaque mois</b>, avant le démarrage. Le budget publicitaire est payé directement à Meta avec ta carte : tu gardes le contrôle de chaque dinar. Je crée ton contenu de A à Z : photos et vidéos de tes produits (une séance par mois, chez toi ou avec tes produits déposés ou envoyés chez moi, à une date fixée ensemble), visuels, montage et textes. <b>Non inclus :</b> les réponses aux messages de tes clients et la publication quotidienne ; je te donne les réponses types pour aller vite. Le tarif final est fixé ensemble avant de commencer.</p>
     </div>
   </section>
 
@@ -386,13 +417,17 @@
         <p class="lead">Je ne regarde pas que les clics. Avec <b>Flux</b>, l'app que j'ai créée, on suit ce qu'il te reste vraiment une fois la pub, la livraison et les retours déduits.</p>
         <p style="margin-top:18px"><a class="btn btn-white" href="/">Découvrir l'app Flux</a></p>
       </div>
-      <div class="sticker receipt" aria-label="Exemple de calcul du vrai bénéfice d'un mois">
-        <span class="lbl">EXEMPLE · UN MOIS DE BOUTIQUE</span>
-        <div class="row"><span>Ventes livrées</span><span class="num">2 400 DT</span></div>
-        <div class="row"><span>Coût des produits</span><span class="num neg">− 1 100 DT</span></div>
-        <div class="row"><span>Pub Meta</span><span class="num neg">− 450 DT</span></div>
-        <div class="row"><span>Livraison et retours</span><span class="num neg">− 320 DT</span></div>
-        <div class="row"><span>Ce qu'il te reste 🎉</span><span class="num pos">530 DT</span></div>
+      <div>
+        <div class="sticker receipt" aria-label="Exemple de calcul du vrai bénéfice d'un mois avec Flux Ad Lab">
+          <span class="lbl">EXEMPLE · UN MOIS DE BOUTIQUE (avec Flux Ad Lab)</span>
+          <div class="row"><span>Ventes livrées</span><span class="num">3 500 DT</span></div>
+          <div class="row"><span>Coût des produits</span><span class="num neg">− 1 500 DT</span></div>
+          <div class="row"><span>Pub Meta</span><span class="num neg">− 400 DT</span></div>
+          <div class="row"><span>Livraison et retours</span><span class="num neg">− 300 DT</span></div>
+          <div class="row"><span>Flux Ad Lab (Essentiel)</span><span class="num neg">− 450 DT</span></div>
+          <div class="row"><span>Ce qu'il te reste 🎉</span><span class="num pos">850 DT</span></div>
+        </div>
+        <p class="receipt-note">Exemple illustratif. Pendant le mini-audit, on fait ce calcul avec tes vrais chiffres.</p>
       </div>
     </div>
   </section>
@@ -404,10 +439,10 @@
       <div class="faq">
         <details class="sticker"><summary>Qui paie la publicité ?</summary><p>Toi, directement à Meta, avec ta carte. Je facture seulement mon travail : stratégie, création, suivi. Tu vois toujours combien tu dépenses.</p></details>
         <details class="sticker"><summary>Quel budget pour commencer ?</summary><p>5 à 10 $ par jour suffisent pour démarrer et apprendre ce qui marche. On augmente seulement quand les commandes suivent.</p></details>
-        <details class="sticker"><summary>Vous faites les photos et les vidéos ?</summary><p>Oui. Nous organisons avec toi la prise de vue de tes produits, puis nous faisons les visuels, le montage et les textes. Tu n'as rien à préparer à part tes produits.</p></details>
+        <details class="sticker"><summary>Tu fais aussi les photos et les vidéos ?</summary><p>Oui. J'organise avec toi la prise de vue de tes produits, puis je fais les visuels, le montage et les textes. Tu n'as rien à préparer à part tes produits.</p></details>
         <details class="sticker"><summary>Ça marche pour ma boutique ?</summary><p>Si tu vends déjà en ligne (vêtements, cosmétiques, accessoires, déco…) et que tu livres, oui. Le mini-audit offert sert justement à vérifier ensemble.</p></details>
         <details class="sticker"><summary>Les résultats sont-ils garantis ?</summary><p>Personne ne peut garantir des ventes. Ce que je garantis : une campagne bien réglée, des chiffres clairs chaque semaine, et des décisions basées sur ces chiffres.</p></details>
-        <details class="sticker"><summary>Pourquoi 3 mois minimum ?</summary><p>La première semaine sert à tout mettre en place (audit, séance photo, Pixel, campagnes). Ensuite, Meta a besoin d'environ 7 jours pour apprendre qui achète. Les résultats solides arrivent au 2e et au 3e mois : un seul mois ne suffit pas pour juger.</p></details>
+        <details class="sticker"><summary>Pourquoi 3 mois minimum ?</summary><p>La première semaine sert à tout mettre en place (audit, séance photo, Pixel, campagnes). Ensuite, Meta a besoin d'environ 7 jours pour apprendre qui achète. Les résultats solides arrivent au 2e et au 3e mois : un seul mois ne suffit pas pour juger. <span class="launch-offer">Offre de lancement : pour les 3 premières boutiques, tu peux arrêter après 30 jours sans payer la suite.</span></p></details>
         <details class="sticker"><summary>Comment on se parle ?</summary><p>Sur WhatsApp, par message ou par appel, en derja ou en français. Les rapports arrivent aussi sur WhatsApp.</p></details>
       </div>
     </div>
@@ -432,5 +467,32 @@
     <span><a href="/">fluxtunisie.com</a> · <a href="/confidentialite">Confidentialité</a></span>
   </div>
 </footer>
+<a class="btn btn-sun sticky-cta" href="https://wa.me/21623958603?text=Bonjour%20Nada%20%F0%9F%91%8B%20Je%20veux%20mon%20mini-audit%20gratuit." target="_blank" rel="noopener" data-cta="adlab-sticky" aria-hidden="true" tabindex="-1">💬 Mini-audit offert</a>
+
+<script>
+/* Sticky WhatsApp button (mobile only, CSS): shown once the hero is out of view,
+   hidden again when the final call-to-action is on screen. */
+(function(){
+  var btn=document.querySelector(".sticky-cta"),hero=document.querySelector(".hero"),fin=document.querySelector(".final");
+  if(!btn||!hero||!fin||!("IntersectionObserver" in window))return;
+  var heroOut=false,finIn=false;
+  function update(){var on=heroOut&&!finIn;btn.classList.toggle("is-on",on);btn.setAttribute("aria-hidden",on?"false":"true");btn.tabIndex=on?0:-1}
+  new IntersectionObserver(function(es){heroOut=!es[0].isIntersecting;update()}).observe(hero);
+  new IntersectionObserver(function(es){finIn=es[0].isIntersecting;update()}).observe(fin);
+})();
+/* Where the prospect comes from: with utm_source / utm_campaign in the page URL,
+   a short reference is added to the end of the WhatsApp message, e.g. "(réf : ig-dm)". */
+(function(){
+  var q=new URLSearchParams(location.search);
+  var ref=[q.get("utm_source"),q.get("utm_campaign")].filter(Boolean).join("-").toLowerCase().replace(/[^a-z0-9_-]+/g,"-").slice(0,30);
+  if(!ref)return;
+  document.addEventListener("click",function(e){
+    var a=e.target&&e.target.closest&&e.target.closest('a[href^="https://wa.me/"]');
+    if(!a||a.dataset.ref)return;
+    var u=new URL(a.href),text=(u.searchParams.get("text")||"")+" (réf : "+ref+")";
+    a.href=u.origin+u.pathname+"?text="+encodeURIComponent(text);a.dataset.ref="1";
+  },true);
+})();
+</script>
 </body>
 </html>
