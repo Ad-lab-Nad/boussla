@@ -76,9 +76,12 @@ export default async function VisitesPage({
   // Landing-page views vs. arrivals on the sign-up form (recorded by the
   // signup page itself — see components/TrackSignupArrival.tsx). allVisits
   // is newest-first, so isBotArrival finds the latest landing visit before.
-  // Flux Ad Lab (/adlab) is a separate service: kept out of Flux's numbers.
+  // Flux Ad Lab (/adlab) and the training (/formation, its own tab) are
+  // separate services: kept out of Flux's numbers.
   const adlabVisits = realVisits.filter((v) => v.path.startsWith("/adlab"));
-  const visits = realVisits.filter((v) => v.path !== "/signup" && !v.path.startsWith("/adlab"));
+  const visits = realVisits.filter(
+    (v) => v.path !== "/signup" && !v.path.startsWith("/adlab") && !v.path.startsWith("/formation")
+  );
   const rawArrivals = realVisits.filter((v) => v.path === "/signup");
   const signupArrivals = rawArrivals.filter((a) => !isBotArrival(a, visits));
   const hiddenBotArrivals = rawArrivals.length - signupArrivals.length;

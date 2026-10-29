@@ -18,7 +18,8 @@ const cache = new Map<string, string>();
 // Anonymous audience beacon (see app/api/visit and /admin/visites),
 // appended at serve time so the landing files themselves stay untouched.
 // Counts only visible time; flags clicks on sign-up buttons, and on Ad Lab
-// (/adlab) the WhatsApp buttons too (cta "wa:<button>").
+// (/adlab) and the Meta Ads training (/formation) the WhatsApp buttons too
+// (cta "wa:<button>").
 const TRACKER = `<script>(function(){
 var v;try{v=localStorage.getItem("fx_vid");if(!v){v=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():Date.now()+"-"+Math.random().toString(36).slice(2);localStorage.setItem("fx_vid",v)}}catch(e){v="nostore-"+Math.random().toString(36).slice(2)}
 var q=new URLSearchParams(location.search),id=null,active=0,since=Date.now();
@@ -30,7 +31,7 @@ addEventListener("pagehide",function(){tick();send()});
 setInterval(function(){tick();send()},15000);
 document.addEventListener("click",function(e){var a=e.target&&e.target.closest&&e.target.closest("a[href]");if(!a)return;var h=a.getAttribute("href")||"",c=a.getAttribute("data-cta");
 if(c&&h.indexOf("/signup")===0){tick();send({cta:c})}
-else if(h.indexOf("https://wa.me/")===0&&location.pathname.indexOf("/adlab")===0){tick();send({cta:"wa:"+(c||"whatsapp")})}},true);
+else if(h.indexOf("https://wa.me/")===0&&(location.pathname.indexOf("/adlab")===0||location.pathname.indexOf("/formation")===0)){tick();send({cta:"wa:"+(c||"whatsapp")})}},true);
 })();</script>`;
 
 function withTracker(html: string): string {
@@ -42,8 +43,9 @@ function withTracker(html: string): string {
 
 export async function serveLanding(
   request: NextRequest,
-  fileName: "index.html" | "ar.html" | "adlab.html",
-  // stayForSignedIn: a page that isn't the app's front door (Ad Lab) —
+  fileName: "index.html" | "ar.html" | "adlab.html" | "formation.html",
+  // stayForSignedIn: a page that isn't the app's front door (Ad Lab, the
+  // training) —
   // signed-in visitors see it too instead of being sent to /gestion.
   options: { appLocale?: Locale; stayForSignedIn?: boolean } = {}
 ) {

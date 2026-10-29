@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
     "/": ["./landing/index.html"],
     "/ar": ["./landing/ar.html"],
     "/adlab": ["./landing/adlab.html"],
+    "/formation": ["./landing/formation.html"],
   },
 
   // Site layout: public landing at "/", the app under /gestion (dashboard),
